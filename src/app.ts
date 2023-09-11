@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Express, Request, Response } from "express";
 import bodyParser from 'body-parser';
 import AccidentRouter from "./routers/AccidentRouter.js";
 import ObserveRouter from "./routers/AccidentRouter.js";

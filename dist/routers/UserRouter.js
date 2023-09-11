@@ -1,8 +1,3 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const UserRouter = express_1.default.Router();
-exports.default = UserRouter;
+import express from "express";
+const UserRouter = express.Router();
+export default UserRouter;
