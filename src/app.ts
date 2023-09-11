@@ -1,8 +1,8 @@
 import express from "express";
 import bodyParser from 'body-parser';
-import AccidentRouter from "../src/routers/AccidentRouter.js";
-import ObserveRouter from "../src/routers/AccidentRouter.js";
-import UserRouter from "../src/routers/UserRouter.js";
+import AccidentRouter from "./routers/AccidentRouter.js";
+import ObserveRouter from "./routers/AccidentRouter.js";
+import UserRouter from "./routers/UserRouter.js";
 
 const app = express();
 
