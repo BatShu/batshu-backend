@@ -4,8 +4,8 @@ import AccidentRouter from "./routers/AccidentRouter.js";
 import ObserveRouter from "./routers/AccidentRouter.js";
 import UserRouter from "./routers/UserRouter.js";
 
-const app = express();
 
+const app = express();
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -16,7 +16,6 @@ app.use(bodyParser.json());
 app.use("/auth/google", UserRouter);
 app.use("/api/accident", AccidentRouter);
 app.use("/api/observe", ObserveRouter);
-
 
 
 
