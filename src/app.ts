@@ -4,8 +4,8 @@ import AccidentRouter from "./routers/AccidentRouter.js";
 import ObserveRouter from "./routers/AccidentRouter.js";
 import UserRouter from "./routers/UserRouter.js";
 
-const app = express();
 
+const app = express();
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -19,11 +19,10 @@ app.use("/api/observe", ObserveRouter);
 
 
 
-
 const PORT = process.env.PORT || 3000;
 
 const handleListening = () =>
-  console.log(`✅ Server listenting on http://localhost:${PORT} 🚀`);
+  console.log(`✅Server listenting on http://localhost:${PORT} 🚀 `);
 
 app.listen(PORT, handleListening);
 
