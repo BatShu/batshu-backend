@@ -7,7 +7,7 @@ on:
 
 # 환경설정
 env:
-  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/BatShu-backend
+  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/batshu-backend
   VERSION: ${{ github.sha }}
   NAME: go_cicd
 
