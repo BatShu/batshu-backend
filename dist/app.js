@@ -9,7 +9,13 @@ app.use(bodyParser.json());
 app.use("/auth/google", UserRouter);
 app.use("/api/accident", AccidentRouter);
 app.use("/api/observe", ObserveRouter);
+app.get("/", (req, res) => {
+    res.send("test hihi");
+});
+app.get("/hi", (req, res) => {
+    res.send("hi");
+});
 const PORT = process.env.PORT || 3000;
-const handleListening = () => console.log(`✅ Server listenting on http://localhost:${PORT} 🚀 `);
+const handleListening = () => console.log(`✅Server listenting on http://localhost:${PORT} 🚀 `);
 app.listen(PORT, handleListening);
 export default app;
