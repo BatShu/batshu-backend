@@ -18,7 +18,6 @@ app.use("/api/accident", AccidentRouter);
 app.use("/api/observe", ObserveRouter);
 
 
-
 const PORT = process.env.PORT || 3000;
 
 const handleListening = () =>
