@@ -35,14 +35,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userPost = exports.confirmAndFetchUserInfo = exports.authToken = void 0;
-var express_1 = __importDefault(require("express"));
 var firebase_1 = require("./firebase");
-var bodyParser = require('body-parser');
 var admin = require('firebase-admin');
 var authToken = function (req, res) {
     if (req.headers.authorization) {
@@ -96,8 +91,14 @@ var confirmAndFetchUserInfo = function (req, res) { return __awaiter(void 0, voi
     });
 }); };
 exports.confirmAndFetchUserInfo = confirmAndFetchUserInfo;
-var app = (0, express_1.default)();
-app.use(bodyParser.urlencoded({ extended: true }));
+// Ex.
+// Header - 
+// key  : Authorization
+// value : Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjE5MGFkMTE4YTk0MGFkYzlmMmY1Mzc2YjM1MjkyZmVkZThjMmQwZWUiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoi7KCV7ZWY656MIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FBY0hUdGNXLUJOZ21qOWV0N0J5UUlzYjNfLVJKUnFQX3dQaFZKTmRTZGNpWXNnVj1zOTYtYyIsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9zeW5lcmd5LXRlc3QtYTFmMjQiLCJhdWQiOiJzeW5lcmd5LXRlc3QtYTFmMjQiLCJhdXRoX3RpbWUiOjE2OTQ4ODQyMzQsInVzZXJfaWQiOiJGWG55SlozcWw2UzJoaVpGRG5NaGNRckZSNWcyIiwic3ViIjoiRlhueUpaM3FsNlMyaGlaRkRuTWhjUXJGUjVnMiIsImlhdCI6MTY5NDg4NDIzNCwiZXhwIjoxNjk0ODg3ODM0LCJlbWFpbCI6IjA0aGFyYW1zNzdAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZ29vZ2xlLmNvbSI6WyIxMTU5MDQzMjk4NzY5MzQ1MTQ1NzYiXSwiZW1haWwiOlsiMDRoYXJhbXM3N0BnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJnb29nbGUuY29tIn19.cmcO6RKWQMJaD4pUruiQ8ofYo-DT11n86om0R0W80crdnAragSR-hARBJ7FoQuuieCHokRnuNkVAHRrSxDjm1DuCpnKgHXcOleA82QSUcjY2BSvAQBkGsqACR6Vp6XDXRpbDnsBG3tpgu0TS76EJUzcWTIVkTLZJnH4Gyn4-onD2L8yiyqVWj6U2IIYxzrAhcIWA7Dejw7cJltouwwMVRYpvIVnBKHLd8hs64RihLgOxtaZAD5T8fsn5eyDyBjcRWRZ6lBPSOfqbENVUPJGNUY0buFqbad1auPbCSieGuSp3XXxMDyiWKoutWY3jWyJ0Qgy9llxPjIG7cXwTAAm6wg
+// body -
+// {
+// "uid" : "FXnyJZ3ql6S2hiZFDnMhcQrFR5g2"
+// }
 var userPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var token, decodedToken, uid, userInfo, resData, error_1;
     var _a;
@@ -106,7 +107,7 @@ var userPost = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
             case 0:
                 _b.trys.push([0, 3, , 4]);
                 token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split('Bearer ')[1];
-                if (!token) { // issue
+                if (!token) {
                     return [2 /*return*/, res.status(401).json({ error: 'Authorization header missing' })];
                 }
                 return [4 /*yield*/, admin.auth().verifyIdToken(token)];
@@ -116,6 +117,12 @@ var userPost = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
                 return [4 /*yield*/, admin.auth().getUser(uid)];
             case 2:
                 userInfo = _b.sent();
+                if (!userInfo) {
+                    return [2 /*return*/, res.status(400).json({
+                            ok: false,
+                            message: '등록되지 않은 유저입니다.'
+                        })];
+                }
                 resData = {
                     "ok": true,
                     "msg": "Successfully registered",
@@ -131,11 +138,14 @@ var userPost = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
             case 3:
                 error_1 = _b.sent();
                 console.error('Error:', error_1);
-                res.status(500).json({ error: 'Internal server error' });
+                res.status(500).json({
+                    "ok": false,
+                    "message": "INTERNAL SERVER ERROR"
+                });
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
 exports.userPost = userPost;
-exports.default = { authToken: exports.authToken, confirmAndFetchUserInfo: exports.confirmAndFetchUserInfo };
+exports.default = { authToken: exports.authToken, confirmAndFetchUserInfo: exports.confirmAndFetchUserInfo, userPost: exports.userPost };
