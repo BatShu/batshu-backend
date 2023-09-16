@@ -2,7 +2,7 @@
   "name": "batshu",
   "version": "1.0.0",
   "description": "",
-  "type": "commonjs", 
+  "type": "commonjs",
   "main": "app.js",
   "scripts": {
     "build": "rimraf dist && npx tsc",

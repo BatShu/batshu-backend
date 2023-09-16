@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 
 
 
-app.use("/auth/google", UserRouter);
+app.use("/api/user", UserRouter);
 app.use("/api/accident", AccidentRouter);
 app.use("/api/observe", ObserveRouter);
 

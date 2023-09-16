@@ -1,5 +1,7 @@
 import express, {Express, Request, Response } from "express";
 import { administrator } from "./firebase";
+const bodyParser = require('body-parser');
+const admin = require('firebase-admin');
 
 
 declare global {
@@ -65,6 +67,40 @@ export const confirmAndFetchUserInfo = async (req : Request, res : Response) => 
             });  
         }
     }
+}
+
+const app = express();
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
+export const userPost = async (req:Request,res:Response)=>{
+    try {
+        const token = req.headers.authorization?.split('Bearer ')[1];
+        if (!token) { // issue
+          return res.status(401).json({ error: 'Authorization header missing' });
+        }
+    
+        // Firebase에서 토큰 검증
+        const decodedToken = await admin.auth().verifyIdToken(token);
+        const uid = decodedToken.uid;
+    
+        // UID를 사용하여 사용자 정보 가져오기
+        const userInfo = await admin.auth().getUser(uid);
+        const resData = {
+            "ok": true,
+            "msg": "Successfully registered",
+            "data" : {
+                "uid": userInfo.uid,
+                "email": userInfo.email,
+                "nickname": userInfo.displayName,
+                "photoUrl": userInfo.photoURL
+            }
+        }
+        res.status(200).json(resData);
+      } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
 }
 
 

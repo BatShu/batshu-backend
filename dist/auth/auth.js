@@ -35,9 +35,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.confirmAndFetchUserInfo = exports.authToken = void 0;
+exports.userPost = exports.confirmAndFetchUserInfo = exports.authToken = void 0;
+var express_1 = __importDefault(require("express"));
 var firebase_1 = require("./firebase");
+var bodyParser = require('body-parser');
+var admin = require('firebase-admin');
 var authToken = function (req, res) {
     if (req.headers.authorization) {
         var token = req.headers.authorization.split('Bearer ')[1];
@@ -90,4 +96,46 @@ var confirmAndFetchUserInfo = function (req, res) { return __awaiter(void 0, voi
     });
 }); };
 exports.confirmAndFetchUserInfo = confirmAndFetchUserInfo;
+var app = (0, express_1.default)();
+app.use(bodyParser.urlencoded({ extended: true }));
+var userPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var token, decodedToken, uid, userInfo, resData, error_1;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 3, , 4]);
+                token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split('Bearer ')[1];
+                if (!token) { // issue
+                    return [2 /*return*/, res.status(401).json({ error: 'Authorization header missing' })];
+                }
+                return [4 /*yield*/, admin.auth().verifyIdToken(token)];
+            case 1:
+                decodedToken = _b.sent();
+                uid = decodedToken.uid;
+                return [4 /*yield*/, admin.auth().getUser(uid)];
+            case 2:
+                userInfo = _b.sent();
+                resData = {
+                    "ok": true,
+                    "msg": "Successfully registered",
+                    "data": {
+                        "uid": userInfo.uid,
+                        "email": userInfo.email,
+                        "nickname": userInfo.displayName,
+                        "photoUrl": userInfo.photoURL
+                    }
+                };
+                res.status(200).json(resData);
+                return [3 /*break*/, 4];
+            case 3:
+                error_1 = _b.sent();
+                console.error('Error:', error_1);
+                res.status(500).json({ error: 'Internal server error' });
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.userPost = userPost;
 exports.default = { authToken: exports.authToken, confirmAndFetchUserInfo: exports.confirmAndFetchUserInfo };
