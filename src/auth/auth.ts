@@ -86,6 +86,14 @@ export const userPost = async (req:Request,res:Response)=>{
     
         // UID를 사용하여 사용자 정보 가져오기
         const userInfo = await admin.auth().getUser(uid);
+
+        if (!userInfo) {
+            return res.status(400).json({
+              ok: false,
+              message: '등록되지 않은 유저입니다.'
+            });
+          }
+
         const resData = {
             "ok": true,
             "msg": "Successfully registered",
@@ -99,7 +107,10 @@ export const userPost = async (req:Request,res:Response)=>{
         res.status(200).json(resData);
       } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({
+            "ok": false,
+            "message": "INTERNAL SERVER ERROR"
+        });
       }
 }
 
