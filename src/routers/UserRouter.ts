@@ -1,11 +1,13 @@
 import express, {Express, Request, Response } from "express";
-
-import { authToken, userPost }  from '../auth/auth';
-import { confirmAndFetchUserInfo } from "../auth/auth";
+import { postUser } from '../controller/UserController'
+import { confirmAndFetchUserInfo, getUserInfo }  from '../auth/auth';
 
 const UserRouter = express.Router();
 
+
+
 UserRouter.route('/check').get(confirmAndFetchUserInfo);
-UserRouter.route('/').post(userPost);
+UserRouter.route('/').post(getUserInfo);
+UserRouter.route('/register').post(postUser);
 
 export default UserRouter;
