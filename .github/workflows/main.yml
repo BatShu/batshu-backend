@@ -57,8 +57,12 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GHCR_TOKEN }}
-          serviceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+          password:
+            ${{ secrets.GHCR_TOKEN }}
+
+            # Firebase 서비스 계정 키 설정
+      - name: Set Firebase Service Account Key
+        run: export FIREBASE_SERVICE_ACCOUNT_KEY="${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}"
 
       # 3000 -> 80 포트로 수행하도록 지정
       - name: Docker run
