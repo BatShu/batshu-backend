@@ -61,8 +61,8 @@ jobs:
             ${{ secrets.GHCR_TOKEN }}
 
             # Firebase 서비스 계정 키 설정
-      - name: Set Firebase Service Account Key
-        run: export FIREBASE_SERVICE_ACCOUNT_KEY="${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}"
+      - name: Create Firebase Service Account Key File
+        run: echo -n "${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}" > serviceAccountKey.json
 
       # 3000 -> 80 포트로 수행하도록 지정
       - name: Docker run
