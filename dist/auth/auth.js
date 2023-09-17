@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userPost = exports.confirmAndFetchUserInfo = exports.authToken = void 0;
+exports.getUserInfo = exports.confirmAndFetchUserInfo = exports.authToken = void 0;
 var firebase_1 = require("./firebase");
 var admin = require('firebase-admin');
 var authToken = function (req, res) {
@@ -101,7 +101,7 @@ exports.confirmAndFetchUserInfo = confirmAndFetchUserInfo;
 // {
 // "uid" : "FXnyJZ3ql6S2hiZFDnMhcQrFR5g2"
 // }
-var userPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var getUserInfo = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var token, decodedToken, uid, userInfo, resData_1, resData, error_1, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -147,5 +147,5 @@ var userPost = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); };
-exports.userPost = userPost;
-exports.default = { authToken: exports.authToken, confirmAndFetchUserInfo: exports.confirmAndFetchUserInfo, userPost: exports.userPost };
+exports.getUserInfo = getUserInfo;
+exports.default = { authToken: exports.authToken, confirmAndFetchUserInfo: exports.confirmAndFetchUserInfo, getUserInfo: exports.getUserInfo };

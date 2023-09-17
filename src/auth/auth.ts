@@ -18,7 +18,7 @@ declare global {
         photoUrl: string;
     }
 
-    interface AuthApiResponse {
+    interface UserApiResponse {
         ok: boolean;
         msg: string;
         data?: UserInfo;
@@ -92,7 +92,7 @@ export const confirmAndFetchUserInfo = async (req : Request, res : Response) => 
 // "uid" : "FXnyJZ3ql6S2hiZFDnMhcQrFR5g2"
 // }
 
-export const userPost = async (req:Request,res:Response):Promise<void>=>{
+export const getUserInfo = async (req:Request,res:Response):Promise<void>=>{
     try {
         const token = authToken(req,res)
     
@@ -104,14 +104,14 @@ export const userPost = async (req:Request,res:Response):Promise<void>=>{
         const userInfo = await admin.auth().getUser(uid);
 
         if (!userInfo) {
-            const resData: AuthApiResponse = {
+            const resData: UserApiResponse = {
                 ok: false,
                 msg: '등록되지 않은 유저입니다.'
             }
             res.status(400).json(resData);
           }
 
-        const resData: AuthApiResponse = {
+        const resData: UserApiResponse = {
             ok: true,
             msg: "Successfully registered",
             data : {
@@ -125,7 +125,7 @@ export const userPost = async (req:Request,res:Response):Promise<void>=>{
 
       } catch (error) {
         console.error('Error:', error);
-        const resData: AuthApiResponse = {
+        const resData: UserApiResponse = {
             ok: false,
             msg: "INTERNAL SERVER ERROR"
         }
@@ -134,4 +134,4 @@ export const userPost = async (req:Request,res:Response):Promise<void>=>{
 }
 
 
-export default { authToken, confirmAndFetchUserInfo, userPost}
+export default { authToken, confirmAndFetchUserInfo, getUserInfo}
