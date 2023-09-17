@@ -59,7 +59,7 @@ export const confirmAndFetchUserInfo = async (req : Request, res : Response) => 
             } 
     
         } else {
-            res.status(401).send({
+            return res.status(401).send({
                 ok: false,
                 msg: "UID값이 존재하지 않습니다."                   
             });  
