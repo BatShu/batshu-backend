@@ -96,12 +96,13 @@ exports.confirmAndFetchUserInfo = confirmAndFetchUserInfo;
 // Header - 
 // key  : Authorization
 // value : Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjE5MGFkMTE4YTk0MGFkYzlmMmY1Mzc2YjM1MjkyZmVkZThjMmQwZWUiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoi7KCV7ZWY656MIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FBY0hUdGNXLUJOZ21qOWV0N0J5UUlzYjNfLVJKUnFQX3dQaFZKTmRTZGNpWXNnVj1zOTYtYyIsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9zeW5lcmd5LXRlc3QtYTFmMjQiLCJhdWQiOiJzeW5lcmd5LXRlc3QtYTFmMjQiLCJhdXRoX3RpbWUiOjE2OTQ4ODQyMzQsInVzZXJfaWQiOiJGWG55SlozcWw2UzJoaVpGRG5NaGNRckZSNWcyIiwic3ViIjoiRlhueUpaM3FsNlMyaGlaRkRuTWhjUXJGUjVnMiIsImlhdCI6MTY5NDg4NDIzNCwiZXhwIjoxNjk0ODg3ODM0LCJlbWFpbCI6IjA0aGFyYW1zNzdAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZ29vZ2xlLmNvbSI6WyIxMTU5MDQzMjk4NzY5MzQ1MTQ1NzYiXSwiZW1haWwiOlsiMDRoYXJhbXM3N0BnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJnb29nbGUuY29tIn19.cmcO6RKWQMJaD4pUruiQ8ofYo-DT11n86om0R0W80crdnAragSR-hARBJ7FoQuuieCHokRnuNkVAHRrSxDjm1DuCpnKgHXcOleA82QSUcjY2BSvAQBkGsqACR6Vp6XDXRpbDnsBG3tpgu0TS76EJUzcWTIVkTLZJnH4Gyn4-onD2L8yiyqVWj6U2IIYxzrAhcIWA7Dejw7cJltouwwMVRYpvIVnBKHLd8hs64RihLgOxtaZAD5T8fsn5eyDyBjcRWRZ6lBPSOfqbENVUPJGNUY0buFqbad1auPbCSieGuSp3XXxMDyiWKoutWY3jWyJ0Qgy9llxPjIG7cXwTAAm6wg
+// <AccessToken maybe renewal required>
 // body -
 // {
 // "uid" : "FXnyJZ3ql6S2hiZFDnMhcQrFR5g2"
 // }
 var userPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var token, decodedToken, uid, userInfo, resData, error_1;
+    var token, decodedToken, uid, userInfo, resData_1, resData, error_1, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -115,19 +116,20 @@ var userPost = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
             case 2:
                 userInfo = _a.sent();
                 if (!userInfo) {
-                    return [2 /*return*/, res.status(400).json({
-                            ok: false,
-                            message: '등록되지 않은 유저입니다.'
-                        })];
+                    resData_1 = {
+                        ok: false,
+                        msg: '등록되지 않은 유저입니다.'
+                    };
+                    res.status(400).json(resData_1);
                 }
                 resData = {
-                    "ok": true,
-                    "msg": "Successfully registered",
-                    "data": {
-                        "uid": userInfo.uid,
-                        "email": userInfo.email,
-                        "nickname": userInfo.displayName,
-                        "photoUrl": userInfo.photoURL
+                    ok: true,
+                    msg: "Successfully registered",
+                    data: {
+                        uid: userInfo.uid,
+                        email: userInfo.email,
+                        nickname: userInfo.displayName,
+                        photoUrl: userInfo.photoURL
                     }
                 };
                 res.status(200).json(resData);
@@ -135,10 +137,11 @@ var userPost = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
             case 3:
                 error_1 = _a.sent();
                 console.error('Error:', error_1);
-                res.status(500).json({
-                    "ok": false,
-                    "message": "INTERNAL SERVER ERROR"
-                });
+                resData = {
+                    ok: false,
+                    msg: "INTERNAL SERVER ERROR"
+                };
+                res.status(500).json(resData);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
