@@ -48,6 +48,7 @@ var authToken = function (req, res) {
                 msg: "로그인 수행이 필요합니다."
             });
         }
+        return token;
     }
     ;
 };
@@ -101,22 +102,18 @@ exports.confirmAndFetchUserInfo = confirmAndFetchUserInfo;
 // }
 var userPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var token, decodedToken, uid, userInfo, resData, error_1;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                _b.trys.push([0, 3, , 4]);
-                token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split('Bearer ')[1];
-                if (!token) {
-                    return [2 /*return*/, res.status(401).json({ error: 'Authorization header missing' })];
-                }
+                _a.trys.push([0, 3, , 4]);
+                token = (0, exports.authToken)(req, res);
                 return [4 /*yield*/, admin.auth().verifyIdToken(token)];
             case 1:
-                decodedToken = _b.sent();
+                decodedToken = _a.sent();
                 uid = decodedToken.uid;
                 return [4 /*yield*/, admin.auth().getUser(uid)];
             case 2:
-                userInfo = _b.sent();
+                userInfo = _a.sent();
                 if (!userInfo) {
                     return [2 /*return*/, res.status(400).json({
                             ok: false,
@@ -136,7 +133,7 @@ var userPost = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
                 res.status(200).json(resData);
                 return [3 /*break*/, 4];
             case 3:
-                error_1 = _b.sent();
+                error_1 = _a.sent();
                 console.error('Error:', error_1);
                 res.status(500).json({
                     "ok": false,

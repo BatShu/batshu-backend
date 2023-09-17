@@ -23,7 +23,8 @@ declare global {
                 ok : false,
                 msg : "로그인 수행이 필요합니다."
             })
-        } 
+        }
+        return token;
   };
 
 }
@@ -79,10 +80,7 @@ export const confirmAndFetchUserInfo = async (req : Request, res : Response) => 
 
 export const userPost = async (req:Request,res:Response)=>{
     try {
-        const token = req.headers.authorization?.split('Bearer ')[1];
-        if (!token) {
-          return res.status(401).json({ error: 'Authorization header missing' });
-        }
+        const token = authToken(req,res)
     
         // Firebase에서 토큰 검증
         const decodedToken = await admin.auth().verifyIdToken(token);
