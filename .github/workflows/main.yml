@@ -62,7 +62,11 @@ jobs:
 
             # Firebase 서비스 계정 키 설정
       - name: Create Firebase Service Account Key File
-        run: echo -n "${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}" > serviceAccountKey.json
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "serviceAccountKey.json"
+          json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
 
       # 3000 -> 80 포트로 수행하도록 지정
       - name: Docker run
