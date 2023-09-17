@@ -11,7 +11,7 @@ var UserRouter_js_1 = __importDefault(require("./routers/UserRouter.js"));
 var app = (0, express_1.default)();
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use(body_parser_1.default.json());
-app.use("/auth/google", UserRouter_js_1.default);
+app.use("/api/user", UserRouter_js_1.default);
 app.use("/api/accident", AccidentRouter_js_1.default);
 app.use("/api/observe", AccidentRouter_js_2.default);
 var PORT = process.env.PORT || 3000;

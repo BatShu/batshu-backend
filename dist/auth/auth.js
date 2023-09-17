@@ -36,8 +36,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.confirmAndFetchUserInfo = exports.authToken = void 0;
+exports.userPost = exports.confirmAndFetchUserInfo = exports.authToken = void 0;
 var firebase_1 = require("./firebase");
+var admin = require('firebase-admin');
 var authToken = function (req, res) {
     if (req.headers.authorization) {
         var token = req.headers.authorization.split('Bearer ')[1];
@@ -47,6 +48,7 @@ var authToken = function (req, res) {
                 msg: "로그인 수행이 필요합니다."
             });
         }
+        return token;
     }
     ;
 };
@@ -90,4 +92,60 @@ var confirmAndFetchUserInfo = function (req, res) { return __awaiter(void 0, voi
     });
 }); };
 exports.confirmAndFetchUserInfo = confirmAndFetchUserInfo;
-exports.default = { authToken: exports.authToken, confirmAndFetchUserInfo: exports.confirmAndFetchUserInfo };
+// Ex.
+// Header - 
+// key  : Authorization
+// value : Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjE5MGFkMTE4YTk0MGFkYzlmMmY1Mzc2YjM1MjkyZmVkZThjMmQwZWUiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoi7KCV7ZWY656MIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FBY0hUdGNXLUJOZ21qOWV0N0J5UUlzYjNfLVJKUnFQX3dQaFZKTmRTZGNpWXNnVj1zOTYtYyIsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9zeW5lcmd5LXRlc3QtYTFmMjQiLCJhdWQiOiJzeW5lcmd5LXRlc3QtYTFmMjQiLCJhdXRoX3RpbWUiOjE2OTQ4ODQyMzQsInVzZXJfaWQiOiJGWG55SlozcWw2UzJoaVpGRG5NaGNRckZSNWcyIiwic3ViIjoiRlhueUpaM3FsNlMyaGlaRkRuTWhjUXJGUjVnMiIsImlhdCI6MTY5NDg4NDIzNCwiZXhwIjoxNjk0ODg3ODM0LCJlbWFpbCI6IjA0aGFyYW1zNzdAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZ29vZ2xlLmNvbSI6WyIxMTU5MDQzMjk4NzY5MzQ1MTQ1NzYiXSwiZW1haWwiOlsiMDRoYXJhbXM3N0BnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJnb29nbGUuY29tIn19.cmcO6RKWQMJaD4pUruiQ8ofYo-DT11n86om0R0W80crdnAragSR-hARBJ7FoQuuieCHokRnuNkVAHRrSxDjm1DuCpnKgHXcOleA82QSUcjY2BSvAQBkGsqACR6Vp6XDXRpbDnsBG3tpgu0TS76EJUzcWTIVkTLZJnH4Gyn4-onD2L8yiyqVWj6U2IIYxzrAhcIWA7Dejw7cJltouwwMVRYpvIVnBKHLd8hs64RihLgOxtaZAD5T8fsn5eyDyBjcRWRZ6lBPSOfqbENVUPJGNUY0buFqbad1auPbCSieGuSp3XXxMDyiWKoutWY3jWyJ0Qgy9llxPjIG7cXwTAAm6wg
+// <AccessToken maybe renewal required>
+// body -
+// {
+// "uid" : "FXnyJZ3ql6S2hiZFDnMhcQrFR5g2"
+// }
+var userPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var token, decodedToken, uid, userInfo, resData_1, resData, error_1, resData;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                token = (0, exports.authToken)(req, res);
+                return [4 /*yield*/, admin.auth().verifyIdToken(token)];
+            case 1:
+                decodedToken = _a.sent();
+                uid = decodedToken.uid;
+                return [4 /*yield*/, admin.auth().getUser(uid)];
+            case 2:
+                userInfo = _a.sent();
+                if (!userInfo) {
+                    resData_1 = {
+                        ok: false,
+                        msg: '등록되지 않은 유저입니다.'
+                    };
+                    res.status(400).json(resData_1);
+                }
+                resData = {
+                    ok: true,
+                    msg: "Successfully registered",
+                    data: {
+                        uid: userInfo.uid,
+                        email: userInfo.email,
+                        nickname: userInfo.displayName,
+                        photoUrl: userInfo.photoURL
+                    }
+                };
+                res.status(200).json(resData);
+                return [3 /*break*/, 4];
+            case 3:
+                error_1 = _a.sent();
+                console.error('Error:', error_1);
+                resData = {
+                    ok: false,
+                    msg: "INTERNAL SERVER ERROR"
+                };
+                res.status(500).json(resData);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.userPost = userPost;
+exports.default = { authToken: exports.authToken, confirmAndFetchUserInfo: exports.confirmAndFetchUserInfo, userPost: exports.userPost };
