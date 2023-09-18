@@ -30,14 +30,15 @@ exports.administrator = void 0;
 var admin = __importStar(require("firebase-admin"));
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-var privateKey = process.env.FIREBASE_PRIVATE_KEY;
-if (privateKey) {
-    privateKey = privateKey.replace(/\\n/g, '\n');
+var _a = process.env, PROJECT_ID = _a.PROJECT_ID, CLIENT_EMAIL = _a.CLIENT_EMAIL;
+var PRIVATE_KEY = process.env.PRIVATE_KEY;
+if (PRIVATE_KEY) {
+    PRIVATE_KEY = PRIVATE_KEY.replace(/\\n/g, '\n');
 }
 exports.administrator = admin.initializeApp({
     credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: privateKey
+        projectId: PROJECT_ID,
+        clientEmail: CLIENT_EMAIL,
+        privateKey: PRIVATE_KEY
     }),
 });
