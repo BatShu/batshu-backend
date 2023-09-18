@@ -18,10 +18,6 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN docker build --build-arg PROJECT_ID=$PROJECT_ID \
-    --build-arg PRIVATE_KEY_ID=$PRIVATE_KEY_ID \
-    --build-arg CLIENT_EMAIL=$CLIENT_EMAIL \
-    -t batshu-backend:latest .
 
 COPY . .
 

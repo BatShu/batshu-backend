@@ -9,9 +9,6 @@ on:
 env:
   DOCKER_IMAGE: ghcr.io/bik1111/batshu-backend
   VERSION: ${{ github.sha }}
-  PROJECT_ID: ${{ secrets.PROJECT_ID }}
-  PRIVATE_KEY_ID: ${{ secrets.PRIVATE_KEY_ID }}
-  CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
   NAME: go_cicd
 
 jobs:
@@ -24,6 +21,16 @@ jobs:
     steps:
       # github repository에서 checkout
       - uses: actions/checkout@v2
+
+      - name: Set env
+        run: |
+          echo "PROJECT_ID=$PROJECT_ID" >> .env
+          echo "PRIVATE_KEY_ID=$PRIVATE_KEY_ID" >> .env
+          echo "CLIENT_EMAIL=$CLIENT_EMAIL" >> .env
+        env:
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          PRIVATE_KEY_ID: ${{ secrets.PRIVATE_KEY_ID }}
+          CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
 
       # docker build 수행
       - name: Set up docker buildx
