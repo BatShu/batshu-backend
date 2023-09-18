@@ -1,6 +1,6 @@
 import * as admin from 'firebase-admin';
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config(); 
 
 
 const { PROJECT_ID, CLIENT_EMAIL } = process.env;
