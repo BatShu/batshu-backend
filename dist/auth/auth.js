@@ -81,12 +81,10 @@ var confirmAndFetchUserInfo = function (req, res) { return __awaiter(void 0, voi
                 console.error("Firebase에서 사용자 정보 가져오기 오류:", err_1);
                 return [3 /*break*/, 4];
             case 4: return [3 /*break*/, 6];
-            case 5:
-                res.status(401).send({
+            case 5: return [2 /*return*/, res.status(401).send({
                     ok: false,
                     msg: "UID값이 존재하지 않습니다."
-                });
-                _a.label = 6;
+                })];
             case 6: return [2 /*return*/];
         }
     });

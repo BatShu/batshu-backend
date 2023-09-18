@@ -9,6 +9,9 @@ on:
 env:
   DOCKER_IMAGE: ghcr.io/bik1111/batshu-backend
   VERSION: ${{ github.sha }}
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  PRIVATE_KEY_ID: ${{ secrets.PRIVATE_KEY_ID }}
+  CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
   NAME: go_cicd
 
 jobs:
@@ -21,10 +24,16 @@ jobs:
     steps:
       # github repository에서 checkout
       - uses: actions/checkout@v2
+
       # docker build 수행
       - name: Set up docker buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
+        run: |
+          docker build --build-arg PROJECT_ID="${{env.PROJECT_ID}}" \
+          --build-arg PRIVATE_KEY_ID="${{env.PRIVATE_KEY_ID}}" \
+          --build-arg CLIENT_EMAIL="${{env.CLIENT_EMAIL}}" \
+
       - name: Cache docker layers
         uses: actions/cache@v2
         with:
@@ -32,6 +41,7 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ env.VERSION }}
           restore-keys: |
             ${{ runner.os }}-buildx-
+
       # GitHub 컨테이너 레지스트리에 로그인 후 빌드 & 푸시
       - name: Login to ghcr
         uses: docker/login-action@v1
@@ -39,13 +49,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_TOKEN }}
-
-      - name: create-json
-        id: create-json
-        uses: jsdaniell/create-json@1.1.2
-        with:
-          name: "serviceAccountKey.json"
-          json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
 
       - name: Build and push
         id: docker_build
