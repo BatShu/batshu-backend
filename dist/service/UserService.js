@@ -42,22 +42,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var database_1 = __importDefault(require("../config/database"));
 exports.createUser = function (uid) {
     return __awaiter(this, void 0, void 0, function () {
-        var existingUser, resData_1, resData, error_1;
+        var existingUserRows, existingUser, resData_1, resData, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 3, , 4]);
-                    return [4 /*yield*/, database_1.default.execute('SELECT * FROM users WHERE uid = ?', [uid])];
+                    return [4 /*yield*/, database_1.default.execute('SELECT * FROM user WHERE uid = ?', [uid])];
                 case 1:
-                    existingUser = (_a.sent())[0];
-                    if (existingUser) {
+                    existingUserRows = (_a.sent())[0];
+                    existingUser = existingUserRows;
+                    if (existingUser.length) {
                         resData_1 = {
                             ok: false,
                             msg: "already exist"
                         };
                         return [2 /*return*/, resData_1];
                     }
-                    return [4 /*yield*/, database_1.default.execute('INSERT INTO users (uid) VALUES (?)', [uid])];
+                    return [4 /*yield*/, database_1.default.execute('INSERT INTO user (uid) VALUES (?)', [uid])];
                 case 2:
                     _a.sent();
                     resData = {
