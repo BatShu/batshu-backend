@@ -31,9 +31,9 @@ jobs:
         uses: docker/setup-buildx-action@v1
       - name: Build Docker Image
         run: |
-        docker build --build-arg PROJECT_ID="${{env.PROJECT_ID}}" \
-        --build-arg PRIVATE_KEY_ID="${{env.PRIVATE_KEY_ID}}" \
-        --build-arg CLIENT_EMAIL="${{env.CLIENT_EMAIL}}" \
+          docker build --build-arg PROJECT_ID="${{env.PROJECT_ID}}" \
+            --build-arg PRIVATE_KEY_ID="${{env.PRIVATE_KEY_ID}}" \
+            --build-arg CLIENT_EMAIL="${{env.CLIENT_EMAIL}}" \
 
       - name: Cache docker layers
         uses: actions/cache@v2
