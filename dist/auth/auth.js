@@ -55,7 +55,7 @@ var authToken = function (req, res) {
 };
 exports.authToken = authToken;
 var tokenToUserId = function (accessToken) { return __awaiter(void 0, void 0, void 0, function () {
-    var decodedToken, uid, user, error_1;
+    var decodedToken, uid, user, userId, error_1, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -67,13 +67,16 @@ var tokenToUserId = function (accessToken) { return __awaiter(void 0, void 0, vo
                 return [4 /*yield*/, userRepository.readUser(uid)];
             case 2:
                 user = _a.sent();
-                return [2 /*return*/, user[0].id];
+                userId = user[0].id;
+                return [2 /*return*/, userId];
             case 3:
                 error_1 = _a.sent();
                 console.log(error_1);
-                return [2 /*return*/, {
-                        "ok": false,
-                    }];
+                resData = {
+                    ok: false,
+                    msg: "INTERNAL SERVER ERROR"
+                };
+                return [2 /*return*/, resData];
             case 4: return [2 /*return*/];
         }
     });

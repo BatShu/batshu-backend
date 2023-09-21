@@ -10,7 +10,7 @@ interface ResultSetHeader {
   warningStatus: number;
 }
 
-export const createAccident = async (data: any) => { // any 얘 interface 지정해주기
+export const createAccident = async (data: Accident):Promise<void> => { // any 얘 interface 지정해주기
     try {
       const connection = await pool.getConnection();
       const accidentInsertQuery:string = `
@@ -41,7 +41,7 @@ export const createAccident = async (data: any) => { // any 얘 interface 지정
         data.bounty
       ]);
 
-      const insertId = (accidentRows as ResultSetHeader[])[0].insertId;
+      const insertId = (accidentRows as ResultSetHeader[])[0].insertId; // 방금 Insert 한 accident row 에 accidentId 를 외래키로 가져오기 위함.
 
       const accidentPictureInsertQuery: string = `
         INSERT INTO accident_picture (

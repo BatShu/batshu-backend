@@ -1,6 +1,6 @@
 const accountRepository = require("../Repository/AccidentRepository");
 
-exports.createAccident = async (data:any[]) => {
+exports.createAccident = async (data:Accident) => {
     try{
         // 의미적 데이터 처리
         

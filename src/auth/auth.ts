@@ -1,4 +1,4 @@
-import e, {Request, Response } from "express";
+import {Request, Response } from "express";
 import { administrator } from "./firebase";
 const userRepository = require("../Repository/UserRepository");
 
@@ -48,14 +48,19 @@ export const tokenToUserId = async (accessToken:string) => {
     try{
         const decodedToken = await admin.auth().verifyIdToken(accessToken);
         const uid:string = decodedToken.uid;
+
         const user = await userRepository.readUser(uid);
-        return user[0].id;
+
+        const userId:number = user[0].id
+        return userId;
 
     } catch (error){
         console.log(error);
-        return {
-            "ok" : false,
-        }   
+         const resData: ApiResponse = {
+            ok : false,
+            msg : "INTERNAL SERVER ERROR"
+        }
+        return resData;
     }
 }
 
