@@ -35,42 +35,35 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var database_1 = __importDefault(require("../config/database"));
+var userRepository = require("../Repository/UserRepository");
 exports.createUser = function (uid) {
     return __awaiter(this, void 0, void 0, function () {
-        var existingUserRows, existingUser, resData_1, resData, error_1;
+        var existingUser, resData_1, resData, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 3, , 4]);
-                    return [4 /*yield*/, database_1.default.execute('SELECT * FROM user WHERE uid = ?', [uid])];
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, userRepository.readUser(uid)];
                 case 1:
-                    existingUserRows = (_a.sent())[0];
-                    existingUser = existingUserRows;
-                    if (existingUser.length) {
+                    existingUser = _a.sent();
+                    if (existingUser.length > 0) {
                         resData_1 = {
                             ok: false,
                             msg: "already exist"
                         };
                         return [2 /*return*/, resData_1];
                     }
-                    return [4 /*yield*/, database_1.default.execute('INSERT INTO user (uid) VALUES (?)', [uid])];
-                case 2:
-                    _a.sent();
+                    userRepository.createUser(uid);
                     resData = {
                         ok: true,
-                        msg: "Success Register"
+                        msg: "Success Register!"
                     };
                     return [2 /*return*/, resData];
-                case 3:
+                case 2:
                     error_1 = _a.sent();
                     console.error('에러 발생:', error_1);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
             }
         });
     });

@@ -1,5 +1,7 @@
-import {Request, Response } from "express";
+import e, {Request, Response } from "express";
 import { administrator } from "./firebase";
+const userRepository = require("../Repository/UserRepository");
+
 const admin = require('firebase-admin');
 
 
@@ -18,7 +20,7 @@ declare global {
         photoUrl: string;
     }
 
-    interface UserApiResponse {
+    interface ApiResponse {
         ok: boolean;
         msg: string;
         data?: UserInfo;
@@ -41,6 +43,22 @@ declare global {
   };
 
 }
+
+export const tokenToUserId = async (accessToken:string) => {
+    try{
+        const decodedToken = await admin.auth().verifyIdToken(accessToken);
+        const uid:string = decodedToken.uid;
+        const user = await userRepository.readUser(uid);
+        return user[0].id;
+
+    } catch (error){
+        console.log(error);
+        return {
+            "ok" : false,
+        }   
+    }
+}
+
 
 // Ex.
 //  {
@@ -104,16 +122,16 @@ export const getUserInfo = async (req:Request,res:Response):Promise<void>=>{
         const userInfo = await admin.auth().getUser(uid);
 
         if (!userInfo) {
-            const resData: UserApiResponse = {
+            const resData: ApiResponse = {
                 ok: false,
                 msg: '등록되지 않은 유저입니다.'
             }
             res.status(400).json(resData);
           }
 
-        const resData: UserApiResponse = {
+        const resData: ApiResponse = {
             ok: true,
-            msg: "Successfully registered",
+            msg: "Successfully Get UserInfo",
             data : {
                 uid: userInfo.uid,
                 email: userInfo.email,
@@ -125,7 +143,7 @@ export const getUserInfo = async (req:Request,res:Response):Promise<void>=>{
 
       } catch (error) {
         console.error('Error:', error);
-        const resData: UserApiResponse = {
+        const resData: ApiResponse = {
             ok: false,
             msg: "INTERNAL SERVER ERROR"
         }
@@ -133,5 +151,4 @@ export const getUserInfo = async (req:Request,res:Response):Promise<void>=>{
       }
 }
 
-
-export default { authToken, confirmAndFetchUserInfo, getUserInfo}
+export default { authToken, tokenToUserId, confirmAndFetchUserInfo, getUserInfo }
