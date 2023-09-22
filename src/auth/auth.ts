@@ -29,7 +29,7 @@ declare global {
 
 export const tokenToUserId = async (accessToken:string) => {
     try{
-        const decodedToken = await admin.auth().verifyIdToken(accessToken);
+        const decodedToken = await administrator.auth().verifyIdToken(accessToken);
         const uid:string = decodedToken.uid;
 
         const user = await userRepository.readUser(uid);
