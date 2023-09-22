@@ -22,16 +22,11 @@ jobs:
       # github repository에서 checkout
       - uses: actions/checkout@v2
 
-      - name: write PROJECT_ID
-        run: echo "PROJECT_ID=$PROJECT_ID" >> .env
-        working-directory: ${{ github.workspace }}
-
-      - name: write PRIVATE_KEY_ID
-        run: echo "PRIVATE_KEY_ID=$PRIVATE_KEY_ID" >> .env
-        working-directory: ${{ github.workspace }}
-
-      - name: wirte CLIENT_EMAIL
-        run: echo "PRIVATE_KEY_ID=$PRIVATE_KEY_ID" >> .env
+      - name: Set up environment variables
+        run: |
+          echo "PROJECT_ID=${{ secrets.PROJECT_ID }}" >> .env
+          echo "PRIVATE_KEY_ID=${{ secrets.PRIVATE_KEY_ID }}" >> .env
+          echo "CLIENT_EMAIL=${{ secrets.CLIENT_EMAIL }}" >> .env
         working-directory: ${{ github.workspace }}
 
       # docker build 수행
