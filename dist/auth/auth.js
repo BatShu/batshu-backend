@@ -60,7 +60,7 @@ var tokenToUserId = function (accessToken) { return __awaiter(void 0, void 0, vo
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 3, , 4]);
-                return [4 /*yield*/, admin.auth().verifyIdToken(accessToken)];
+                return [4 /*yield*/, firebase_1.administrator.auth().verifyIdToken(accessToken)];
             case 1:
                 decodedToken = _a.sent();
                 uid = decodedToken.uid;
