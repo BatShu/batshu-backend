@@ -27,8 +27,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.administrator = void 0;
+exports.admin = void 0;
 var admin = __importStar(require("firebase-admin"));
+exports.admin = admin;
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 var _b = {
@@ -39,8 +40,7 @@ var _b = {
 if (!PRIVATE_KEY) {
     throw new Error('PRIVATE_KEY is missing in the environment variables');
 }
-console.log(PRIVATE_KEY);
-exports.administrator = admin.initializeApp({
+admin.initializeApp({
     credential: admin.credential.cert({
         projectId: PROJECT_ID,
         clientEmail: CLIENT_EMAIL,
