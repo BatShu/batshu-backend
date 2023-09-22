@@ -5,7 +5,7 @@ const userService = require("../service/UserService");
 
 const admin = require('firebase-admin');
 
-export const postUser = async (req:Request,res:Response):Promise<void>=>{
+export const postUser = async (req:Request,res:Response):Promise<void>=> {
     try {
         const token = authToken(req,res)
     
@@ -39,4 +39,4 @@ export const postUser = async (req:Request,res:Response):Promise<void>=>{
 }
 
 
-export default { postUser };
+
