@@ -30,15 +30,14 @@ exports.administrator = void 0;
 var admin = __importStar(require("firebase-admin"));
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-var _a = process.env, PROJECT_ID = _a.PROJECT_ID, CLIENT_EMAIL = _a.CLIENT_EMAIL;
-var PRIVATE_KEY = process.env.PRIVATE_KEY;
-if (PRIVATE_KEY) {
-    PRIVATE_KEY = PRIVATE_KEY.replace(/\\n/g, '\n');
+var _a = process.env, PROJECT_ID = _a.PROJECT_ID, CLIENT_EMAIL = _a.CLIENT_EMAIL, PRIVATE_KEY = _a.PRIVATE_KEY;
+if (!PRIVATE_KEY) {
+    throw new Error('PRIVATE_KEY is missing in the environment variables');
 }
 exports.administrator = admin.initializeApp({
     credential: admin.credential.cert({
         projectId: PROJECT_ID,
         clientEmail: CLIENT_EMAIL,
-        privateKey: PRIVATE_KEY
+        privateKey: PRIVATE_KEY.replace(/\\n/g, '\n')
     }),
 });

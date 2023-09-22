@@ -8,15 +8,11 @@ if (!PRIVATE_KEY) {
   throw new Error('PRIVATE_KEY is missing in the environment variables');
 }
 
-const formattedPrivateKey = PRIVATE_KEY.replace(/\\n/g, '\n');
-
 
 export const administrator = admin.initializeApp({
   credential: admin.credential.cert({
       projectId: PROJECT_ID,
       clientEmail: CLIENT_EMAIL,  
-      privateKey: formattedPrivateKey
+      privateKey: PRIVATE_KEY.replace(/\\n/g, '\n')
   }),
 });
-
-

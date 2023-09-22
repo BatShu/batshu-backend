@@ -46,17 +46,19 @@ jobs:
       - name: Set up environment variables
         run: |
           echo "PROJECT_ID=$PROJECT_ID" >> .env
-          echo "PRIVATE_KEY_ID=$PRIVATE_KEY_ID" >> .env
+          echo "PRIVATE_KEY=$PRIVATE_KEY" >> .env
           echo "CLIENT_EMAIL=$CLIENT_EMAIL" >> .env
         env:
           PROJECT_ID: ${{ secrets.PROJECT_ID }}
-          PRIVATE_KEY_ID: ${{ secrets.PRIVATE_KEY_ID }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
 
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
+          ssh: |
+            default=${{ env.SSH_AUTH_SOCK }}
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
