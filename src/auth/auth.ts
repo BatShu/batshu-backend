@@ -1,5 +1,4 @@
-import {Request, Response } from "express";
-const userRepository = require("../Repository/UserRepository");
+import {NextFunction, Request, Response } from "express";
 import { admin } from "./firebase";
 
 
@@ -23,10 +22,29 @@ declare global {
         msg: string;
         data?: UserInfo;
     }
+
+    interface CustomRequest extends Request {
+        uid?: string; // 'uid' 프로퍼티를 추가합니다.
+    }
   }
 
+  export const tokenToUid = async (req: CustomRequest, res: Response, next: NextFunction) => {
+    if (req.headers.authorization) {
+        const token: string = req.headers.authorization.split('Bearer ')[1];
 
-
+        try {
+            const decodedToken = await admin.auth().verifyIdToken(token);
+            req['uid'] = decodedToken.uid;
+            next();
+        } catch (error) {
+            // Handle token verification error here
+            res.status(401).send('Unauthorized1');
+        }
+    } else {
+        // Handle case where authorization header is missing
+        res.status(401).send('Unauthorized2');
+    }
+}
 
 // export const tokenToUserId = async (accessToken:string) => {
 //     try{
@@ -51,7 +69,7 @@ declare global {
 
 
 //유저 uid 인식.
-export const confirmAndFetchUserInfo = async (req : Request, res : Response) => {
+export const confirmAndFetchUserInfo = async (req : CustomRequest, res : Response) => {
     
     let uid: string;
 
@@ -75,19 +93,12 @@ export const confirmAndFetchUserInfo = async (req : Request, res : Response) => 
 }
 
 
-export const getUserInfo = async (req:Request,res:Response):Promise<void>=>{
+export const getUserInfo = async (req:CustomRequest,res:Response):Promise<void>=>{
     try {
-
-        if (req.headers.authorization) {
-            
-            const token:string = req.headers.authorization.split('Bearer ')[1];
-
-             // Firebase에서 토큰 검증
-            const decodedToken = await admin.auth().verifyIdToken(token);
-            const uid = decodedToken.uid;
+        if (typeof req.uid === 'string') {
 
             // UID를 사용하여 사용자 정보 가져오기
-            const userInfo = await admin.auth().getUser(uid);
+            const userInfo = await admin.auth().getUser(req.uid);
             
             if (!userInfo) {
                 const resData: ApiResponse = {
@@ -127,4 +138,4 @@ export const getUserInfo = async (req:Request,res:Response):Promise<void>=>{
 
 
 // export default { authToken, tokenToUserId, confirmAndFetchUserInfo, getUserInfo }
-export default { authToken, confirmAndFetchUserInfo, getUserInfo }
+export default { confirmAndFetchUserInfo, getUserInfo }

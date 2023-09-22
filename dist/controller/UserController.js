@@ -37,7 +37,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postUser = void 0;
-var auth_1 = require("../auth/auth");
 var userService = require("../service/UserService");
 var admin = require('firebase-admin');
 var postUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -45,8 +44,9 @@ var postUser = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 4, , 5]);
-                token = (0, auth_1.authToken)(req, res);
+                _a.trys.push([0, 5, , 6]);
+                if (!req.headers.authorization) return [3 /*break*/, 4];
+                token = req.headers.authorization.split('Bearer ')[1];
                 return [4 /*yield*/, admin.auth().verifyIdToken(token)];
             case 1:
                 decodedToken = _a.sent();
@@ -65,8 +65,9 @@ var postUser = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
             case 3:
                 resData = _a.sent();
                 res.status(200).json(resData);
-                return [3 /*break*/, 5];
-            case 4:
+                _a.label = 4;
+            case 4: return [3 /*break*/, 6];
+            case 5:
                 error_1 = _a.sent();
                 console.error('Error:', error_1);
                 resData = {
@@ -74,8 +75,8 @@ var postUser = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
                     msg: "INTERNAL SERVER ERROR"
                 };
                 res.status(500).json(resData);
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); };
