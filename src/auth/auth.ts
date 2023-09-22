@@ -44,25 +44,25 @@ declare global {
 
 }
 
-export const tokenToUserId = async (accessToken:string) => {
-    try{
-        const decodedToken = await administrator.auth().verifyIdToken(accessToken);
-        const uid:string = decodedToken.uid;
+// export const tokenToUserId = async (accessToken:string) => {
+//     try{
+//         const decodedToken = await administrator.auth().verifyIdToken(accessToken);
+//         const uid:string = decodedToken.uid;
 
-        const user = await userRepository.readUser(uid);
+//         const user = await userRepository.readUser(uid);
 
-        const userId:number = user[0].id
-        return userId;
+//         const userId:number = user[0].uid
+//         return userId;
 
-    } catch (error){
-        console.log(error);
-         const resData: ApiResponse = {
-            ok : false,
-            msg : "INTERNAL SERVER ERROR"
-        }
-        return resData;
-    }
-}
+//     } catch (error){
+//         console.log(error);
+//          const resData: ApiResponse = {
+//             ok : false,
+//             msg : "INTERNAL SERVER ERROR"
+//         }
+//         return resData;
+//     }
+// }
 
 
 // Ex.
@@ -117,7 +117,7 @@ export const confirmAndFetchUserInfo = async (req : Request, res : Response) => 
 
 export const getUserInfo = async (req:Request,res:Response):Promise<void>=>{
     try {
-        const token = authToken(req,res)
+        const token = authToken(req,res);
     
         // Firebase에서 토큰 검증
         const decodedToken = await admin.auth().verifyIdToken(token);
@@ -156,4 +156,5 @@ export const getUserInfo = async (req:Request,res:Response):Promise<void>=>{
       }
 }
 
-export default { authToken, tokenToUserId, confirmAndFetchUserInfo, getUserInfo }
+// export default { authToken, tokenToUserId, confirmAndFetchUserInfo, getUserInfo }
+export default { authToken, confirmAndFetchUserInfo, getUserInfo }

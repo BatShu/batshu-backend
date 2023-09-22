@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 
 const accidentService = require("../service/AccidentService");
 const auth = require("../auth/auth");
+const admin = require('firebase-admin');
 
 declare global {
   interface Location {
@@ -17,7 +18,7 @@ declare global {
       accidentLocation : Location;
       carModelName : string;
       licensePlate : string;
-      userId : number;
+      uid : string;
       bounty : number;
   }
 }
@@ -54,9 +55,12 @@ export const postAccident = async (req: Request, res: Response) => {
 
         // 형식적 데이터 처리
 
-        const token:string = req.headers.authorization.split('Bearer ')[1];
+        const token = auth.authToken(req,res);
+
+        const decodedToken = await admin.auth().verifyIdToken(token);
+        const uid:string = decodedToken.uid;
         
-        const userId:number = await auth.tokenToUserId(token);
+        // const userId:number = await auth.tokenToUserId(token);
         
         const passedData:Accident = {
           contentTitle : req.body.contentTitle,
@@ -66,9 +70,10 @@ export const postAccident = async (req: Request, res: Response) => {
           accidentLocation : req.body.accidentLocation,
           carModelName : req.body.carModelName,
           licensePlate : req.body.licensePlate,
-          userId : userId,
+          uid : uid,
           bounty : req.body.bounty
         }
+        console.log(passedData);
 
         const resData:ApiResponse = await accidentService.createAccident(passedData);
         res.status(200).json(resData);

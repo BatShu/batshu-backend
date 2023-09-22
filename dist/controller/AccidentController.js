@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postAccident = void 0;
 var accidentService = require("../service/AccidentService");
 var auth = require("../auth/auth");
+var admin = require('firebase-admin');
 // Ex.
 // Header - 
 // key  : Authorization
@@ -65,16 +66,17 @@ var auth = require("../auth/auth");
 //   "bounty" : 400000
 // }
 var postAccident = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var token, userId, passedData, resData, error_1, resData;
+    var token, decodedToken, uid, passedData, resData, error_1, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 4, , 5]);
                 if (!req.headers.authorization) return [3 /*break*/, 3];
-                token = req.headers.authorization.split('Bearer ')[1];
-                return [4 /*yield*/, auth.tokenToUserId(token)];
+                token = auth.authToken(req, res);
+                return [4 /*yield*/, admin.auth().verifyIdToken(token)];
             case 1:
-                userId = _a.sent();
+                decodedToken = _a.sent();
+                uid = decodedToken.uid;
                 passedData = {
                     contentTitle: req.body.contentTitle,
                     contentDescription: req.body.contentDescription,
@@ -83,9 +85,10 @@ var postAccident = function (req, res) { return __awaiter(void 0, void 0, void 0
                     accidentLocation: req.body.accidentLocation,
                     carModelName: req.body.carModelName,
                     licensePlate: req.body.licensePlate,
-                    userId: userId,
+                    uid: uid,
                     bounty: req.body.bounty
                 };
+                console.log(passedData);
                 return [4 /*yield*/, accidentService.createAccident(passedData)];
             case 2:
                 resData = _a.sent();

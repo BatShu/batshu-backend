@@ -10,7 +10,7 @@ interface ResultSetHeader {
   warningStatus: number;
 }
 
-export const createAccident = async (data: Accident):Promise<void> => { // any 얘 interface 지정해주기
+export const createAccident = async (data: Accident):Promise<void> => {
     try {
       const connection = await pool.getConnection();
       const accidentInsertQuery:string = `
@@ -23,7 +23,7 @@ export const createAccident = async (data: Accident):Promise<void> => { // any �
           accident_location,
           car_model_name,
           license_plate,
-          user_id,
+          uid,
           bounty
         ) VALUES (?, ?, ?, ?, NOW(), POINT(?, ?), ?, ?, ?, ?)
       `;
@@ -37,7 +37,7 @@ export const createAccident = async (data: Accident):Promise<void> => { // any �
         data.accidentLocation.y,
         data.carModelName,
         data.licensePlate,
-        data.userId,
+        data.uid,
         data.bounty
       ]);
 

@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserInfo = exports.confirmAndFetchUserInfo = exports.tokenToUserId = exports.authToken = void 0;
+exports.getUserInfo = exports.confirmAndFetchUserInfo = exports.authToken = void 0;
 var firebase_1 = require("./firebase");
 var userRepository = require("../Repository/UserRepository");
 var admin = require('firebase-admin');
@@ -54,34 +54,22 @@ var authToken = function (req, res) {
     ;
 };
 exports.authToken = authToken;
-var tokenToUserId = function (accessToken) { return __awaiter(void 0, void 0, void 0, function () {
-    var decodedToken, uid, user, userId, error_1, resData;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 3, , 4]);
-                return [4 /*yield*/, firebase_1.administrator.auth().verifyIdToken(accessToken)];
-            case 1:
-                decodedToken = _a.sent();
-                uid = decodedToken.uid;
-                return [4 /*yield*/, userRepository.readUser(uid)];
-            case 2:
-                user = _a.sent();
-                userId = user[0].id;
-                return [2 /*return*/, userId];
-            case 3:
-                error_1 = _a.sent();
-                console.log(error_1);
-                resData = {
-                    ok: false,
-                    msg: "INTERNAL SERVER ERROR"
-                };
-                return [2 /*return*/, resData];
-            case 4: return [2 /*return*/];
-        }
-    });
-}); };
-exports.tokenToUserId = tokenToUserId;
+// export const tokenToUserId = async (accessToken:string) => {
+//     try{
+//         const decodedToken = await administrator.auth().verifyIdToken(accessToken);
+//         const uid:string = decodedToken.uid;
+//         const user = await userRepository.readUser(uid);
+//         const userId:number = user[0].uid
+//         return userId;
+//     } catch (error){
+//         console.log(error);
+//          const resData: ApiResponse = {
+//             ok : false,
+//             msg : "INTERNAL SERVER ERROR"
+//         }
+//         return resData;
+//     }
+// }
 // Ex.
 //  {
 //    "Authorizaiton": "Bearer access-token",
@@ -131,7 +119,7 @@ exports.confirmAndFetchUserInfo = confirmAndFetchUserInfo;
 // "uid" : "FXnyJZ3ql6S2hiZFDnMhcQrFR5g2"
 // }
 var getUserInfo = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var token, decodedToken, uid, userInfo, resData_1, resData, error_2, resData;
+    var token, decodedToken, uid, userInfo, resData_1, resData, error_1, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -164,8 +152,8 @@ var getUserInfo = function (req, res) { return __awaiter(void 0, void 0, void 0,
                 res.status(200).json(resData);
                 return [3 /*break*/, 4];
             case 3:
-                error_2 = _a.sent();
-                console.error('Error:', error_2);
+                error_1 = _a.sent();
+                console.error('Error:', error_1);
                 resData = {
                     ok: false,
                     msg: "INTERNAL SERVER ERROR"
@@ -177,4 +165,5 @@ var getUserInfo = function (req, res) { return __awaiter(void 0, void 0, void 0,
     });
 }); };
 exports.getUserInfo = getUserInfo;
-exports.default = { authToken: exports.authToken, tokenToUserId: exports.tokenToUserId, confirmAndFetchUserInfo: exports.confirmAndFetchUserInfo, getUserInfo: exports.getUserInfo };
+// export default { authToken, tokenToUserId, confirmAndFetchUserInfo, getUserInfo }
+exports.default = { authToken: exports.authToken, confirmAndFetchUserInfo: exports.confirmAndFetchUserInfo, getUserInfo: exports.getUserInfo };
