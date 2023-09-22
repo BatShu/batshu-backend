@@ -22,16 +22,6 @@ jobs:
       # github repository에서 checkout
       - uses: actions/checkout@v2
 
-      - name: Set up environment variables
-        run: |
-          echo "PROJECT_ID=$PROJECT_ID" >> .env
-          echo "PRIVATE_KEY_ID=$PRIVATE_KEY_ID" >> .env
-          echo "CLIENT_EMAIL=$CLIENT_EMAIL" >> .env
-        env:
-          PROJECT_ID: ${{ secrets.PROJECT_ID }}
-          PRIVATE_KEY_ID: ${{ secrets.PRIVATE_KEY_ID }}
-          CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
-
       # docker build 수행
       - name: Set up docker buildx
         id: buildx
@@ -53,6 +43,16 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_TOKEN }}
 
+      - name: Set up environment variables
+        run: |
+          echo "PROJECT_ID=$PROJECT_ID" >> .env
+          echo "PRIVATE_KEY_ID=$PRIVATE_KEY_ID" >> .env
+          echo "CLIENT_EMAIL=$CLIENT_EMAIL" >> .env
+        env:
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          PRIVATE_KEY_ID: ${{ secrets.PRIVATE_KEY_ID }}
+          CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
+
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
@@ -60,6 +60,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
+
   # 배포 Job
   deploy:
     needs: build # build 후에 실행되도록 정의
