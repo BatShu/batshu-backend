@@ -1,4 +1,4 @@
-import express, {Express, Request, Response } from "express";
+import { Request, Response } from "express";
 import { authToken }  from '../auth/auth';
 
 const userService = require("../service/UserService");
@@ -7,8 +7,8 @@ const admin = require('firebase-admin');
 
 export const postUser = async (req:Request,res:Response):Promise<void>=> {
     try {
-        const token = authToken(req,res)
-    
+        const token = authToken(req,res);
+
         // Firebase에서 토큰 검증
         const decodedToken = await admin.auth().verifyIdToken(token);
         const uid = decodedToken.uid;
@@ -17,20 +17,20 @@ export const postUser = async (req:Request,res:Response):Promise<void>=> {
         const userInfo = await admin.auth().getUser(uid);
 
         if (!userInfo) {
-            const resData: UserApiResponse = {
+            const resData: ApiResponse = {
                 ok: false,
                 msg: '등록되지 않은 유저입니다.'
             }
             res.status(400).json(resData);
           }
         
-        const resData: UserApiResponse = await userService.createUser(userInfo.uid);
+        const resData: ApiResponse = await userService.createUser(userInfo.uid);
 
         res.status(200).json(resData);
 
       } catch (error) {
         console.error('Error:', error);
-        const resData: UserApiResponse = {
+        const resData: ApiResponse = {
             ok: false,
             msg: "INTERNAL SERVER ERROR"
         }

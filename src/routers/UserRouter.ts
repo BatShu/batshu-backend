@@ -1,4 +1,4 @@
-import express, {Express, Request, Response } from "express";
+import express from "express";
 import { postUser } from '../controller/UserController'
 import { confirmAndFetchUserInfo, getUserInfo }  from '../auth/auth';
 
