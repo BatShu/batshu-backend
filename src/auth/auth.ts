@@ -1,8 +1,6 @@
 import {Request, Response } from "express";
-import { administrator } from "./firebase";
 const userRepository = require("../Repository/UserRepository");
-
-const admin = require('firebase-admin');
+import { admin } from "./firebase";
 
 
 declare global {
@@ -28,21 +26,6 @@ declare global {
   }
 
 
-  export const authToken = (req : Request, res : Response) => {
-    if (req.headers.authorization) {
-        
-        const token:string = req.headers.authorization.split('Bearer ')[1];
-        
-        if (!token) {
-            res.status(401).send({
-                ok : false,
-                msg : "로그인 수행이 필요합니다."
-            })
-        }
-        return token;
-  };
-
-}
 
 export const tokenToUserId = async (accessToken:string) => {
     try{
@@ -65,13 +48,7 @@ export const tokenToUserId = async (accessToken:string) => {
 }
 
 
-// Ex.
-//  {
-//    "Authorizaiton": "Bearer access-token",
-//    "uid": "2342knp4ad3k3233jk22"
-//  }
-
-
+//유저 uid 인식.
 export const confirmAndFetchUserInfo = async (req : Request, res : Response) => {
     
     let uid: string;
@@ -81,20 +58,10 @@ export const confirmAndFetchUserInfo = async (req : Request, res : Response) => 
         if(typeof req.headers.uid === 'string') {
 
             uid = req.headers.uid;
-
-            try {
             
-                const userInfo = await administrator.auth().getUser(uid);
-                
-                console.log(userInfo);
-
-                req.currentUser = userInfo.uid;
-                req.userEmail = userInfo.email;
+            req.currentUser = uid
+            req.userEmail = uid
             
-            } catch(err) {
-                
-                console.error("Firebase에서 사용자 정보 가져오기 오류:", err);
-            } 
     
         } else {
             return res.status(401).send({
@@ -105,48 +72,47 @@ export const confirmAndFetchUserInfo = async (req : Request, res : Response) => 
     }
 }
 
-// Ex.
-// Header - 
-// key  : Authorization
-// value : Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjE5MGFkMTE4YTk0MGFkYzlmMmY1Mzc2YjM1MjkyZmVkZThjMmQwZWUiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoi7KCV7ZWY656MIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FBY0hUdGNXLUJOZ21qOWV0N0J5UUlzYjNfLVJKUnFQX3dQaFZKTmRTZGNpWXNnVj1zOTYtYyIsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9zeW5lcmd5LXRlc3QtYTFmMjQiLCJhdWQiOiJzeW5lcmd5LXRlc3QtYTFmMjQiLCJhdXRoX3RpbWUiOjE2OTQ4ODQyMzQsInVzZXJfaWQiOiJGWG55SlozcWw2UzJoaVpGRG5NaGNRckZSNWcyIiwic3ViIjoiRlhueUpaM3FsNlMyaGlaRkRuTWhjUXJGUjVnMiIsImlhdCI6MTY5NDg4NDIzNCwiZXhwIjoxNjk0ODg3ODM0LCJlbWFpbCI6IjA0aGFyYW1zNzdAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZ29vZ2xlLmNvbSI6WyIxMTU5MDQzMjk4NzY5MzQ1MTQ1NzYiXSwiZW1haWwiOlsiMDRoYXJhbXM3N0BnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJnb29nbGUuY29tIn19.cmcO6RKWQMJaD4pUruiQ8ofYo-DT11n86om0R0W80crdnAragSR-hARBJ7FoQuuieCHokRnuNkVAHRrSxDjm1DuCpnKgHXcOleA82QSUcjY2BSvAQBkGsqACR6Vp6XDXRpbDnsBG3tpgu0TS76EJUzcWTIVkTLZJnH4Gyn4-onD2L8yiyqVWj6U2IIYxzrAhcIWA7Dejw7cJltouwwMVRYpvIVnBKHLd8hs64RihLgOxtaZAD5T8fsn5eyDyBjcRWRZ6lBPSOfqbENVUPJGNUY0buFqbad1auPbCSieGuSp3XXxMDyiWKoutWY3jWyJ0Qgy9llxPjIG7cXwTAAm6wg
-// <AccessToken maybe renewal required>
-// body -
-// {
-// "uid" : "FXnyJZ3ql6S2hiZFDnMhcQrFR5g2"
-// }
 
 export const getUserInfo = async (req:Request,res:Response):Promise<void>=>{
     try {
-        const token = authToken(req,res)
-    
-        // Firebase에서 토큰 검증
-        const decodedToken = await admin.auth().verifyIdToken(token);
-        const uid = decodedToken.uid;
-    
-        // UID를 사용하여 사용자 정보 가져오기
-        const userInfo = await admin.auth().getUser(uid);
 
-        if (!userInfo) {
+        if (req.headers.authorization) {
+            
+            const token:string = req.headers.authorization.split('Bearer ')[1];
+
+             // Firebase에서 토큰 검증
+            const decodedToken = await admin.auth().verifyIdToken(token);
+            const uid = decodedToken.uid;
+
+            // UID를 사용하여 사용자 정보 가져오기
+            const userInfo = await admin.auth().getUser(uid);
+            
+            if (!userInfo) {
+                const resData: ApiResponse = {
+                    ok: false,
+                    msg: '등록되지 않은 유저입니다.'
+                }
+                
+                res.status(400).json(resData);
+          } else {
+                
             const resData: ApiResponse = {
-                ok: false,
-                msg: '등록되지 않은 유저입니다.'
+                ok: true,
+                msg: "Successfully Get UserInfo",
+                data : {
+                    uid: userInfo.uid,
+                    email: userInfo.email || '',
+                    nickname: userInfo.displayName || '',
+                    photoUrl: userInfo.photoURL || '',
+                }
             }
-            res.status(400).json(resData);
+            res.status(200).json(resData);
           }
+          
 
-        const resData: ApiResponse = {
-            ok: true,
-            msg: "Successfully Get UserInfo",
-            data : {
-                uid: userInfo.uid,
-                email: userInfo.email,
-                nickname: userInfo.displayName,
-                photoUrl: userInfo.photoURL
-            }
-        }
-        res.status(200).json(resData);
+        } 
 
-      } catch (error) {
+    } catch (error) {
         console.error('Error:', error);
         const resData: ApiResponse = {
             ok: false,
@@ -154,6 +120,7 @@ export const getUserInfo = async (req:Request,res:Response):Promise<void>=>{
         }
         res.status(500).json(resData);
       }
-}
+    
+}   
 
-export default { authToken, tokenToUserId, confirmAndFetchUserInfo, getUserInfo }
+export default { tokenToUserId, confirmAndFetchUserInfo, getUserInfo }
