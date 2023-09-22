@@ -36,6 +36,45 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getUserInfo = exports.confirmAndFetchUserInfo = exports.authToken = void 0;
+var firebase_1 = require("./firebase");
+var userRepository = require("../Repository/UserRepository");
+var admin = require('firebase-admin');
+var authToken = function (req, res) {
+    if (req.headers.authorization) {
+        var token = req.headers.authorization.split('Bearer ')[1];
+        if (!token) {
+            res.status(401).send({
+                ok: false,
+                msg: "로그인 수행이 필요합니다."
+            });
+        }
+        return token;
+    }
+    ;
+};
+exports.authToken = authToken;
+// export const tokenToUserId = async (accessToken:string) => {
+//     try{
+//         const decodedToken = await administrator.auth().verifyIdToken(accessToken);
+//         const uid:string = decodedToken.uid;
+//         const user = await userRepository.readUser(uid);
+//         const userId:number = user[0].uid
+//         return userId;
+//     } catch (error){
+//         console.log(error);
+//          const resData: ApiResponse = {
+//             ok : false,
+//             msg : "INTERNAL SERVER ERROR"
+//         }
+//         return resData;
+//     }
+// }
+// Ex.
+//  {
+//    "Authorizaiton": "Bearer access-token",
+//    "uid": "2342knp4ad3k3233jk22"
+//  }
 exports.getUserInfo = exports.confirmAndFetchUserInfo = exports.tokenToUserId = void 0;
 var userRepository = require("../Repository/UserRepository");
 var firebase_1 = require("./firebase");
@@ -109,7 +148,7 @@ var getUserInfo = function (req, res) { return __awaiter(void 0, void 0, void 0,
                         msg: '등록되지 않은 유저입니다.'
                     };
                     res.status(400).json(resData);
-                }
+                }r:', error_1);
                 else {
                     resData = {
                         ok: true,
@@ -139,4 +178,5 @@ var getUserInfo = function (req, res) { return __awaiter(void 0, void 0, void 0,
     });
 }); };
 exports.getUserInfo = getUserInfo;
-exports.default = { tokenToUserId: exports.tokenToUserId, confirmAndFetchUserInfo: exports.confirmAndFetchUserInfo, getUserInfo: exports.getUserInfo };
+// export default { authToken, tokenToUserId, confirmAndFetchUserInfo, getUserInfo }
+exports.default = { authToken: exports.authToken, confirmAndFetchUserInfo: exports.confirmAndFetchUserInfo, getUserInfo: exports.getUserInfo };

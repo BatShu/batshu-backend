@@ -27,25 +27,27 @@ declare global {
 
 
 
-export const tokenToUserId = async (accessToken:string) => {
-    try{
-        const decodedToken = await admin.auth().verifyIdToken(accessToken);
-        const uid:string = decodedToken.uid;
 
-        const user = await userRepository.readUser(uid);
+// export const tokenToUserId = async (accessToken:string) => {
+//     try{
+//         const decodedToken = await administrator.auth().verifyIdToken(accessToken);
+//         const uid:string = decodedToken.uid;
 
-        const userId:number = user[0].id
-        return userId;
+//         const user = await userRepository.readUser(uid);
 
-    } catch (error){
-        console.log(error);
-         const resData: ApiResponse = {
-            ok : false,
-            msg : "INTERNAL SERVER ERROR"
-        }
-        return resData;
-    }
-}
+//         const userId:number = user[0].uid
+//         return userId;
+
+//     } catch (error){
+//         console.log(error);
+//          const resData: ApiResponse = {
+//             ok : false,
+//             msg : "INTERNAL SERVER ERROR"
+//         }
+//         return resData;
+//     }
+// }
+
 
 
 //유저 uid 인식.
@@ -123,4 +125,6 @@ export const getUserInfo = async (req:Request,res:Response):Promise<void>=>{
     
 }   
 
-export default { tokenToUserId, confirmAndFetchUserInfo, getUserInfo }
+
+// export default { authToken, tokenToUserId, confirmAndFetchUserInfo, getUserInfo }
+export default { authToken, confirmAndFetchUserInfo, getUserInfo }

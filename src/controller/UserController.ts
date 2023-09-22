@@ -9,11 +9,9 @@ export const postUser = async (req:Request,res:Response):Promise<void>=> {
     try {
         const token = authToken(req,res);
 
-        // Firebase에서 토큰 검증
         const decodedToken = await admin.auth().verifyIdToken(token);
         const uid = decodedToken.uid;
     
-        // UID를 사용하여 사용자 정보 가져오기
         const userInfo = await admin.auth().getUser(uid);
 
         if (!userInfo) {
