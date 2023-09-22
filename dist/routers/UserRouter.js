@@ -8,6 +8,6 @@ var UserController_1 = require("../controller/UserController");
 var auth_1 = require("../auth/auth");
 var UserRouter = express_1.default.Router();
 UserRouter.route('/check').get(auth_1.confirmAndFetchUserInfo);
-UserRouter.route('/').post(auth_1.getUserInfo);
+UserRouter.route('/').get(auth_1.getUserInfo);
 UserRouter.route('/register').post(UserController_1.postUser);
 exports.default = UserRouter;
