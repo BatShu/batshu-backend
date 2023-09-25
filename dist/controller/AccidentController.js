@@ -66,17 +66,13 @@ var admin = require('firebase-admin');
 //   "bounty" : 400000
 // }
 var postAccident = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var token, decodedToken, uid, passedData, resData, error_1, resData;
+    var uid, passedData, resData, error_1, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 4, , 5]);
-                if (!req.headers.authorization) return [3 /*break*/, 3];
-                token = auth.authToken(req, res);
-                return [4 /*yield*/, admin.auth().verifyIdToken(token)];
-            case 1:
-                decodedToken = _a.sent();
-                uid = decodedToken.uid;
+                _a.trys.push([0, 3, , 4]);
+                if (!(typeof req.uid === 'string')) return [3 /*break*/, 2];
+                uid = req.uid;
                 passedData = {
                     contentTitle: req.body.contentTitle,
                     contentDescription: req.body.contentDescription,
@@ -90,12 +86,12 @@ var postAccident = function (req, res) { return __awaiter(void 0, void 0, void 0
                 };
                 console.log(passedData);
                 return [4 /*yield*/, accidentService.createAccident(passedData)];
-            case 2:
+            case 1:
                 resData = _a.sent();
                 res.status(200).json(resData);
-                _a.label = 3;
-            case 3: return [3 /*break*/, 5];
-            case 4:
+                _a.label = 2;
+            case 2: return [3 /*break*/, 4];
+            case 3:
                 error_1 = _a.sent();
                 console.error('Error:', error_1);
                 resData = {
@@ -103,8 +99,8 @@ var postAccident = function (req, res) { return __awaiter(void 0, void 0, void 0
                     msg: "INTERNAL SERVER ERROR"
                 };
                 res.status(500).json(resData);
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); };

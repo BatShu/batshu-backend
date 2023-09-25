@@ -46,28 +46,6 @@ declare global {
     }
 }
 
-// export const tokenToUserId = async (accessToken:string) => {
-//     try{
-//         const decodedToken = await administrator.auth().verifyIdToken(accessToken);
-//         const uid:string = decodedToken.uid;
-
-//         const user = await userRepository.readUser(uid);
-
-//         const userId:number = user[0].uid
-//         return userId;
-
-//     } catch (error){
-//         console.log(error);
-//          const resData: ApiResponse = {
-//             ok : false,
-//             msg : "INTERNAL SERVER ERROR"
-//         }
-//         return resData;
-//     }
-// }
-
-
-
 //유저 uid 인식.
 export const confirmAndFetchUserInfo = async (req : CustomRequest, res : Response) => {
     
@@ -137,5 +115,4 @@ export const getUserInfo = async (req:CustomRequest,res:Response):Promise<void>=
 }   
 
 
-// export default { authToken, tokenToUserId, confirmAndFetchUserInfo, getUserInfo }
 export default { confirmAndFetchUserInfo, getUserInfo }

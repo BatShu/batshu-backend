@@ -49,16 +49,11 @@ declare global {
 //   "bounty" : 400000
 // }
 
-export const postAccident = async (req: Request, res: Response) => {
+export const postAccident = async (req: CustomRequest, res: Response) => {
     try {
-      if (req.headers.authorization) {
-
-        // 형식적 데이터 처리
-
-        const token = auth.authToken(req,res);
-
-        const decodedToken = await admin.auth().verifyIdToken(token);
-        const uid:string = decodedToken.uid;
+      if (typeof req.uid === 'string') {
+        
+        const uid:string = req.uid;
         
         // const userId:number = await auth.tokenToUserId(token);
         

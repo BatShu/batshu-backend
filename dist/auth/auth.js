@@ -69,22 +69,6 @@ var tokenToUid = function (req, res, next) { return __awaiter(void 0, void 0, vo
     });
 }); };
 exports.tokenToUid = tokenToUid;
-// export const tokenToUserId = async (accessToken:string) => {
-//     try{
-//         const decodedToken = await administrator.auth().verifyIdToken(accessToken);
-//         const uid:string = decodedToken.uid;
-//         const user = await userRepository.readUser(uid);
-//         const userId:number = user[0].uid
-//         return userId;
-//     } catch (error){
-//         console.log(error);
-//          const resData: ApiResponse = {
-//             ok : false,
-//             msg : "INTERNAL SERVER ERROR"
-//         }
-//         return resData;
-//     }
-// }
 //유저 uid 인식.
 var confirmAndFetchUserInfo = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var uid;
@@ -152,5 +136,4 @@ var getUserInfo = function (req, res) { return __awaiter(void 0, void 0, void 0,
     });
 }); };
 exports.getUserInfo = getUserInfo;
-// export default { authToken, tokenToUserId, confirmAndFetchUserInfo, getUserInfo }
 exports.default = { confirmAndFetchUserInfo: exports.confirmAndFetchUserInfo, getUserInfo: exports.getUserInfo };
