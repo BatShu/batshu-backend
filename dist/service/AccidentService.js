@@ -63,3 +63,30 @@ exports.createAccident = function (data) { return __awaiter(void 0, void 0, void
         }
     });
 }); };
+exports.readAccident = function (accidentId) { return __awaiter(void 0, void 0, void 0, function () {
+    var resData, error_2, resData;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                // 의미적 데이터 처리
+                return [4 /*yield*/, accountRepository.readAccident(accidentId)];
+            case 1:
+                // 의미적 데이터 처리
+                _a.sent();
+                resData = {
+                    ok: true,
+                    msg: "Successfully Get"
+                };
+                return [2 /*return*/, resData];
+            case 2:
+                error_2 = _a.sent();
+                resData = {
+                    ok: false,
+                    msg: "INTERNAL SERVER ERROR"
+                };
+                return [2 /*return*/, resData];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };

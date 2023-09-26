@@ -11,4 +11,5 @@ var storage = multer_1.default.memoryStorage();
 var upload = (0, multer_1.default)({ storage: storage });
 var AccidentRouter = express_1.default.Router();
 AccidentRouter.route('/').post(auth_1.tokenToUid, upload.array('pictureUrl'), AccidentController_1.postAccident);
+AccidentRouter.route('/:accidentId').get(auth_1.tokenToUid, AccidentController_1.getAccident);
 exports.default = AccidentRouter;

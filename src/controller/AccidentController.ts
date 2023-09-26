@@ -136,3 +136,21 @@ export const postAccident = async (req: CustomRequest, res: Response) => {
         res.status(500).json(resData);
       }
 }
+
+export const getAccident = async (req:Request, res: Response) => {
+  try{
+    const resData:ApiResponse = await accidentService.readAccident(req.params.accidentId);
+
+    res.status(200).json(resData);
+    
+  } catch (error) {
+    console.error('Error:', error);
+    const resData: ApiResponse = {
+        ok: false,
+        msg: "INTERNAL SERVER ERROR"
+    }
+    res.status(500).json(resData);
+  }
+}
+
+export default { postAccident, getAccident };
