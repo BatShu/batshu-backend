@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createAccident = void 0;
+exports.readAccident = exports.createAccident = void 0;
 var database_1 = __importDefault(require("../config/database"));
 var createAccident = function (data) { return __awaiter(void 0, void 0, void 0, function () {
     var connection, accidentInsertQuery, accidentRows, insertId, accidentPictureInsertQuery, pictures, _i, pictures_1, picture, error_1;
@@ -94,4 +94,37 @@ var createAccident = function (data) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 exports.createAccident = createAccident;
-exports.default = { createAccident: exports.createAccident };
+var readAccident = function (accidentId) { return __awaiter(void 0, void 0, void 0, function () {
+    var connection, accidentSelectQuery, accidentRows, accidentPictureSelectQuery, accidentPictureRows, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 4, , 5]);
+                return [4 /*yield*/, database_1.default.getConnection()];
+            case 1:
+                connection = _a.sent();
+                accidentSelectQuery = "SELECT * FROM accident WHERE id = ?";
+                return [4 /*yield*/, connection.execute(accidentSelectQuery, [
+                        accidentId
+                    ])];
+            case 2:
+                accidentRows = _a.sent();
+                console.log(accidentRows[0]);
+                accidentPictureSelectQuery = "SELECT * FROM accident_picture WHERE accident_id = ?";
+                return [4 /*yield*/, connection.execute(accidentPictureSelectQuery, [
+                        accidentId
+                    ])];
+            case 3:
+                accidentPictureRows = _a.sent();
+                console.log(accidentPictureRows[0]);
+                connection.release();
+                return [3 /*break*/, 5];
+            case 4:
+                error_2 = _a.sent();
+                throw error_2;
+            case 5: return [2 /*return*/];
+        }
+    });
+}); };
+exports.readAccident = readAccident;
+exports.default = { createAccident: exports.createAccident, readAccident: exports.readAccident };

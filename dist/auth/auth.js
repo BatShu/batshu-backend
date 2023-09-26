@@ -36,76 +36,39 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserInfo = exports.confirmAndFetchUserInfo = exports.authToken = void 0;
+exports.getUserInfo = exports.confirmAndFetchUserInfo = exports.tokenToUid = void 0;
 var firebase_1 = require("./firebase");
-var userRepository = require("../Repository/UserRepository");
-var admin = require('firebase-admin');
-var authToken = function (req, res) {
-    if (req.headers.authorization) {
-        var token = req.headers.authorization.split('Bearer ')[1];
-        if (!token) {
-            res.status(401).send({
-                ok: false,
-                msg: "로그인 수행이 필요합니다."
-            });
-        }
-        return token;
-    }
-    ;
-};
-exports.authToken = authToken;
-// export const tokenToUserId = async (accessToken:string) => {
-//     try{
-//         const decodedToken = await administrator.auth().verifyIdToken(accessToken);
-//         const uid:string = decodedToken.uid;
-//         const user = await userRepository.readUser(uid);
-//         const userId:number = user[0].uid
-//         return userId;
-//     } catch (error){
-//         console.log(error);
-//          const resData: ApiResponse = {
-//             ok : false,
-//             msg : "INTERNAL SERVER ERROR"
-//         }
-//         return resData;
-//     }
-// }
-// Ex.
-//  {
-//    "Authorizaiton": "Bearer access-token",
-//    "uid": "2342knp4ad3k3233jk22"
-//  }
-exports.getUserInfo = exports.confirmAndFetchUserInfo = exports.tokenToUserId = void 0;
-var userRepository = require("../Repository/UserRepository");
-var firebase_1 = require("./firebase");
-var tokenToUserId = function (accessToken) { return __awaiter(void 0, void 0, void 0, function () {
-    var decodedToken, uid, user, userId, error_1, resData;
+var tokenToUid = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var token, decodedToken, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 3, , 4]);
-                return [4 /*yield*/, firebase_1.admin.auth().verifyIdToken(accessToken)];
+                if (!req.headers.authorization) return [3 /*break*/, 5];
+                token = req.headers.authorization.split('Bearer ')[1];
+                _a.label = 1;
             case 1:
-                decodedToken = _a.sent();
-                uid = decodedToken.uid;
-                return [4 /*yield*/, userRepository.readUser(uid)];
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, firebase_1.admin.auth().verifyIdToken(token)];
             case 2:
-                user = _a.sent();
-                userId = user[0].id;
-                return [2 /*return*/, userId];
+                decodedToken = _a.sent();
+                req['uid'] = decodedToken.uid;
+                next();
+                return [3 /*break*/, 4];
             case 3:
                 error_1 = _a.sent();
-                console.log(error_1);
-                resData = {
-                    ok: false,
-                    msg: "INTERNAL SERVER ERROR"
-                };
-                return [2 /*return*/, resData];
-            case 4: return [2 /*return*/];
+                // Handle token verification error here
+                res.status(401).send('Unauthorized1');
+                return [3 /*break*/, 4];
+            case 4: return [3 /*break*/, 6];
+            case 5:
+                // Handle case where authorization header is missing
+                res.status(401).send('Unauthorized2');
+                _a.label = 6;
+            case 6: return [2 /*return*/];
         }
     });
 }); };
-exports.tokenToUserId = tokenToUserId;
+exports.tokenToUid = tokenToUid;
 //유저 uid 인식.
 var confirmAndFetchUserInfo = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var uid;
@@ -128,19 +91,14 @@ var confirmAndFetchUserInfo = function (req, res) { return __awaiter(void 0, voi
 }); };
 exports.confirmAndFetchUserInfo = confirmAndFetchUserInfo;
 var getUserInfo = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var token, decodedToken, uid, userInfo, resData, resData, error_2, resData;
+    var userInfo, resData, resData, error_2, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 4, , 5]);
-                if (!req.headers.authorization) return [3 /*break*/, 3];
-                token = req.headers.authorization.split('Bearer ')[1];
-                return [4 /*yield*/, firebase_1.admin.auth().verifyIdToken(token)];
+                _a.trys.push([0, 3, , 4]);
+                if (!(typeof req.uid === 'string')) return [3 /*break*/, 2];
+                return [4 /*yield*/, firebase_1.admin.auth().getUser(req.uid)];
             case 1:
-                decodedToken = _a.sent();
-                uid = decodedToken.uid;
-                return [4 /*yield*/, firebase_1.admin.auth().getUser(uid)];
-            case 2:
                 userInfo = _a.sent();
                 if (!userInfo) {
                     resData = {
@@ -148,7 +106,7 @@ var getUserInfo = function (req, res) { return __awaiter(void 0, void 0, void 0,
                         msg: '등록되지 않은 유저입니다.'
                     };
                     res.status(400).json(resData);
-                }r:', error_1);
+                }
                 else {
                     resData = {
                         ok: true,
@@ -162,9 +120,9 @@ var getUserInfo = function (req, res) { return __awaiter(void 0, void 0, void 0,
                     };
                     res.status(200).json(resData);
                 }
-                _a.label = 3;
-            case 3: return [3 /*break*/, 5];
-            case 4:
+                _a.label = 2;
+            case 2: return [3 /*break*/, 4];
+            case 3:
                 error_2 = _a.sent();
                 console.error('Error:', error_2);
                 resData = {
@@ -172,11 +130,10 @@ var getUserInfo = function (req, res) { return __awaiter(void 0, void 0, void 0,
                     msg: "INTERNAL SERVER ERROR"
                 };
                 res.status(500).json(resData);
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); };
 exports.getUserInfo = getUserInfo;
-// export default { authToken, tokenToUserId, confirmAndFetchUserInfo, getUserInfo }
-exports.default = { authToken: exports.authToken, confirmAndFetchUserInfo: exports.confirmAndFetchUserInfo, getUserInfo: exports.getUserInfo };
+exports.default = { confirmAndFetchUserInfo: exports.confirmAndFetchUserInfo, getUserInfo: exports.getUserInfo };

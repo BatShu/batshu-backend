@@ -1,3 +1,4 @@
+import { DateTime } from "aws-sdk/clients/devicefarm";
 import pool from "../config/database";
 
 
@@ -8,6 +9,20 @@ interface ResultSetHeader {
   info: string;
   serverStatus: number;
   warningStatus: number;
+}
+
+interface AccidentRow {
+  id: number;
+  content_title: string;
+  content_description: string;
+  accident_start_time: DateTime;
+  accident_end_time: DateTime;
+  created_at: DateTime;
+  accident_location: Location;
+  car_model_name: string;
+  license_plate: string;
+  bounty: number;
+  uid: string;
 }
 
 export const createAccident = async (data: Accident):Promise<void> => {
@@ -64,4 +79,33 @@ export const createAccident = async (data: Accident):Promise<void> => {
     }
   }
 
-export default { createAccident } ;
+
+  export const readAccident = async (accidentId:number):Promise<void> => {
+    try {
+      const connection = await pool.getConnection();
+
+      const accidentSelectQuery:string = `SELECT * FROM accident WHERE id = ?`;
+
+      const accidentRows = await connection.execute(accidentSelectQuery, [ 
+        accidentId
+      ]);
+
+      console.log(accidentRows[0]);
+
+      const accidentPictureSelectQuery:string = `SELECT * FROM accident_picture WHERE accident_id = ?`;
+
+      const accidentPictureRows = await connection.execute(accidentPictureSelectQuery, [ 
+        accidentId
+      ]);
+
+      console.log(accidentPictureRows[0]);
+
+      connection.release();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+
+export default { createAccident, readAccident } ;
