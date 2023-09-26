@@ -3,6 +3,14 @@ import { Request, Response } from "express";
 const accidentService = require("../service/AccidentService");
 const auth = require("../auth/auth");
 const admin = require('firebase-admin');
+const crypto = require('crypto');
+const sharp = require('sharp')
+
+const AWS = require('aws-sdk');
+
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+
+import dotenv from "dotenv";
 
 declare global {
   interface Location {
@@ -21,7 +29,48 @@ declare global {
       uid : string;
       bounty : number;
   }
+
+  interface imageData {
+    fieldname: string;
+    originalname: string;
+    encoding: string;
+    mimetype: string;
+    buffer: Buffer;
+    size: number;
+  }
+
+  interface s3ClientParams {
+    credentials: {
+      accessKeyId: string;
+      secretAccessKey: string;
+    };
+    region: string;
+  }
 }
+
+dotenv.config();
+
+const bucketName:string = process.env.BUCKET_NAME!;
+const accessKey:string = process.env.ACCESS_KEY!;
+const bucketRegion:string = process.env.BUCKET_REGION!;
+const secretAccessKey:string = process.env.SECRET_ACCESS_KEY!;
+
+
+AWS.config.update({
+  accessKeyId: accessKey,          // AWS Access Key ID를 여기에 입력
+  secretAccessKey: secretAccessKey,  // AWS Secret Access Key를 여기에 입력
+  region: bucketRegion,                      // 사용하는 AWS 지역을 여기에 입력
+});
+
+const s3params:s3ClientParams = {
+  credentials: {
+    accessKeyId: accessKey,
+    secretAccessKey: secretAccessKey
+  },
+  region: bucketRegion
+}
+
+const s3 = new S3Client(s3params);
 
 // Ex.
 // Header - 
@@ -52,15 +101,35 @@ declare global {
 export const postAccident = async (req: CustomRequest, res: Response) => {
     try {
       if (typeof req.uid === 'string') {
+        // console.log("req.body",req.body);
+        const images:imageData[] = req.files as Express.Multer.File[];
         
         const uid:string = req.uid;
         
-        // const userId:number = await auth.tokenToUserId(token);
+        const pictureUrl:string[] = [];
         
+        for (let img of images){
+          const fileName:string = crypto.randomBytes(16).toString('hex');
+          const buffer = await sharp(img.buffer).resize({height: 1920, width: 1080, fit: "contain"}).toBuffer()
+          console.log(img);
+          const params = {
+            Bucket: bucketName,
+            Key: `${fileName}.${img.originalname.split('.').pop()}`,
+            Body: buffer,
+            ContentType: img.mimetype
+          }
+          
+          pictureUrl.push(`https://${params.Bucket}.s3.amazonaws.com/${params.Key}`);
+
+          const command = new PutObjectCommand(params);
+          await s3.send(command);
+        }
+        
+
         const passedData:Accident = {
           contentTitle : req.body.contentTitle,
           contentDescription : req.body.contentDescription,
-          pictureUrl : req.body.pictureUrl,
+          pictureUrl : pictureUrl,
           accidentTime : req.body.accidentTime,
           accidentLocation : req.body.accidentLocation,
           carModelName : req.body.carModelName,
@@ -68,7 +137,8 @@ export const postAccident = async (req: CustomRequest, res: Response) => {
           uid : uid,
           bounty : req.body.bounty
         }
-        console.log(passedData);
+
+        // console.log(passedData);
 
         const resData:ApiResponse = await accidentService.createAccident(passedData);
         res.status(200).json(resData);
