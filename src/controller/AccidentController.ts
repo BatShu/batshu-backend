@@ -28,6 +28,11 @@ declare global {
       bounty : number;
   }
 
+  interface AccidentPicture {
+      pictureUrl : string;
+      accidentId : number;
+  }
+
   interface imageData {
     fieldname: string;
     originalname: string;
@@ -35,6 +40,15 @@ declare global {
     mimetype: string;
     buffer: Buffer;
     size: number;
+  }
+
+  interface ResultSetHeader {
+    fieldCount: number;
+    affectedRows: number;
+    insertId: number;
+    info: string;
+    serverStatus: number;
+    warningStatus: number;
   }
 
 }
