@@ -95,8 +95,8 @@ exports.readAccident = function (accidentId) { return __awaiter(void 0, void 0, 
             case 2:
                 accidnetPictureRows = _a.sent();
                 accidentLocation = {
-                    x: "",
-                    y: ""
+                    x: accidentRow[0].x,
+                    y: accidentRow[0].y
                 };
                 data = {
                     contentTitle: accidentRow[0].content_title,
@@ -116,8 +116,6 @@ exports.readAccident = function (accidentId) { return __awaiter(void 0, void 0, 
                     accidentPictureRow = accidnetPictureRows_1[_i];
                     data.pictureUrl.push(accidentPictureRow.picture_url);
                 }
-                console.log(accidentRow[0]);
-                console.log(accidnetPictureRows[0]);
                 resData = {
                     ok: true,
                     msg: "Successfully Get",
