@@ -1,6 +1,6 @@
 import pool from "../config/database";
 
-export const createUser = async (uid: string) => { // any 얘 interface 지정해주기
+export const createUser = async (uid: string) => {
     try {
       const connection = await pool.getConnection();
 

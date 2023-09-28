@@ -83,7 +83,7 @@ exports.createAccident = function (data) { return __awaiter(void 0, void 0, void
     });
 }); };
 exports.readAccident = function (accidentId) { return __awaiter(void 0, void 0, void 0, function () {
-    var accidentRow, accidnetPictureRow, resData, error_2, resData;
+    var accidentRow, accidnetPictureRows, accidentLocation, data, _i, accidnetPictureRows_1, accidentPictureRow, resData, error_2, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -93,12 +93,35 @@ exports.readAccident = function (accidentId) { return __awaiter(void 0, void 0, 
                 accidentRow = _a.sent();
                 return [4 /*yield*/, AccidentRepository_1.default.selectAccidentPictureRow(accidentId)];
             case 2:
-                accidnetPictureRow = _a.sent();
-                console.log(accidentRow);
-                console.log(accidnetPictureRow);
+                accidnetPictureRows = _a.sent();
+                accidentLocation = {
+                    x: "",
+                    y: ""
+                };
+                data = {
+                    contentTitle: accidentRow[0].content_title,
+                    contentDescription: accidentRow[0].content_description,
+                    pictureUrl: [],
+                    accidentTime: [
+                        accidentRow[0].accident_start_time,
+                        accidentRow[0].accident_end_time
+                    ],
+                    createdAt: accidentRow[0].created_at,
+                    accidentLocation: accidentLocation,
+                    carModelName: accidentRow[0].car_model_name,
+                    licensePlate: accidentRow[0].license_plate,
+                    bounty: accidentRow[0].bounty
+                };
+                for (_i = 0, accidnetPictureRows_1 = accidnetPictureRows; _i < accidnetPictureRows_1.length; _i++) {
+                    accidentPictureRow = accidnetPictureRows_1[_i];
+                    data.pictureUrl.push(accidentPictureRow.picture_url);
+                }
+                console.log(accidentRow[0]);
+                console.log(accidnetPictureRows[0]);
                 resData = {
                     ok: true,
-                    msg: "Successfully Get"
+                    msg: "Successfully Get",
+                    data: data
                 };
                 return [2 /*return*/, resData];
             case 3:

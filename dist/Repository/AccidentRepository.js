@@ -86,7 +86,7 @@ var insertAccidentRow = function (data) { return __awaiter(void 0, void 0, void 
             case 0: return [4 /*yield*/, database_1.default.getConnection()];
             case 1:
                 connection = _a.sent();
-                accidentInsertQuery = "\n    INSERT INTO accident (\n      content_title,\n      content_description,\n      accident_start_time,\n      accident_end_time,\n      created_at,\n      accident_location,\n      car_model_name,\n      license_plate,\n      uid,\n      bounty\n    ) VALUES (?, ?, ?, ?, NOW(), POINT(?, ?), ?, ?, ?, ?)\n  ";
+                accidentInsertQuery = "\n      INSERT INTO accident (\n        content_title,\n        content_description,\n        accident_start_time,\n        accident_end_time,\n        created_at,\n        accident_location,\n        car_model_name,\n        license_plate,\n        uid,\n        bounty\n      ) VALUES (?, ?, ?, ?, NOW(), POINT(?, ?), ?, ?, ?, ?)\n    ";
                 return [4 /*yield*/, connection.execute(accidentInsertQuery, [
                         data.contentTitle,
                         data.contentDescription,
