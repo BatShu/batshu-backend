@@ -11,7 +11,7 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import dotenv from "dotenv";
 
 declare global {
-  interface Location {
+  interface LocationObject {
     x : string;
     y : string;
   }
@@ -21,11 +21,17 @@ declare global {
       contentDescription : string;
       pictureUrl : string[];
       accidentTime : Date[];
-      accidentLocation : Location;
+      createdAt? : Date;
+      accidentLocation : LocationObject;
       carModelName : string;
       licensePlate : string;
-      uid : string;
+      uid? : string;
       bounty : number;
+  }
+
+  interface AccidentPicture {
+      pictureUrl : string;
+      accidentId : number;
   }
 
   interface imageData {
@@ -35,6 +41,25 @@ declare global {
     mimetype: string;
     buffer: Buffer;
     size: number;
+  }
+
+  interface ResultSetHeader {
+    bounty: number;
+    license_plate: string;
+    car_model_name: string;
+    accident_end_time: Date;
+    accident_start_time: Date;
+    created_at: Date;
+    content_description: string;
+    accident_location:Location;
+    content_title: string;
+    picture_url: string;
+    fieldCount: number;
+    affectedRows: number;
+    insertId: number;
+    info: string;
+    serverStatus: number;
+    warningStatus: number;
   }
 
 }

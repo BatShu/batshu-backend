@@ -35,58 +35,103 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var accountRepository = require("../Repository/AccidentRepository");
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var AccidentRepository_1 = __importDefault(require("../Repository/AccidentRepository"));
 exports.createAccident = function (data) { return __awaiter(void 0, void 0, void 0, function () {
-    var resData, error_1, resData;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var accidentRows, insertId, _i, _a, picture, resData, error_1, resData;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                // 의미적 데이터 처리
-                return [4 /*yield*/, accountRepository.createAccident(data)];
+                _b.trys.push([0, 6, , 7]);
+                return [4 /*yield*/, AccidentRepository_1.default.insertAccidentRow(data)];
             case 1:
-                // 의미적 데이터 처리
-                _a.sent();
+                accidentRows = _b.sent();
+                insertId = accidentRows[0].insertId;
+                _i = 0, _a = data.pictureUrl;
+                _b.label = 2;
+            case 2:
+                if (!(_i < _a.length)) return [3 /*break*/, 5];
+                picture = _a[_i];
+                return [4 /*yield*/, AccidentRepository_1.default.insertAccidentPictureRow({
+                        pictureUrl: picture,
+                        accidentId: insertId
+                    })];
+            case 3:
+                _b.sent();
+                _b.label = 4;
+            case 4:
+                _i++;
+                return [3 /*break*/, 2];
+            case 5:
                 resData = {
                     ok: true,
                     msg: "Successfully Post"
                 };
                 return [2 /*return*/, resData];
-            case 2:
-                error_1 = _a.sent();
+            case 6:
+                error_1 = _b.sent();
                 resData = {
                     ok: false,
                     msg: "INTERNAL SERVER ERROR"
                 };
                 return [2 /*return*/, resData];
-            case 3: return [2 /*return*/];
+            case 7: return [2 /*return*/];
         }
     });
 }); };
 exports.readAccident = function (accidentId) { return __awaiter(void 0, void 0, void 0, function () {
-    var resData, error_2, resData;
+    var accidentRow, accidnetPictureRows, accidentLocation, data, _i, accidnetPictureRows_1, accidentPictureRow, resData, error_2, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                // 의미적 데이터 처리
-                return [4 /*yield*/, accountRepository.readAccident(accidentId)];
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, AccidentRepository_1.default.selectAccidentRow(accidentId)];
             case 1:
-                // 의미적 데이터 처리
-                _a.sent();
+                accidentRow = _a.sent();
+                return [4 /*yield*/, AccidentRepository_1.default.selectAccidentPictureRow(accidentId)];
+            case 2:
+                accidnetPictureRows = _a.sent();
+                accidentLocation = {
+                    x: "",
+                    y: ""
+                };
+                data = {
+                    contentTitle: accidentRow[0].content_title,
+                    contentDescription: accidentRow[0].content_description,
+                    pictureUrl: [],
+                    accidentTime: [
+                        accidentRow[0].accident_start_time,
+                        accidentRow[0].accident_end_time
+                    ],
+                    createdAt: accidentRow[0].created_at,
+                    accidentLocation: accidentLocation,
+                    carModelName: accidentRow[0].car_model_name,
+                    licensePlate: accidentRow[0].license_plate,
+                    bounty: accidentRow[0].bounty
+                };
+                for (_i = 0, accidnetPictureRows_1 = accidnetPictureRows; _i < accidnetPictureRows_1.length; _i++) {
+                    accidentPictureRow = accidnetPictureRows_1[_i];
+                    data.pictureUrl.push(accidentPictureRow.picture_url);
+                }
+                console.log(accidentRow[0]);
+                console.log(accidnetPictureRows[0]);
                 resData = {
                     ok: true,
-                    msg: "Successfully Get"
+                    msg: "Successfully Get",
+                    data: data
                 };
                 return [2 /*return*/, resData];
-            case 2:
+            case 3:
                 error_2 = _a.sent();
                 resData = {
                     ok: false,
                     msg: "INTERNAL SERVER ERROR"
                 };
                 return [2 /*return*/, resData];
-            case 3: return [2 /*return*/];
+            case 4: return [2 /*return*/];
         }
     });
 }); };

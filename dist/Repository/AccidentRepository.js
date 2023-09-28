@@ -39,18 +39,54 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.readAccident = exports.createAccident = void 0;
+exports.insertAccidentPictureRow = exports.insertAccidentRow = exports.selectAccidentPictureRow = exports.selectAccidentRow = void 0;
 var database_1 = __importDefault(require("../config/database"));
-var createAccident = function (data) { return __awaiter(void 0, void 0, void 0, function () {
-    var connection, accidentInsertQuery, accidentRows, insertId, accidentPictureInsertQuery, pictures, _i, pictures_1, picture, error_1;
+var selectAccidentRow = function (accidentId) { return __awaiter(void 0, void 0, void 0, function () {
+    var connection, accidentSelectQuery, accidentRows;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 7, , 8]);
-                return [4 /*yield*/, database_1.default.getConnection()];
+            case 0: return [4 /*yield*/, database_1.default.getConnection()];
             case 1:
                 connection = _a.sent();
-                accidentInsertQuery = "\n        INSERT INTO accident (\n          content_title,\n          content_description,\n          accident_start_time,\n          accident_end_time,\n          created_at,\n          accident_location,\n          car_model_name,\n          license_plate,\n          uid,\n          bounty\n        ) VALUES (?, ?, ?, ?, NOW(), POINT(?, ?), ?, ?, ?, ?)\n      ";
+                accidentSelectQuery = "SELECT * FROM accident WHERE id = ?";
+                return [4 /*yield*/, connection.execute(accidentSelectQuery, [
+                        accidentId
+                    ])];
+            case 2:
+                accidentRows = _a.sent();
+                connection.release();
+                return [2 /*return*/, accidentRows[0]];
+        }
+    });
+}); };
+exports.selectAccidentRow = selectAccidentRow;
+var selectAccidentPictureRow = function (accidentId) { return __awaiter(void 0, void 0, void 0, function () {
+    var connection, accidentPictureSelectQuery, accidentPictureRows;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, database_1.default.getConnection()];
+            case 1:
+                connection = _a.sent();
+                accidentPictureSelectQuery = "SELECT * FROM accident_picture WHERE accident_id = ?";
+                return [4 /*yield*/, connection.execute(accidentPictureSelectQuery, [
+                        accidentId
+                    ])];
+            case 2:
+                accidentPictureRows = _a.sent();
+                connection.release();
+                return [2 /*return*/, accidentPictureRows[0]];
+        }
+    });
+}); };
+exports.selectAccidentPictureRow = selectAccidentPictureRow;
+var insertAccidentRow = function (data) { return __awaiter(void 0, void 0, void 0, function () {
+    var connection, accidentInsertQuery, accidentRows;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, database_1.default.getConnection()];
+            case 1:
+                connection = _a.sent();
+                accidentInsertQuery = "\n      INSERT INTO accident (\n        content_title,\n        content_description,\n        accident_start_time,\n        accident_end_time,\n        created_at,\n        accident_location,\n        car_model_name,\n        license_plate,\n        uid,\n        bounty\n      ) VALUES (?, ?, ?, ?, NOW(), POINT(?, ?), ?, ?, ?, ?)\n    ";
                 return [4 /*yield*/, connection.execute(accidentInsertQuery, [
                         data.contentTitle,
                         data.contentDescription,
@@ -65,66 +101,30 @@ var createAccident = function (data) { return __awaiter(void 0, void 0, void 0, 
                     ])];
             case 2:
                 accidentRows = _a.sent();
-                insertId = accidentRows[0].insertId;
-                accidentPictureInsertQuery = "\n        INSERT INTO accident_picture (\n          picture_url,\n          accident_id\n        ) VALUES (?, ?)\n      ";
-                pictures = data.pictureUrl;
-                _i = 0, pictures_1 = pictures;
-                _a.label = 3;
-            case 3:
-                if (!(_i < pictures_1.length)) return [3 /*break*/, 6];
-                picture = pictures_1[_i];
-                return [4 /*yield*/, connection.execute(accidentPictureInsertQuery, [
-                        picture,
-                        insertId
-                    ])];
-            case 4:
-                _a.sent();
-                _a.label = 5;
-            case 5:
-                _i++;
-                return [3 /*break*/, 3];
-            case 6:
                 connection.release();
-                return [3 /*break*/, 8];
-            case 7:
-                error_1 = _a.sent();
-                throw error_1;
-            case 8: return [2 /*return*/];
+                return [2 /*return*/, accidentRows];
         }
     });
 }); };
-exports.createAccident = createAccident;
-var readAccident = function (accidentId) { return __awaiter(void 0, void 0, void 0, function () {
-    var connection, accidentSelectQuery, accidentRows, accidentPictureSelectQuery, accidentPictureRows, error_2;
+exports.insertAccidentRow = insertAccidentRow;
+var insertAccidentPictureRow = function (data) { return __awaiter(void 0, void 0, void 0, function () {
+    var connection, accidentPictureInsertQuery;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 4, , 5]);
-                return [4 /*yield*/, database_1.default.getConnection()];
+            case 0: return [4 /*yield*/, database_1.default.getConnection()];
             case 1:
                 connection = _a.sent();
-                accidentSelectQuery = "SELECT * FROM accident WHERE id = ?";
-                return [4 /*yield*/, connection.execute(accidentSelectQuery, [
-                        accidentId
+                accidentPictureInsertQuery = "\n        INSERT INTO accident_picture (\n          picture_url,\n          accident_id\n        ) VALUES (?, ?)\n      ";
+                return [4 /*yield*/, connection.execute(accidentPictureInsertQuery, [
+                        data.pictureUrl,
+                        data.accidentId
                     ])];
             case 2:
-                accidentRows = _a.sent();
-                console.log(accidentRows[0]);
-                accidentPictureSelectQuery = "SELECT * FROM accident_picture WHERE accident_id = ?";
-                return [4 /*yield*/, connection.execute(accidentPictureSelectQuery, [
-                        accidentId
-                    ])];
-            case 3:
-                accidentPictureRows = _a.sent();
-                console.log(accidentPictureRows[0]);
+                _a.sent();
                 connection.release();
-                return [3 /*break*/, 5];
-            case 4:
-                error_2 = _a.sent();
-                throw error_2;
-            case 5: return [2 /*return*/];
+                return [2 /*return*/];
         }
     });
 }); };
-exports.readAccident = readAccident;
-exports.default = { createAccident: exports.createAccident, readAccident: exports.readAccident };
+exports.insertAccidentPictureRow = insertAccidentPictureRow;
+exports.default = { insertAccidentRow: exports.insertAccidentRow, insertAccidentPictureRow: exports.insertAccidentPictureRow, selectAccidentRow: exports.selectAccidentRow, selectAccidentPictureRow: exports.selectAccidentPictureRow };
