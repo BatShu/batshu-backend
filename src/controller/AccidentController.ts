@@ -44,6 +44,8 @@ declare global {
   }
 
   interface ResultSetHeader {
+    y: string;
+    x: string;
     bounty: number;
     license_plate: string;
     car_model_name: string;
@@ -51,7 +53,6 @@ declare global {
     accident_start_time: Date;
     created_at: Date;
     content_description: string;
-    accident_location:Location;
     content_title: string;
     picture_url: string;
     fieldCount: number;

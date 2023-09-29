@@ -48,7 +48,7 @@ var selectAccidentRow = function (accidentId) { return __awaiter(void 0, void 0,
             case 0: return [4 /*yield*/, database_1.default.getConnection()];
             case 1:
                 connection = _a.sent();
-                accidentSelectQuery = "SELECT * FROM accident WHERE id = ?";
+                accidentSelectQuery = "select \n    content_title, \n    content_description, \n    accident_start_time, \n    accident_end_time, \n    created_at, \n    ST_X(accident_location) AS x, \n    ST_Y(accident_location) AS y, \n    car_model_name, \n    license_plate, \n    bounty, \n    uid \n    from accident\n    WHERE id = ?";
                 return [4 /*yield*/, connection.execute(accidentSelectQuery, [
                         accidentId
                     ])];

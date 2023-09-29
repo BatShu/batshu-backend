@@ -3,7 +3,21 @@ import pool from "../config/database";
 export const selectAccidentRow =async (accidentId:number) => {
   const connection = await pool.getConnection();
 
-  const accidentSelectQuery:string = `SELECT * FROM accident WHERE id = ?`;
+  const accidentSelectQuery:string = 
+    `select 
+    content_title, 
+    content_description, 
+    accident_start_time, 
+    accident_end_time, 
+    created_at, 
+    ST_X(accident_location) AS x, 
+    ST_Y(accident_location) AS y, 
+    car_model_name, 
+    license_plate, 
+    bounty, 
+    uid 
+    from accident
+    WHERE id = ?`;
 
   const accidentRows = await connection.execute(accidentSelectQuery, [ 
     accidentId
