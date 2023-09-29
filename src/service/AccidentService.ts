@@ -35,7 +35,7 @@ exports.readAccident =async (accidentId:number) => {
         const accidentRow = await AccidentRepository.selectAccidentRow(accidentId) as ResultSetHeader[];
 
         const accidnetPictureRows = await AccidentRepository.selectAccidentPictureRow(accidentId) as ResultSetHeader[];
-        
+
         const accidentLocation:LocationObject = {
             x : accidentRow[0].x,
             y : accidentRow[0].y
@@ -68,6 +68,30 @@ exports.readAccident =async (accidentId:number) => {
         return resData;
         
     } catch (error) {
+        const resData: ApiResponse = {
+            ok: false,
+            msg: "INTERNAL SERVER ERROR"
+        }
+        return resData;
+    }
+}
+
+exports.readAccidentOnTheMap = async (locationObject:LocationObject) => {
+    try{
+    const accidentRows = await AccidentRepository.selectAccidentOnTheMapRow(locationObject) as ResultSetHeader[];
+    
+    console.log(accidentRows)
+
+    const data:AccidentLocationObject[] = []
+
+    const resData = {
+        ok: true,
+        msg: "Successfully Get",
+        data: data
+    }
+    return resData;
+    
+    }  catch (error) {
         const resData: ApiResponse = {
             ok: false,
             msg: "INTERNAL SERVER ERROR"

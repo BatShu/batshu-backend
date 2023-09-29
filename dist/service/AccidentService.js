@@ -133,3 +133,31 @@ exports.readAccident = function (accidentId) { return __awaiter(void 0, void 0, 
         }
     });
 }); };
+exports.readAccidentOnTheMap = function (locationObject) { return __awaiter(void 0, void 0, void 0, function () {
+    var accidentRows, data, resData, error_3, resData;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, AccidentRepository_1.default.selectAccidentOnTheMapRow(locationObject)];
+            case 1:
+                accidentRows = _a.sent();
+                console.log(accidentRows);
+                data = [];
+                resData = {
+                    ok: true,
+                    msg: "Successfully Get",
+                    data: data
+                };
+                return [2 /*return*/, resData];
+            case 2:
+                error_3 = _a.sent();
+                resData = {
+                    ok: false,
+                    msg: "INTERNAL SERVER ERROR"
+                };
+                return [2 /*return*/, resData];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };

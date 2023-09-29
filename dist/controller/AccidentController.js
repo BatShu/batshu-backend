@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAccident = exports.postAccident = void 0;
+exports.getAccident = exports.postAccident = exports.getAccidentOnTheMap = void 0;
 var accidentService = require("../service/AccidentService");
 var crypto = require('crypto');
 var sharp = require('sharp');
@@ -85,6 +85,39 @@ var s3 = new client_s3_1.S3Client(s3params);
 //   "licensePlate" : "13어 1342",
 //   "bounty" : 400000
 // }
+var getAccidentOnTheMap = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, x, y, radius, xCoord, yCoord, radiusValue, Obj, resData, err_1, resData;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                _a = req.query, x = _a.x, y = _a.y, radius = _a.radius;
+                xCoord = parseFloat(x);
+                yCoord = parseFloat(y);
+                radiusValue = parseFloat(radius);
+                if (isNaN(xCoord) || isNaN(yCoord) || isNaN(radiusValue)) {
+                    return [2 /*return*/, res.status(400).json({ ok: false, msg: 'Invalid values for x, y, or radius' })];
+                }
+                Obj = { x: xCoord, y: yCoord, radius: radiusValue };
+                return [4 /*yield*/, accidentService.readAccidentOnTheMap(Obj)];
+            case 1:
+                resData = _b.sent();
+                res.status(200).json(resData);
+                return [3 /*break*/, 3];
+            case 2:
+                err_1 = _b.sent();
+                console.error('Error:', err_1);
+                resData = {
+                    ok: false,
+                    msg: "INTERNAL SERVER ERROR"
+                };
+                res.status(500).json(resData);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAccidentOnTheMap = getAccidentOnTheMap;
 var postAccident = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var images, uid, pictureUrl, _i, images_1, img, fileName, buffer, params, command, passedData, resData, error_1, resData;
     return __generator(this, function (_a) {
@@ -176,4 +209,4 @@ var getAccident = function (req, res) { return __awaiter(void 0, void 0, void 0,
     });
 }); };
 exports.getAccident = getAccident;
-exports.default = { postAccident: exports.postAccident, getAccident: exports.getAccident };
+exports.default = { getAccidentOnTheMap: exports.getAccidentOnTheMap, postAccident: exports.postAccident, getAccident: exports.getAccident };
