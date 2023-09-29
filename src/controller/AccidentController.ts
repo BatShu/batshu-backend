@@ -111,6 +111,10 @@ const s3 = new S3Client(s3params);
 //   "bounty" : 400000
 // }
 
+export const getAccidentOnTheMap = async (req:CustomRequest, res: Response) => {
+  
+}
+
 export const postAccident = async (req: CustomRequest, res: Response) => {
     try {
       if (typeof req.uid === 'string') {
@@ -179,4 +183,4 @@ export const getAccident = async (req:Request, res: Response) => {
   }
 }
 
-export default { postAccident, getAccident };
+export default { getAccidentOnTheMap, postAccident, getAccident };
