@@ -86,5 +86,28 @@ export const insertAccidentPictureRow = async (data:AccidentPicture):Promise<voi
     connection.release();
 }
 
+export const selectAccidentOnTheMapRow = async (locationObject:LocationObject) => {
+  try{
+    const connection = await pool.getConnection();
 
-export default { insertAccidentRow, insertAccidentPictureRow, selectAccidentRow, selectAccidentPictureRow } ;
+    const accidentSelectQuery: string = `
+      SELECT id, ST_X(accident_location) AS x, ST_Y(accident_location) AS y
+      FROM accident
+      WHERE ST_Distance_Sphere(
+        accident_location,
+        ST_GeomFromText('POINT(${locationObject.x} ${locationObject.y})')
+      ) <= ?;`;
+    
+    const accidentRows = await connection.execute(accidentSelectQuery, [
+      locationObject.radius
+    ])
+
+    connection.release();
+    return accidentRows[0];
+  } catch (err) {
+    return err;
+  }
+}
+
+
+export default { insertAccidentRow, insertAccidentPictureRow, selectAccidentRow, selectAccidentPictureRow, selectAccidentOnTheMapRow } ;

@@ -12,8 +12,9 @@ import dotenv from "dotenv";
 
 declare global {
   interface LocationObject {
-    x : string;
-    y : string;
+    x : number;
+    y : number;
+    radius? : number;
   }
 
   interface Accident {
@@ -34,6 +35,11 @@ declare global {
       accidentId : number;
   }
 
+  interface AccidentLocationObject {
+    accidentId : number;
+    accidentLocation : LocationObject
+  }
+
   interface imageData {
     fieldname: string;
     originalname: string;
@@ -44,8 +50,10 @@ declare global {
   }
 
   interface ResultSetHeader {
-    y: string;
-    x: string;
+    id: number;
+    y: number;
+    x: number;
+    radius: number;
     bounty: number;
     license_plate: string;
     car_model_name: string;
@@ -111,10 +119,39 @@ const s3 = new S3Client(s3params);
 //   "bounty" : 400000
 // }
 
+export const getAccidentOnTheMap = async (req:CustomRequest, res: Response) => {
+  try {
+    const { x, y, radius } = req.query;
+
+    const xCoord:number = parseFloat(x as string);
+    const yCoord:number = parseFloat(y as string);
+    const radiusValue:number = parseFloat(radius as string);
+
+
+    if (isNaN(xCoord) || isNaN(yCoord) || isNaN(radiusValue)) {
+      return res.status(400).json({ ok: false, msg: 'Invalid values for x, y, or radius' });
+    }
+
+    const Obj:LocationObject = { x: xCoord, y: yCoord, radius: radiusValue };
+    
+    const resData:ApiResponse = await accidentService.readAccidentOnTheMap(Obj);
+
+    res.status(200).json(resData);
+
+  } catch (err) {
+    console.error('Error:', err);
+    const resData: ApiResponse = {
+        ok: false,
+        msg: "INTERNAL SERVER ERROR"
+    }
+    res.status(500).json(resData);
+  }
+  
+}
+
 export const postAccident = async (req: CustomRequest, res: Response) => {
     try {
       if (typeof req.uid === 'string') {
-        // console.log("req.body",req.body);
         const images:imageData[] = req.files as Express.Multer.File[];
         
         const uid:string = req.uid;
@@ -179,4 +216,4 @@ export const getAccident = async (req:Request, res: Response) => {
   }
 }
 
-export default { postAccident, getAccident };
+export default { getAccidentOnTheMap, postAccident, getAccident };
