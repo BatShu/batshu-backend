@@ -134,7 +134,7 @@ exports.readAccident = function (accidentId) { return __awaiter(void 0, void 0, 
     });
 }); };
 exports.readAccidentOnTheMap = function (locationObject) { return __awaiter(void 0, void 0, void 0, function () {
-    var accidentRows, data, resData, error_3, resData;
+    var accidentRows, data, _i, accidentRows_1, accidentRow, accidentLocationObject, resData, error_3, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -142,8 +142,16 @@ exports.readAccidentOnTheMap = function (locationObject) { return __awaiter(void
                 return [4 /*yield*/, AccidentRepository_1.default.selectAccidentOnTheMapRow(locationObject)];
             case 1:
                 accidentRows = _a.sent();
-                console.log(accidentRows);
                 data = [];
+                for (_i = 0, accidentRows_1 = accidentRows; _i < accidentRows_1.length; _i++) {
+                    accidentRow = accidentRows_1[_i];
+                    accidentLocationObject = {
+                        x: accidentRow.x,
+                        y: accidentRow.y,
+                        accidentId: accidentRow.id
+                    };
+                    data.push(accidentLocationObject);
+                }
                 resData = {
                     ok: true,
                     msg: "Successfully Get",

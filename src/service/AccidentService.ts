@@ -80,17 +80,24 @@ exports.readAccidentOnTheMap = async (locationObject:LocationObject) => {
     try{
     const accidentRows = await AccidentRepository.selectAccidentOnTheMapRow(locationObject) as ResultSetHeader[];
     
-    console.log(accidentRows)
-
     const data:AccidentLocationObject[] = []
+
+    for (let accidentRow of accidentRows){
+        const accidentLocationObject:AccidentLocationObject = {
+            x: accidentRow.x,
+            y: accidentRow.y,
+            accidentId: accidentRow.id
+        };
+        data.push(accidentLocationObject);
+    }
 
     const resData = {
         ok: true,
         msg: "Successfully Get",
         data: data
-    }
+    } 
     return resData;
-    
+
     }  catch (error) {
         const resData: ApiResponse = {
             ok: false,

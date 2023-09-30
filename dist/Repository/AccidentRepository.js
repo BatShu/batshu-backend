@@ -128,23 +128,26 @@ var insertAccidentPictureRow = function (data) { return __awaiter(void 0, void 0
 }); };
 exports.insertAccidentPictureRow = insertAccidentPictureRow;
 var selectAccidentOnTheMapRow = function (locationObject) { return __awaiter(void 0, void 0, void 0, function () {
-    var connection, accidentSelectQuery, accidentRows;
+    var connection, accidentSelectQuery, accidentRows, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, database_1.default.getConnection()];
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, database_1.default.getConnection()];
             case 1:
                 connection = _a.sent();
-                accidentSelectQuery = "\n    SELECT id, ST_X(accident_location) AS x, ST_Y(accident_location) AS y\n    FROM accident\n    WHERE ST_Distance_Sphere(\n      accident_location,\n      ST_GeomFromText('POINT(? ?)')) <= ?;";
+                accidentSelectQuery = "\n      SELECT id, ST_X(accident_location) AS x, ST_Y(accident_location) AS y\n      FROM accident\n      WHERE ST_Distance_Sphere(\n        accident_location,\n        ST_GeomFromText('POINT(".concat(locationObject.x, " ").concat(locationObject.y, ")')\n      ) <= ?;");
                 return [4 /*yield*/, connection.execute(accidentSelectQuery, [
-                        locationObject.x,
-                        locationObject.y,
                         locationObject.radius
                     ])];
             case 2:
                 accidentRows = _a.sent();
-                console.log("3");
                 connection.release();
                 return [2 /*return*/, accidentRows[0]];
+            case 3:
+                err_1 = _a.sent();
+                return [2 /*return*/, err_1];
+            case 4: return [2 /*return*/];
         }
     });
 }); };

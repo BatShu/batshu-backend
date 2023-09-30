@@ -51,6 +51,7 @@ declare global {
   }
 
   interface ResultSetHeader {
+    id: number;
     y: number;
     x: number;
     radius: number;
@@ -152,7 +153,6 @@ export const getAccidentOnTheMap = async (req:CustomRequest, res: Response) => {
 export const postAccident = async (req: CustomRequest, res: Response) => {
     try {
       if (typeof req.uid === 'string') {
-        // console.log("req.body",req.body);
         const images:imageData[] = req.files as Express.Multer.File[];
         
         const uid:string = req.uid;
