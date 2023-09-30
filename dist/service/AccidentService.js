@@ -134,7 +134,7 @@ exports.readAccident = function (accidentId) { return __awaiter(void 0, void 0, 
     });
 }); };
 exports.readAccidentOnTheMap = function (locationObject) { return __awaiter(void 0, void 0, void 0, function () {
-    var accidentRows, data, _i, accidentRows_1, accidentRow, accidentLocationObject, resData, error_3, resData;
+    var accidentRows, data, _i, accidentRows_1, accidentRow, location_1, accidentLocationObject, resData, error_3, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -145,10 +145,13 @@ exports.readAccidentOnTheMap = function (locationObject) { return __awaiter(void
                 data = [];
                 for (_i = 0, accidentRows_1 = accidentRows; _i < accidentRows_1.length; _i++) {
                     accidentRow = accidentRows_1[_i];
-                    accidentLocationObject = {
+                    location_1 = {
                         x: accidentRow.x,
-                        y: accidentRow.y,
-                        accidentId: accidentRow.id
+                        y: accidentRow.y
+                    };
+                    accidentLocationObject = {
+                        accidentId: accidentRow.id,
+                        accidentLocation: location_1
                     };
                     data.push(accidentLocationObject);
                 }

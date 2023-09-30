@@ -37,8 +37,7 @@ declare global {
 
   interface AccidentLocationObject {
     accidentId : number;
-    x : number;
-    y : number;
+    accidentLocation : LocationObject
   }
 
   interface imageData {

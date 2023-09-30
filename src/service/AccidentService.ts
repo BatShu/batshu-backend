@@ -81,12 +81,15 @@ exports.readAccidentOnTheMap = async (locationObject:LocationObject) => {
     const accidentRows = await AccidentRepository.selectAccidentOnTheMapRow(locationObject) as ResultSetHeader[];
     
     const data:AccidentLocationObject[] = []
-
+    
     for (let accidentRow of accidentRows){
+        const location:LocationObject = {
+            x : accidentRow.x,
+            y : accidentRow.y
+        }
         const accidentLocationObject:AccidentLocationObject = {
-            x: accidentRow.x,
-            y: accidentRow.y,
-            accidentId: accidentRow.id
+            accidentId: accidentRow.id,
+            accidentLocation: location
         };
         data.push(accidentLocationObject);
     }
