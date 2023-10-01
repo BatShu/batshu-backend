@@ -1,14 +1,15 @@
+require("dotenv").config();
 import express, {Express, Request, Response } from "express";
 import bodyParser from 'body-parser';
 import AccidentRouter from "./routers/AccidentRouter.js";
-import ObserveRouter from "./routers/AccidentRouter.js";
+import ObserveRouter from "./routers/ObserveRouter.js";
 import UserRouter from "./routers/UserRouter.js";
 
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json()); 
+app.use(bodyParser.json());   
 
 
 
