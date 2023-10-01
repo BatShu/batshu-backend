@@ -36,7 +36,51 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getObserve = void 0;
+exports.getObserve = exports.registerObserve = exports.mosaicProcessing = void 0;
+var child_process_1 = require("child_process");
+var mosaicProcessing = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var uploadedVideo, uploadedVideoOriginalName, outputFileName, scriptDirectory, mosaicCommand, childProcess, resData;
+    return __generator(this, function (_a) {
+        try {
+            uploadedVideo = req.file;
+            uploadedVideoOriginalName = uploadedVideo.originalname;
+            outputFileName = 'blurred_video.mp4';
+            scriptDirectory = '/Users/jincheol/Desktop/BatShu-backend/src/DashcamCleaner';
+            // 원하는 디렉토리로 이동
+            process.chdir(scriptDirectory);
+            mosaicCommand = "python cli.py -i ".concat(uploadedVideoOriginalName, " -o ").concat(outputFileName, " -w 360p_nano_v8.pt");
+            childProcess = (0, child_process_1.spawn)(mosaicCommand, { shell: true });
+            // stdout 스트림 데이터를 콘솔에 출력
+            childProcess.stdout.on('data', function (data) {
+                console.log("stdout: ".concat(data));
+            });
+            childProcess.on('close', function (code) {
+                if (code === 0) {
+                    console.log('Command execution successful');
+                }
+                else {
+                    console.error("Command execution failed with code ".concat(code));
+                }
+            });
+        }
+        catch (error) {
+            console.error('Error:', error);
+            resData = {
+                ok: false,
+                msg: "INTERNAL SERVER ERROR"
+            };
+            res.status(500).json(resData);
+        }
+        return [2 /*return*/];
+    });
+}); };
+exports.mosaicProcessing = mosaicProcessing;
+var registerObserve = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2 /*return*/];
+    });
+}); };
+exports.registerObserve = registerObserve;
 var getObserve = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var resData;
     return __generator(this, function (_a) {
