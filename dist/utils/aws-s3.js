@@ -26,7 +26,7 @@ exports.s3Upload = multer({
         acl: 'private',
         contentType: multerS3.AUTO_CONTENT_TYPE,
         key: function (req, file, cb) {
-            cb(null, "".concat(Date.now(), "_").concat(path.basename(file.originalname))); // original 폴더안에다 파일을 저장
+            cb(null, "".concat(Date.now(), "_").concat(path.basename(file.originalname)));
         },
     }),
 });
