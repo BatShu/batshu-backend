@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
-import { spawn } from "child_process";
+import { exec } from 'child_process'
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 
 declare global {
   interface LocationObject {
-    x : string;
-    y : string;
+    x : number;
+    y : number;
+    radius? : number;
   }
 
   interface video {
@@ -37,7 +38,7 @@ export const mosaicProcessing = async (req:Request, res: Response) => {
 
     //console.log(process.cwd()); -> 현재 디렉토리 확인
 
-
+    
 
 
     // Section 2. 동영상 모자이크 
@@ -50,29 +51,22 @@ export const mosaicProcessing = async (req:Request, res: Response) => {
     // 원하는 디렉토리로 이동
     process.chdir(scriptDirectory);
 
+    const mosaicCommand = `python cli.py -i ${uploadedVideoOriginalName} -o ${outputFileName} -w 720p_nano_v8.pt -bw 3 -t 0.6`;
 
-    const mosaicCommand = `python cli.py -i ${uploadedVideoOriginalName} -o ${outputFileName} -w 360p_nano_v8.pt`;
-
-    const childProcess = spawn(mosaicCommand, { shell: true });
-
-
-    // stdout 스트림 데이터를 콘솔에 출력
-    childProcess.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`);
-    });
-  
-
-    childProcess.on('close', (code) => {
-      if (code === 0) {
-        
-        // TODO : 동영상 파일 이름 / 상태 (blurringDone) -> UPDATE
-
-        console.log('Command execution successful');
-
-      } else {
-        console.error(`Command execution failed with code ${code}`);
+    exec(mosaicCommand, (error, stdout, stderr) => {
+    
+      if (error) {
+        console.log(`error: ${error.message}`);
       }
-    });
+      else if (stderr) {
+        console.log(`stderr: ${stderr}`);
+      }
+      else {
+        // TODO : 동영상 파일 이름 / 상태 (blurringDone) -> UPDATE
+        console.log(stdout);
+      }
+    })
+        
 
     // Section 3. S3 INPUT BUCKET에 모자이크된 동영상 업로드
 

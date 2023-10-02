@@ -43,15 +43,12 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Set up environment variables
+      - name: Setting .env
         run: |
           echo "PROJECT_ID=$PROJECT_ID" >> .env
           echo "PRIVATE_KEY=\"$PRIVATE_KEY\"" >> .env
           echo "CLIENT_EMAIL=$CLIENT_EMAIL" >> .env
-        env:
-          PROJECT_ID: ${{ secrets.PROJECT_ID }}
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
+          cat .env
 
       - name: Build and push
         id: docker_build
