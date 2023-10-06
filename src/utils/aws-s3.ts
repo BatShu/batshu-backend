@@ -1,8 +1,9 @@
 import express, {Express, Request, Response } from "express";
 import dotenv from "dotenv";
 dotenv.config();
+import multer, { FileFilterCallback } from 'multer'; 
 
-const multer = require('multer');
+//const multer = require('multer');
 const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const path = require('path');
@@ -32,6 +33,23 @@ export const s3Upload = multer({
      },
   }),
 });
+
+
+
+
+// 확장자 필터 함수 정의
+export const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+  const allowedExtensions = ["mp4", "wmv", "mov", "avi", "dat"];
+  const fileExtension = String(file.originalname.split('.').pop()); // 문자열로 형변환
+
+  if (allowedExtensions.includes(fileExtension)) {
+    // 허용된 확장자인 경우
+    cb(null, true); // 파일 허용
+  } else {
+    // 허용되지 않은 확장자인 경우
+    cb(null, false); // 파일 거부
+  }
+};
 
 
 

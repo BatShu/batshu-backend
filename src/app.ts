@@ -12,7 +12,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());   
 
 
-
 app.use("/api/user", UserRouter);
 app.use("/api/accident", AccidentRouter);
 app.use("/api/observe", ObserveRouter);
@@ -24,6 +23,7 @@ const handleListening = () =>
   console.log(`✅Server listenting on http://localhost:${PORT} 🚀 `);
 
 app.listen(PORT, handleListening);
+
 
 
 export default app;

@@ -9,6 +9,7 @@ const AWS = require('aws-sdk');
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 import dotenv from "dotenv";
+import pool from "../config/database";
 
 declare global {
   interface LocationObject {

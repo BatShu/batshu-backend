@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { exec } from 'child_process'
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-
+import { insertVideoStatus, findVideoId, updateVideoStautsToBlurringStart, updateVideoStautsToBlurringDone } from "../service/ObserveService";
 
 declare global {
   interface LocationObject {
@@ -25,35 +25,70 @@ declare global {
 }
 
 
-
-export const mosaicProcessing = async (req:Request, res: Response) => {
+export const uploadVideo = async (req:Request, res: Response, next: NextFunction) => {
+  
   try {
 
-    // Section 1. 동영상 업로드 
     const uploadedVideo: video = req.file as Express.Multer.File;
-    // TODO :  동영상 파일 이름 / 상태 (uploaded) -> INSERT
-
+  
     const uploadedVideoOriginalName: string = uploadedVideo.originalname;
+  
+    const updateUploadedVideoStatus = await insertVideoStatus(uploadedVideoOriginalName);
+   
+    const videoId  = await findVideoId(uploadedVideoOriginalName);
+  
+    if (!videoId) {
+      return res.status(500).json({
+        ok: false,
+        msg: "해당 비디오가 존재하지 않습니다."
+      })
+    } else { 
+
+      next();
+      
+      return res.status(200).json({
+        ok: true,
+        msg: "This is uploaded videoId",
+        videoId: videoId,      
+      })        
+
+    }
+
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      ok: false,
+      msg: "INTERNAL SERVER ERROR"
+    });
+
+  }
+
+}
+
+
+
+export const mosaicProcessing = async (req:Request, res: Response) => {
+
+  try {
+    
+    const uploadedVideo: video = req.file as Express.Multer.File;
+  
+    const uploadedVideoOriginalName: string = uploadedVideo.originalname;
+
     const outputFileName = 'blurred_video.mp4'
 
-    //console.log(process.cwd()); -> 현재 디렉토리 확인
+   //const scriptDirectory = '/Users/jincheol/Desktop/BatShu-backend/src/DashcamCleaner';
+   const scriptDirectory = './src/DashcamCleaner';
 
-    
-
-
-    // Section 2. 동영상 모자이크 
-
-    // TODO : 동영상 파일 이름 / 상태 (blurringStart) -> UPDATE
-
-    // 스크립트 있는 폴더 경로
-    const scriptDirectory = '/Users/jincheol/Desktop/BatShu-backend/src/DashcamCleaner';
-
-    // 원하는 디렉토리로 이동
     process.chdir(scriptDirectory);
 
     const mosaicCommand = `python cli.py -i ${uploadedVideoOriginalName} -o ${outputFileName} -w 720p_nano_v8.pt -bw 3 -t 0.6`;
+    
+    await updateVideoStautsToBlurringStart(uploadedVideoOriginalName);
 
-    exec(mosaicCommand, (error, stdout, stderr) => {
+    // execute child_process to do processig of mosaic
+    const blurringDoneVideo = exec(mosaicCommand, async (error, stdout, stderr) => {
     
       if (error) {
         console.log(`error: ${error.message}`);
@@ -62,15 +97,15 @@ export const mosaicProcessing = async (req:Request, res: Response) => {
         console.log(`stderr: ${stderr}`);
       }
       else {
-        // TODO : 동영상 파일 이름 / 상태 (blurringDone) -> UPDATE
-        console.log(stdout);
+
+        console.log('stdout:', stdout); // 외부 명령어의 표준 출력을 콘솔에 출력
       }
+
+      if (blurringDoneVideo) {
+        await updateVideoStautsToBlurringDone(uploadedVideoOriginalName);
+      }
+
     })
-        
-
-    // Section 3. S3 INPUT BUCKET에 모자이크된 동영상 업로드
-
-
 
   } catch (error) {
     console.error('Error:', error);
