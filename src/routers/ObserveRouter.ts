@@ -10,9 +10,9 @@ const ObserverRouter = express.Router();
 const observeVideoUpload = multer({ storage: localStorage, fileFilter: fileFilter });
 
 
-ObserverRouter.route('/video').post(observeVideoUpload.single("video"), uploadVideo,mosaicProcessing);
+ObserverRouter.route('/video').post(tokenToUid, observeVideoUpload.single("video"), uploadVideo,mosaicProcessing);
 
-ObserverRouter.route('/register').post(registerObserve);
+ObserverRouter.route('/register').post(tokenToUid, registerObserve);
 
 ObserverRouter.route('/:observeId').get(tokenToUid,getObserve);
 

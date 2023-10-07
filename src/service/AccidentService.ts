@@ -32,9 +32,12 @@ exports.createAccident = async (data:Accident) => {
 
 exports.readAccident =async (accidentId:number) => {
     try{
-        const accidentRow = await AccidentRepository.selectAccidentRow(accidentId) as ResultSetHeader[];
+        // as a ResultSetHeader[] 제거
+        const accidentRow = await AccidentRepository.selectAccidentRow(accidentId)
 
         const accidnetPictureRows = await AccidentRepository.selectAccidentPictureRow(accidentId) as ResultSetHeader[];
+
+        
 
         const accidentLocation:LocationObject = {
             x : accidentRow[0].x,

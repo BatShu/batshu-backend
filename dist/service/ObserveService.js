@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateVideoStautsToBlurringDone = exports.updateVideoStautsToBlurringStart = exports.findVideoId = exports.insertVideoStatus = void 0;
+exports.createObserve = exports.updateVideoStautsToBlurringDone = exports.updateVideoStautsToBlurringStart = exports.findVideoId = exports.insertVideoStatus = void 0;
 var database_1 = __importDefault(require("../config/database"));
 var ObserveRepository_1 = require("../Repository/ObserveRepository");
 var insertVideoStatus = function (uploadedVideoOriginalName) { return __awaiter(void 0, void 0, void 0, function () {
@@ -106,3 +106,19 @@ var updateVideoStautsToBlurringDone = function (uploadedVideoOriginalName) { ret
     });
 }); };
 exports.updateVideoStautsToBlurringDone = updateVideoStautsToBlurringDone;
+var createObserve = function (registerObserveData) { return __awaiter(void 0, void 0, void 0, function () {
+    var conneciton, observeData;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, database_1.default.getConnection()];
+            case 1:
+                conneciton = _a.sent();
+                return [4 /*yield*/, (0, ObserveRepository_1.createObserveData)(conneciton, registerObserveData)];
+            case 2:
+                observeData = _a.sent();
+                conneciton.release();
+                return [2 /*return*/, observeData];
+        }
+    });
+}); };
+exports.createObserve = createObserve;

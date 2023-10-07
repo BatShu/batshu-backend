@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { admin } from "./firebase";
 
 
@@ -23,7 +23,7 @@ declare global {
         data?: UserInfo;
     }
 
-    interface CustomRequest extends Request {
+    export interface CustomRequest extends Request {
         uid?: string; // 'uid' 프로퍼티를 추가합니다.
     }
   }

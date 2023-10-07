@@ -1,5 +1,6 @@
 import pool from "../config/database"
-import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone } from "../Repository/ObserveRepository"
+import { registerObserveRequest } from "../interface/observe";
+import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData } from "../Repository/ObserveRepository"
 
 
 export const insertVideoStatus = async (uploadedVideoOriginalName: string) => {
@@ -36,3 +37,12 @@ export const updateVideoStautsToBlurringDone = async (uploadedVideoOriginalName:
 
     return updateUploadedVideoStatus;
 }
+
+export const createObserve = async (registerObserveData : registerObserveRequest) => {
+    const conneciton = await pool.getConnection();
+    const observeData = await createObserveData(conneciton, registerObserveData);
+    conneciton.release();
+
+
+    return observeData;
+}   

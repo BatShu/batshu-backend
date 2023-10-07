@@ -1,4 +1,6 @@
-import { PoolConnection } from "mysql2/promise";
+import { FieldPacket,RowDataPacket, PoolConnection } from "mysql2/promise";
+import { registerObserveRequest } from "../interface/observe"
+
 
 // 비디오 업로드.
 export const updateVideoStatus = async(connection: PoolConnection, uploadedVideoOriginalName:string) => {
@@ -29,3 +31,22 @@ export const updateVideoStatusWithBlurringDone = async(connection: PoolConnectio
 
     return updateVideoStatusWithBlurringDoneRows;
 }
+
+export const createObserveData = async(connection: PoolConnection, registerObserveData : registerObserveRequest) => {
+    const createObserveQuery = `INSERT INTO observe (content_title, content_description, video_id, observe_start_time, observe_end_time, observe_location, created_at, uid) VALUES (?, ?, ?, ?, ?, POINT(?, ?), NOW(), ?);`;
+    
+    const results = await connection.query(createObserveQuery, [
+          registerObserveData.contentTitle,
+          registerObserveData.contentDescription,
+          registerObserveData.videoId,
+          registerObserveData.observeTime[0],
+          registerObserveData.observeTime[1],
+          registerObserveData.accidentLocation.x,
+          registerObserveData.accidentLocation.y,
+          registerObserveData.uid,
+        ]);
+
+        console.log(results);
+ 
+
+};
