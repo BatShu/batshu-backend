@@ -1,28 +1,21 @@
 import { NextFunction, Request, Response } from "express";
 import { exec } from 'child_process'
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { insertVideoStatus, findVideoId, updateVideoStautsToBlurringStart, updateVideoStautsToBlurringDone } from "../service/ObserveService";
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3, accessKey, secretAccessKey, bucketRegion } from "../utils/aws-s3";
+import { registerObserveRequest, reigsterObserveResponse, video } from "../interface/observe";
+import CustomRequest from "../auth/auth";
+import { insertVideoStatus, findVideoId, updateVideoStautsToBlurringStart, updateVideoStautsToBlurringDone, createObserve } from "../service/ObserveService";
 
-declare global {
-  interface LocationObject {
-    x : number;
-    y : number;
-    radius? : number;
-  }
+const AWS = require('aws-sdk');
+const path = require('path');
 
-  interface video {
+AWS.config.update({
+  accessKeyId: accessKey,       
+  secretAccessKey: secretAccessKey,  
+  region: bucketRegion,             
+});
 
-    fieldname: string;
-    originalname: string;
-    encoding: string;
-    mimetype: string;
-    destination: string;
-    path: string;
-    filename: string;
-    size: number;
-  }
-
-}
+const s3 = new AWS.S3();
 
 
 export const uploadVideo = async (req:Request, res: Response, next: NextFunction) => {
@@ -76,14 +69,15 @@ export const mosaicProcessing = async (req:Request, res: Response) => {
   
     const uploadedVideoOriginalName: string = uploadedVideo.originalname;
 
-    const outputFileName = 'blurred_video.mp4'
+    const fileExtension = path.extname(uploadedVideoOriginalName);
 
-   //const scriptDirectory = '/Users/jincheol/Desktop/BatShu-backend/src/DashcamCleaner';
+    const outputFileName = `blurred_video_${Date.now()}${fileExtension}`;
+
    const scriptDirectory = './src/DashcamCleaner';
 
     process.chdir(scriptDirectory);
 
-    const mosaicCommand = `python cli.py -i ${uploadedVideoOriginalName} -o ${outputFileName} -w 720p_nano_v8.pt -bw 3 -t 0.6`;
+    const mosaicCommand = `python cli.py -i ${uploadedVideoOriginalName} -o ${outputFileName} -w 360p_nano_v8.pt`
     
     await updateVideoStautsToBlurringStart(uploadedVideoOriginalName);
 
@@ -97,12 +91,38 @@ export const mosaicProcessing = async (req:Request, res: Response) => {
         console.log(`stderr: ${stderr}`);
       }
       else {
-
-        console.log('stdout:', stdout); // 외부 명령어의 표준 출력을 콘솔에 출력
+        
+        console.log('stdout:', stdout); 
       }
 
       if (blurringDoneVideo) {
         await updateVideoStautsToBlurringDone(uploadedVideoOriginalName);
+        
+        const uploadParams = {
+          Bucket: 'batshu-observe-input', 
+          Key: outputFileName, 
+          Body: outputFileName,
+        };
+
+        try {
+          const command = new PutObjectCommand(uploadParams);
+          await S3.send(command);
+
+
+          // get S3 video url
+          const params = { Bucket: 'batshu-observe-input', Key: outputFileName };
+
+
+          const url = await s3.getSignedUrlPromise('getObject', params);
+          
+          //TODO: url insert to database
+
+        } catch (error) {
+          console.log(error);
+        }
+        
+      } else {
+        console.log("blurringDoneVideo is not defined");
       }
 
     })
@@ -119,9 +139,50 @@ export const mosaicProcessing = async (req:Request, res: Response) => {
 
 
 
-export const registerObserve = async (req:Request, res: Response) => {
+export const registerObserve = async (req: CustomRequest, res: Response) => {
+
+  try {
+
+  if (typeof req.uid === 'string') {
+
+  const uid : string = req.uid;
+
+  const registerObserveData: registerObserveRequest = {
+
+    contentTitle: req.body.contentTitle,
+    contentDescription: req.body.contentDescription,
+    videoId: req.body.videoId,
+    observeTime: req.body.observeTime,
+    accidentLocation: req.body.observeLocation,
+    uid: uid,
+  
+  }
+
+  const registerObserveResult = await createObserve(registerObserveData);
+
+// const finalVideo = await findFinalVideoByVideoId(registerObserveData.videoId);
+
+    //TODO: add video url to response
+
+    // const resData: reigsterObserveResponse = {
+    //   ok: true,
+    //   msg: "Successfully reegister observe data",
+    //   videoUrl: findVideo,
+    //   thumbnailUrl: "",
+    //   createdAt: registerObserveResult.createdAt,
+    // }
 
 }
+  } catch(err) {
+    console.log(err);
+  }
+
+}
+
+
+
+//TODO: make function to get videoUrl by videoId
+
 
 export const getObserve = async (req:Request, res: Response) => {
     try{

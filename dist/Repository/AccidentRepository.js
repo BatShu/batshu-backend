@@ -53,8 +53,7 @@ var selectAccidentRow = function (accidentId) { return __awaiter(void 0, void 0,
                         accidentId
                     ])];
             case 2:
-                accidentRows = _a.sent();
-                console.log(accidentRows);
+                accidentRows = (_a.sent())[0];
                 connection.release();
                 return [2 /*return*/, accidentRows[0]];
         }

@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateVideoStatusWithBlurringDone = exports.updateVideoStatusWithBlurring = exports.findUploadedVideoId = exports.updateVideoStatus = void 0;
+exports.createObserveData = exports.updateVideoStatusWithBlurringDone = exports.updateVideoStatusWithBlurring = exports.findUploadedVideoId = exports.updateVideoStatus = void 0;
 // 비디오 업로드.
 var updateVideoStatus = function (connection, uploadedVideoOriginalName) { return __awaiter(void 0, void 0, void 0, function () {
     var updateVideoStatusQuery, updateVideoStatusRows;
@@ -94,3 +94,27 @@ var updateVideoStatusWithBlurringDone = function (connection, uploadedVideoOrigi
     });
 }); };
 exports.updateVideoStatusWithBlurringDone = updateVideoStatusWithBlurringDone;
+var createObserveData = function (connection, registerObserveData) { return __awaiter(void 0, void 0, void 0, function () {
+    var createObserveQuery, results;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                createObserveQuery = "INSERT INTO observe (content_title, content_description, video_id, observe_start_time, observe_end_time, observe_location, created_at, uid) VALUES (?, ?, ?, ?, ?, POINT(?, ?), NOW(), ?);";
+                return [4 /*yield*/, connection.query(createObserveQuery, [
+                        registerObserveData.contentTitle,
+                        registerObserveData.contentDescription,
+                        registerObserveData.videoId,
+                        registerObserveData.observeTime[0],
+                        registerObserveData.observeTime[1],
+                        registerObserveData.accidentLocation.x,
+                        registerObserveData.accidentLocation.y,
+                        registerObserveData.uid,
+                    ])];
+            case 1:
+                results = _a.sent();
+                console.log(results);
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.createObserveData = createObserveData;

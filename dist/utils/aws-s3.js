@@ -3,21 +3,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.localStorage = exports.fileFilter = exports.s3Upload = void 0;
+exports.localStorage = exports.fileFilter = exports.s3Upload = exports.S3 = exports.bucketRegion = exports.secretAccessKey = exports.accessKey = void 0;
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 var multer_1 = __importDefault(require("multer"));
-//const multer = require('multer');
+var client_s3_1 = require("@aws-sdk/client-s3");
 var AWS = require('aws-sdk');
 var multerS3 = require('multer-s3');
 var path = require('path');
-var accessKey = process.env.ACCESS_KEY;
-var secretAccessKey = process.env.SECRET_ACCESS_KEY;
-var bucketRegion = process.env.BUCKET_REGION;
+exports.accessKey = process.env.ACCESS_KEY;
+exports.secretAccessKey = process.env.SECRET_ACCESS_KEY;
+exports.bucketRegion = process.env.BUCKET_REGION;
+var s3params = {
+    credentials: {
+        accessKeyId: exports.accessKey,
+        secretAccessKey: exports.secretAccessKey
+    },
+    region: exports.bucketRegion
+};
+exports.S3 = new client_s3_1.S3Client(s3params);
 AWS.config.update({
-    accessKeyId: accessKey,
-    secretAccessKey: secretAccessKey,
-    region: bucketRegion,
+    accessKeyId: exports.accessKey,
+    secretAccessKey: exports.secretAccessKey,
+    region: exports.bucketRegion,
 });
 //* AWS S3 multer 설정
 exports.s3Upload = (0, multer_1.default)({

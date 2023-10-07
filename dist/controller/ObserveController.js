@@ -38,7 +38,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getObserve = exports.registerObserve = exports.mosaicProcessing = exports.uploadVideo = void 0;
 var child_process_1 = require("child_process");
+var client_s3_1 = require("@aws-sdk/client-s3");
+var aws_s3_1 = require("../utils/aws-s3");
 var ObserveService_1 = require("../service/ObserveService");
+var AWS = require('aws-sdk');
+var path = require('path');
+AWS.config.update({
+    accessKeyId: aws_s3_1.accessKey,
+    secretAccessKey: aws_s3_1.secretAccessKey,
+    region: aws_s3_1.bucketRegion,
+});
+var s3 = new AWS.S3();
 var uploadVideo = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var uploadedVideo, uploadedVideoOriginalName, updateUploadedVideoStatus, videoId, error_1;
     return __generator(this, function (_a) {
@@ -81,21 +91,23 @@ var uploadVideo = function (req, res, next) { return __awaiter(void 0, void 0, v
 }); };
 exports.uploadVideo = uploadVideo;
 var mosaicProcessing = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var uploadedVideo, uploadedVideoOriginalName_1, outputFileName, scriptDirectory, mosaicCommand, blurringDoneVideo_1, error_2, resData;
+    var uploadedVideo, uploadedVideoOriginalName_1, fileExtension, outputFileName_1, scriptDirectory, mosaicCommand, blurringDoneVideo_1, error_2, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 uploadedVideo = req.file;
                 uploadedVideoOriginalName_1 = uploadedVideo.originalname;
-                outputFileName = 'blurred_video.mp4';
+                fileExtension = path.extname(uploadedVideoOriginalName_1);
+                outputFileName_1 = "blurred_video_".concat(Date.now()).concat(fileExtension);
                 scriptDirectory = './src/DashcamCleaner';
                 process.chdir(scriptDirectory);
-                mosaicCommand = "python cli.py -i ".concat(uploadedVideoOriginalName_1, " -o ").concat(outputFileName, " -w 720p_nano_v8.pt -bw 3 -t 0.6");
+                mosaicCommand = "python cli.py -i ".concat(uploadedVideoOriginalName_1, " -o ").concat(outputFileName_1, " -w 360p_nano_v8.pt");
                 return [4 /*yield*/, (0, ObserveService_1.updateVideoStautsToBlurringStart)(uploadedVideoOriginalName_1)];
             case 1:
                 _a.sent();
                 blurringDoneVideo_1 = (0, child_process_1.exec)(mosaicCommand, function (error, stdout, stderr) { return __awaiter(void 0, void 0, void 0, function () {
+                    var uploadParams, command, params, url, error_3;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
@@ -106,14 +118,38 @@ var mosaicProcessing = function (req, res) { return __awaiter(void 0, void 0, vo
                                     console.log("stderr: ".concat(stderr));
                                 }
                                 else {
-                                    console.log('stdout:', stdout); // 외부 명령어의 표준 출력을 콘솔에 출력
+                                    console.log('stdout:', stdout);
                                 }
-                                if (!blurringDoneVideo_1) return [3 /*break*/, 2];
+                                if (!blurringDoneVideo_1) return [3 /*break*/, 7];
                                 return [4 /*yield*/, (0, ObserveService_1.updateVideoStautsToBlurringDone)(uploadedVideoOriginalName_1)];
                             case 1:
                                 _a.sent();
+                                uploadParams = {
+                                    Bucket: 'batshu-observe-input',
+                                    Key: outputFileName_1,
+                                    Body: outputFileName_1,
+                                };
                                 _a.label = 2;
-                            case 2: return [2 /*return*/];
+                            case 2:
+                                _a.trys.push([2, 5, , 6]);
+                                command = new client_s3_1.PutObjectCommand(uploadParams);
+                                return [4 /*yield*/, aws_s3_1.S3.send(command)];
+                            case 3:
+                                _a.sent();
+                                params = { Bucket: 'batshu-observe-input', Key: outputFileName_1 };
+                                return [4 /*yield*/, s3.getSignedUrlPromise('getObject', params)];
+                            case 4:
+                                url = _a.sent();
+                                return [3 /*break*/, 6];
+                            case 5:
+                                error_3 = _a.sent();
+                                console.log(error_3);
+                                return [3 /*break*/, 6];
+                            case 6: return [3 /*break*/, 8];
+                            case 7:
+                                console.log("blurringDoneVideo is not defined");
+                                _a.label = 8;
+                            case 8: return [2 /*return*/];
                         }
                     });
                 }); });
@@ -133,11 +169,36 @@ var mosaicProcessing = function (req, res) { return __awaiter(void 0, void 0, vo
 }); };
 exports.mosaicProcessing = mosaicProcessing;
 var registerObserve = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var uid, registerObserveData, registerObserveResult, err_1;
     return __generator(this, function (_a) {
-        return [2 /*return*/];
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                if (!(typeof req.uid === 'string')) return [3 /*break*/, 2];
+                uid = req.uid;
+                registerObserveData = {
+                    contentTitle: req.body.contentTitle,
+                    contentDescription: req.body.contentDescription,
+                    videoId: req.body.videoId,
+                    observeTime: req.body.observeTime,
+                    accidentLocation: req.body.observeLocation,
+                    uid: uid,
+                };
+                return [4 /*yield*/, (0, ObserveService_1.createObserve)(registerObserveData)];
+            case 1:
+                registerObserveResult = _a.sent();
+                _a.label = 2;
+            case 2: return [3 /*break*/, 4];
+            case 3:
+                err_1 = _a.sent();
+                console.log(err_1);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
     });
 }); };
 exports.registerObserve = registerObserve;
+//TODO: make function to get videoUrl by videoId
 var getObserve = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var resData;
     return __generator(this, function (_a) {

@@ -1,4 +1,6 @@
+import { FieldPacket, RowDataPacket } from "mysql2";
 import pool from "../config/database";
+import { getAccidentResponse } from "../interface/accident";
 
 export const selectAccidentRow =async (accidentId:number) => {
   const connection = await pool.getConnection();
@@ -19,10 +21,11 @@ export const selectAccidentRow =async (accidentId:number) => {
     from accident
     WHERE id = ?`;
 
-  const accidentRows = await connection.execute(accidentSelectQuery, [ 
+  const [accidentRows]: [getAccidentResponse[], FieldPacket[]] = await connection.execute<getAccidentResponse[]>(accidentSelectQuery, [ 
     accidentId
   ]);
   connection.release();
+
   return accidentRows[0];
 }
 

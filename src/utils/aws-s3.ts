@@ -1,17 +1,29 @@
 import express, {Express, Request, Response } from "express";
 import dotenv from "dotenv";
 dotenv.config();
-import multer, { FileFilterCallback } from 'multer'; 
+import multer from 'multer'; 
+import { S3Client } from '@aws-sdk/client-s3';
 
-//const multer = require('multer');
+
 const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const path = require('path');
 
 
-const accessKey:string = process.env.ACCESS_KEY!;
-const secretAccessKey:string = process.env.SECRET_ACCESS_KEY!;
-const bucketRegion:string = process.env.BUCKET_REGION!;
+export const accessKey:string = process.env.ACCESS_KEY!;
+export const secretAccessKey:string = process.env.SECRET_ACCESS_KEY!;
+export const bucketRegion:string = process.env.BUCKET_REGION!;
+
+
+const s3params = {
+  credentials: {
+    accessKeyId: accessKey,
+    secretAccessKey: secretAccessKey
+  },
+  region: bucketRegion
+}
+
+export const S3 = new S3Client(s3params);
 
 
 AWS.config.update({
@@ -33,7 +45,6 @@ export const s3Upload = multer({
      },
   }),
 });
-
 
 
 
