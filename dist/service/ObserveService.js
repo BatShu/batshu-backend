@@ -39,7 +39,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-
 exports.createObserve = exports.updateVideoStautsToBlurringDone = exports.updateVideoStautsToBlurringStart = exports.findVideoId = exports.insertVideoStatus = void 0;
 var database_1 = __importDefault(require("../config/database"));
 var ObserveRepository_1 = require("../Repository/ObserveRepository");
@@ -123,3 +122,42 @@ var createObserve = function (registerObserveData) { return __awaiter(void 0, vo
     });
 }); };
 exports.createObserve = createObserve;
+exports.readObserveOnTheMap = function (locationObject) { return __awaiter(void 0, void 0, void 0, function () {
+    var observeRows, data, _i, observeRows_1, observeRow, location_1, observeLocationObject, resData, error_1, resData;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, (0, ObserveRepository_1.selectObserveOnTheMapRow)(locationObject)];
+            case 1:
+                observeRows = _a.sent();
+                data = [];
+                for (_i = 0, observeRows_1 = observeRows; _i < observeRows_1.length; _i++) {
+                    observeRow = observeRows_1[_i];
+                    location_1 = {
+                        x: observeRow.x,
+                        y: observeRow.y
+                    };
+                    observeLocationObject = {
+                        observeId: observeRow.id,
+                        observeLocation: location_1
+                    };
+                    data.push(observeLocationObject);
+                }
+                resData = {
+                    ok: true,
+                    msg: "Successfully Get",
+                    data: data
+                };
+                return [2 /*return*/, resData];
+            case 2:
+                error_1 = _a.sent();
+                resData = {
+                    ok: false,
+                    msg: "INTERNAL SERVER ERROR"
+                };
+                return [2 /*return*/, resData];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };

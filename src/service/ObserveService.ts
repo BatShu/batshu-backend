@@ -49,7 +49,7 @@ export const createObserve = async (registerObserveData : registerObserveRequest
 
 exports.readObserveOnTheMap = async (locationObject:LocationObject) => {
     try{
-    const observeRows = await ObserveRepository.selectObserveOnTheMapRow(locationObject) as ResultSetHeader[];
+    const observeRows = await selectObserveOnTheMapRow(locationObject) as ResultSetHeader[];
     
     const data:ObserveLocationObject[] = []
     

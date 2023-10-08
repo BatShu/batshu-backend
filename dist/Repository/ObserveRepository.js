@@ -35,12 +35,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.selectObserveOnTheMapRow = void 0;
+exports.createObserveData = exports.updateVideoStatusWithBlurringDone = exports.updateVideoStatusWithBlurring = exports.findUploadedVideoId = exports.updateVideoStatus = exports.selectObserveOnTheMapRow = void 0;
 var database_1 = __importDefault(require("../config/database"));
 var selectObserveOnTheMapRow = function (locationObject) { return __awaiter(void 0, void 0, void 0, function () {
     var connection, observeSelectQuery, observeRows, err_1;
@@ -67,9 +66,6 @@ var selectObserveOnTheMapRow = function (locationObject) { return __awaiter(void
     });
 }); };
 exports.selectObserveOnTheMapRow = selectObserveOnTheMapRow;
-exports.default = { selectObserveOnTheMapRow: exports.selectObserveOnTheMapRow };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createObserveData = exports.updateVideoStatusWithBlurringDone = exports.updateVideoStatusWithBlurring = exports.findUploadedVideoId = exports.updateVideoStatus = void 0;
 // 비디오 업로드.
 var updateVideoStatus = function (connection, uploadedVideoOriginalName) { return __awaiter(void 0, void 0, void 0, function () {
     var updateVideoStatusQuery, updateVideoStatusRows;
@@ -151,4 +147,3 @@ var createObserveData = function (connection, registerObserveData) { return __aw
     });
 }); };
 exports.createObserveData = createObserveData;
-
