@@ -39,17 +39,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-
 exports.selectfindregisterObserveInfo = exports.createObserveData = exports.selectVideoInfo = exports.insertThumbnailUrlResult = exports.updateVideoUrlToOutputFileNameResult = exports.insertMosaicedVideoUrlResult = exports.updateVideoStatusWithBlurringDone = exports.updateVideoStatusWithBlurring = exports.findUploadedVideoId = exports.updateVideoStatus = exports.selectObserveOnTheMapRow = void 0;
-
 var database_1 = __importDefault(require("../config/database"));
 var selectObserveOnTheMapRow = function (locationObject) { return __awaiter(void 0, void 0, void 0, function () {
-    var connection, observeSelectQuery, observeRows, err_1;
+    var connection, observeSelectQuery, observeRows;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 3, , 4]);
-                return [4 /*yield*/, database_1.default.getConnection()];
+            case 0: return [4 /*yield*/, database_1.default.getConnection()];
             case 1:
                 connection = _a.sent();
                 observeSelectQuery = "\n        SELECT id, ST_X(observe_location) AS x, ST_Y(observe_location) AS y\n        FROM observe\n        WHERE ST_Distance_Sphere(\n          observe_location,\n          ST_GeomFromText('POINT(".concat(locationObject.x, " ").concat(locationObject.y, ")')\n        ) <= ?;");
@@ -60,10 +56,6 @@ var selectObserveOnTheMapRow = function (locationObject) { return __awaiter(void
                 observeRows = _a.sent();
                 connection.release();
                 return [2 /*return*/, observeRows[0]];
-            case 3:
-                err_1 = _a.sent();
-                return [2 /*return*/, err_1];
-            case 4: return [2 /*return*/];
         }
     });
 }); };
@@ -211,4 +203,17 @@ var createObserveData = function (connection, registerObserveData) { return __aw
     });
 }); };
 exports.createObserveData = createObserveData;
-
+var selectfindregisterObserveInfo = function (connection, videoId) { return __awaiter(void 0, void 0, void 0, function () {
+    var selectCreatedAtQuery, selectCreatedAtRows;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                selectCreatedAtQuery = "SELECT * FROM observe WHERE video_id = ?;";
+                return [4 /*yield*/, connection.query(selectCreatedAtQuery, [videoId])];
+            case 1:
+                selectCreatedAtRows = (_a.sent())[0];
+                return [2 /*return*/, selectCreatedAtRows];
+        }
+    });
+}); };
+exports.selectfindregisterObserveInfo = selectfindregisterObserveInfo;

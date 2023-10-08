@@ -1,11 +1,11 @@
 import { FieldPacket,RowDataPacket, PoolConnection } from "mysql2/promise";
 import { registerObserveRequest } from "../interface/observe"
+import { LocationRow } from "../interface/both";
 import pool from "../config/database";
 
-export const selectObserveOnTheMapRow = async (locationObject:LocationObject) => {
-    try{
+export const selectObserveOnTheMapRow = async (locationObject:LocationObject):Promise<LocationRow[]> => {
       const connection = await pool.getConnection();
-  
+
       const observeSelectQuery: string = `
         SELECT id, ST_X(observe_location) AS x, ST_Y(observe_location) AS y
         FROM observe
@@ -14,16 +14,13 @@ export const selectObserveOnTheMapRow = async (locationObject:LocationObject) =>
           ST_GeomFromText('POINT(${locationObject.x} ${locationObject.y})')
         ) <= ?;`;
       
-      const observeRows = await connection.execute(observeSelectQuery, [
+      const observeRows: [LocationRow[], FieldPacket[]] = await connection.execute(observeSelectQuery, [
         locationObject.radius
       ])
-  
+
       connection.release();
       return observeRows[0];
-    } catch (err) {
-      return err;
     }
-  }
 
 // 비디오 업로드.
 export const updateVideoStatus = async(connection: PoolConnection, uploadedVideoOriginalName:string) => {

@@ -1,8 +1,9 @@
-import { FieldPacket, RowDataPacket } from "mysql2";
+import { FieldPacket } from "mysql2";
 import pool from "../config/database";
-import { getAccidentResponse } from "../interface/accident";
+import { AccidentRow, AccidentPictureRow } from "../interface/accident";
+import { LocationRow } from "../interface/both";
 
-export const selectAccidentRow = async (accidentId:number) => {
+export const selectAccidentRow = async (accidentId:number):Promise<AccidentRow> => {
   const connection = await pool.getConnection();
 
   const accidentSelectQuery:string = 
@@ -21,29 +22,30 @@ export const selectAccidentRow = async (accidentId:number) => {
     from accident
     WHERE id = ?`;
 
-
-  const [accidentRows]: [getAccidentResponse[], FieldPacket[]] = await connection.execute<getAccidentResponse[]>(accidentSelectQuery, [ 
-
+  const [accidentRows]: [AccidentRow[], FieldPacket[]] = await connection.execute<AccidentRow[]>(accidentSelectQuery, [ 
     accidentId
   ]);
+
+  console.log(accidentRows)
   connection.release();
 
   return accidentRows[0];
 }
 
-export const selectAccidentPictureRow =async (accidentId:number) => {
+export const selectAccidentPictureRow = async (accidentId:number): Promise<AccidentPictureRow[]> => {
   const connection = await pool.getConnection();
 
-  const accidentPictureSelectQuery:string = `SELECT * FROM accident_picture WHERE accident_id = ?`;
+  const accidentPictureSelectQuery:string = `SELECT accident_id ,picture_url FROM accident_picture WHERE accident_id = ?`;
 
-  const accidentPictureRows = await connection.execute(accidentPictureSelectQuery, [ 
+  const [accidentPictureRows]:[AccidentPictureRow[], FieldPacket[]] = await connection.execute<AccidentPictureRow[]>(accidentPictureSelectQuery, [ 
     accidentId
   ]);
   connection.release();
-  return accidentPictureRows[0];
+  console.log(accidentPictureRows)
+  return accidentPictureRows;
 }
 
-export const insertAccidentRow = async (data:Accident)=> {
+export const insertAccidentRow = async (data:Accident) => {
     const connection = await pool.getConnection();
     const accidentInsertQuery:string = `
       INSERT INTO accident (
@@ -60,7 +62,7 @@ export const insertAccidentRow = async (data:Accident)=> {
       ) VALUES (?, ?, ?, ?, NOW(), POINT(?, ?), ?, ?, ?, ?)
     `;
     
-    const accidentRows = await connection.execute(accidentInsertQuery, [ // insertId 가 accidentId 임.
+    const accidentRows = await connection.execute(accidentInsertQuery, [
       data.contentTitle,
       data.contentDescription,
       data.accidentTime[0],
@@ -91,8 +93,7 @@ export const insertAccidentPictureRow = async (data:AccidentPicture):Promise<voi
     connection.release();
 }
 
-export const selectAccidentOnTheMapRow = async (locationObject:LocationObject) => {
-  try{
+export const selectAccidentOnTheMapRow = async (locationObject:LocationObject):Promise<LocationRow[]> => {
     const connection = await pool.getConnection();
 
     const accidentSelectQuery: string = `
@@ -103,15 +104,14 @@ export const selectAccidentOnTheMapRow = async (locationObject:LocationObject) =
         ST_GeomFromText('POINT(${locationObject.x} ${locationObject.y})')
       ) <= ?;`;
     
-    const accidentRows = await connection.execute(accidentSelectQuery, [
+    const [accidentRows]:[LocationRow[], FieldPacket[]]  = await connection.execute<LocationRow[]>(accidentSelectQuery, [
       locationObject.radius
     ])
 
+    console.log(accidentRows)
+
     connection.release();
-    return accidentRows[0];
-  } catch (err) {
-    return err;
-  }
+    return accidentRows;
 }
 
 
