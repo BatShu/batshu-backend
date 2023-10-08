@@ -40,6 +40,25 @@ declare global {
     accidentLocation : LocationObject
   }
 
+  interface ObserveLocationObject {
+    observeId : number;
+    observeLocation : LocationObject
+  }
+
+  interface AccidentRow {
+    content_title: string;
+    content_description: string;
+    accident_start_time: Date;
+    accident_end_time: Date;
+    created_at: Date;
+    x: number;
+    y: number;
+    car_model_name: string;
+    license_plate: string;
+    bounty: number;
+    uid: string;
+}
+
   interface imageData {
     fieldname: string;
     originalname: string;

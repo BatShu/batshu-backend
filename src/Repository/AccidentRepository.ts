@@ -1,6 +1,6 @@
 import pool from "../config/database";
 
-export const selectAccidentRow =async (accidentId:number) => {
+export const selectAccidentRow = async (accidentId:number) => {
   const connection = await pool.getConnection();
 
   const accidentSelectQuery:string = 
@@ -19,7 +19,7 @@ export const selectAccidentRow =async (accidentId:number) => {
     from accident
     WHERE id = ?`;
 
-  const accidentRows = await connection.execute(accidentSelectQuery, [ 
+  const accidentRows = await connection.execute(accidentSelectQuery, [
     accidentId
   ]);
   connection.release();

@@ -36,8 +36,42 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getObserve = exports.registerObserve = exports.mosaicProcessing = void 0;
+exports.getObserve = exports.registerObserve = exports.mosaicProcessing = exports.getObserveOnTheMap = void 0;
 var child_process_1 = require("child_process");
+var observeService = require("../service/ObserveService");
+var getObserveOnTheMap = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, x, y, radius, xCoord, yCoord, radiusValue, Obj, resData, err_1, resData;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                _a = req.query, x = _a.x, y = _a.y, radius = _a.radius;
+                xCoord = parseFloat(x);
+                yCoord = parseFloat(y);
+                radiusValue = parseFloat(radius);
+                if (isNaN(xCoord) || isNaN(yCoord) || isNaN(radiusValue)) {
+                    return [2 /*return*/, res.status(400).json({ ok: false, msg: 'Invalid values for x, y, or radius' })];
+                }
+                Obj = { x: xCoord, y: yCoord, radius: radiusValue };
+                return [4 /*yield*/, observeService.readAccidentOnTheMap(Obj)];
+            case 1:
+                resData = _b.sent();
+                res.status(200).json(resData);
+                return [3 /*break*/, 3];
+            case 2:
+                err_1 = _b.sent();
+                console.error('Error:', err_1);
+                resData = {
+                    ok: false,
+                    msg: "INTERNAL SERVER ERROR"
+                };
+                res.status(500).json(resData);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getObserveOnTheMap = getObserveOnTheMap;
 var mosaicProcessing = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var uploadedVideo, uploadedVideoOriginalName, outputFileName, scriptDirectory, mosaicCommand, resData;
     return __generator(this, function (_a) {
@@ -48,7 +82,7 @@ var mosaicProcessing = function (req, res) { return __awaiter(void 0, void 0, vo
             scriptDirectory = '/Users/jincheol/Desktop/BatShu-backend/src/DashcamCleaner';
             // 원하는 디렉토리로 이동
             process.chdir(scriptDirectory);
-            mosaicCommand = "python cli.py -i ".concat(uploadedVideoOriginalName, " -o ").concat(outputFileName, " -w 360p_nano_v8.pt");
+            mosaicCommand = "python cli.py -i ".concat(uploadedVideoOriginalName, " -o ").concat(outputFileName, " -w 720p_nano_v8.pt -bw 3 -t 0.6");
             (0, child_process_1.exec)(mosaicCommand, function (error, stdout, stderr) {
                 if (error) {
                     console.log("error: ".concat(error.message));

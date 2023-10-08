@@ -13,5 +13,6 @@ var observeVideoUpload = (0, multer_1.default)({ storage: aws_s3_1.localStorage 
 // 동영상 업로드
 ObserverRouter.route('/video').post(observeVideoUpload.single("video"), ObserveController_1.mosaicProcessing);
 ObserverRouter.route('/register').post(ObserveController_1.registerObserve);
+ObserverRouter.route('/').get(ObserveController_1.getObserveOnTheMap);
 ObserverRouter.route('/:observeId').get(auth_1.tokenToUid, ObserveController_1.getObserve);
 exports.default = ObserverRouter;
