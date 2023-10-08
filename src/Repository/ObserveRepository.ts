@@ -1,6 +1,5 @@
 import { FieldPacket,RowDataPacket, PoolConnection } from "mysql2/promise";
 import { registerObserveRequest } from "../interface/observe"
-
 import pool from "../config/database";
 
 export const selectObserveOnTheMapRow = async (locationObject:LocationObject) => {
@@ -56,6 +55,43 @@ export const updateVideoStatusWithBlurringDone = async(connection: PoolConnectio
     return updateVideoStatusWithBlurringDoneRows;
 }
 
+
+export const insertMosaicedVideoUrlResult = async(connection: PoolConnection, videoOutputFileName : string, mosaicedVideoUrl : string) => {
+
+    const insertMosaicedVideoUrlQuery = `UPDATE video SET video_url = ? WHERE video_url = ?;`;
+    const [insertMosaicedVideoUrlRows] = await connection.query(insertMosaicedVideoUrlQuery, [mosaicedVideoUrl, videoOutputFileName]);
+
+    return insertMosaicedVideoUrlRows;
+}
+
+export const updateVideoUrlToOutputFileNameResult = async(connection: PoolConnection, uploadedVideoOriginalName : string, outputFileName : string) => {
+  
+      const updateVideoUrlToOutputFileNameQuery = `UPDATE video SET video_url = ? WHERE video_url = ?;`;
+      const [updateVideoUrlToOutputFileNameRows] = await connection.query(updateVideoUrlToOutputFileNameQuery, [outputFileName, uploadedVideoOriginalName]);
+  
+      return updateVideoUrlToOutputFileNameRows;
+}
+
+
+export const insertThumbnailUrlResult = async(connection: PoolConnection, locationUrl : string, thumbnailLocationUrl : string) => {
+  try {
+    const updateThumbnailUrlQuery = `UPDATE video SET thumbnail_url = ? WHERE video_url = ?;`;
+    const [insertThumbnailUrlRows] = await connection.query(updateThumbnailUrlQuery, [thumbnailLocationUrl, locationUrl]);
+    return insertThumbnailUrlRows;
+} catch (error) {
+    console.error('썸네일 URL 삽입 오류:', error);
+    throw error; // 더 높은 수준에서 처리하기 위해 오류를 다시 던집니다.
+}
+}
+
+
+export const selectVideoInfo = async(connection: PoolConnection, videoId : number) => {
+    const selectVideoInfoQuery = `SELECT id, video_url, thumbnail_url FROM video WHERE id = ?;`;
+    const [selectVideoInfoRows] = await connection.query(selectVideoInfoQuery, [videoId]);
+
+    return selectVideoInfoRows;
+}
+
 export const createObserveData = async(connection: PoolConnection, registerObserveData : registerObserveRequest) => {
     const createObserveQuery = `INSERT INTO observe (content_title, content_description, video_id, observe_start_time, observe_end_time, observe_location, created_at, uid) VALUES (?, ?, ?, ?, ?, POINT(?, ?), NOW(), ?);`;
     
@@ -74,4 +110,11 @@ export const createObserveData = async(connection: PoolConnection, registerObser
  
 
 };
+
+export const selectfindregisterObserveInfo = async(connection: PoolConnection, videoId : number) => {
+    const selectCreatedAtQuery = `SELECT * FROM observe WHERE video_id = ?;`;
+    const [selectCreatedAtRows] = await connection.query(selectCreatedAtQuery, [videoId]);
+
+    return selectCreatedAtRows;
+}
 

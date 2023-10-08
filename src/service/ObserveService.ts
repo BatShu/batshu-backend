@@ -1,6 +1,6 @@
 import pool from "../config/database"
 import { registerObserveRequest } from "../interface/observe";
-import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow } from "../Repository/ObserveRepository"
+import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow, insertMosaicedVideoUrlResult, updateVideoUrlToOutputFileNameResult, insertThumbnailUrlResult, selectVideoInfo, selectfindregisterObserveInfo } from "../Repository/ObserveRepository"
 
 
 export const insertVideoStatus = async (uploadedVideoOriginalName: string) => {
@@ -45,7 +45,46 @@ export const createObserve = async (registerObserveData : registerObserveRequest
 
 
     return observeData;
-}   
+}
+
+export const insertMosaicedFinalVideoUrl = async (videoOutputFileName : string, mosaicedVideoUrl : string) => {
+    const conneciton = await pool.getConnection();
+    const mosaicedVideo = await insertMosaicedVideoUrlResult(conneciton, videoOutputFileName, mosaicedVideoUrl);
+    conneciton.release();
+}
+
+export const updateVideoUrlToOutputFileName = async (uploadedVideoOriginalName : string, outputFileName : string) => {
+    
+    const conneciton = await pool.getConnection();
+    const updateVideoUrl = await updateVideoUrlToOutputFileNameResult(conneciton, uploadedVideoOriginalName, outputFileName);
+    conneciton.release();
+
+    return updateVideoUrl;
+
+}
+
+export const insertThumbnailUrl = async (locationUrl : string, thumbnailLocationUrl : string) => {
+    const conneciton = await pool.getConnection();
+    const thumbnail = await insertThumbnailUrlResult(conneciton, locationUrl, thumbnailLocationUrl);
+    conneciton.release();
+}
+
+export const findvideoInfo = async (videoId : number) => {
+    const conneciton = await pool.getConnection();
+    const videoInfo = await selectVideoInfo(conneciton, videoId);
+    conneciton.release();
+
+    return videoInfo;
+}
+
+export const findregisterObserveInfo = async (videoId : number) => {
+    const conneciton = await pool.getConnection();
+    const createdAt = await selectfindregisterObserveInfo(conneciton, videoId);
+    conneciton.release();
+
+    return createdAt;
+}
+
 
 exports.readObserveOnTheMap = async (locationObject:LocationObject) => {
     try{
