@@ -4,10 +4,13 @@ import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { S3, accessKey, secretAccessKey, bucketRegion } from "../utils/aws-s3";
 import { registerObserveRequest, reigsterObserveResponse, video } from "../interface/observe";
 import CustomRequest from "../auth/auth";
-import { insertVideoStatus, findVideoId, updateVideoStautsToBlurringStart, updateVideoStautsToBlurringDone, createObserve } from "../service/ObserveService";
+import { insertVideoStatus, findVideoId, updateVideoStautsToBlurringStart, updateVideoStautsToBlurringDone, createObserve, insertMosaicedFinalVideoUrl, updateVideoUrlToOutputFileName, insertThumbnailUrl, findvideoInfo, findregisterObserveInfo } from "../service/ObserveService";
 
 const AWS = require('aws-sdk');
 const path = require('path');
+const fs = require('fs');
+const ffmpeg = require('fluent-ffmpeg');
+
 
 AWS.config.update({
   accessKeyId: accessKey,       
@@ -24,7 +27,9 @@ export const uploadVideo = async (req:Request, res: Response, next: NextFunction
   
   try {
 
+
     const uploadedVideo: video = req.file as Express.Multer.File;
+    console.log(uploadedVideo)
   
     const uploadedVideoOriginalName: string = uploadedVideo.originalname;
   
@@ -90,7 +95,7 @@ export const getObserveOnTheMap =async (req:CustomRequest,res:Response) => {
   }
 }
 
-export const mosaicProcessing = async (req:Request, res: Response) => {
+export const videoProcessing = async (req:Request, res: Response) => {
 
   try {
     
@@ -100,13 +105,13 @@ export const mosaicProcessing = async (req:Request, res: Response) => {
 
     const fileExtension = path.extname(uploadedVideoOriginalName);
 
-    const outputFileName = `blurred_video_${Date.now()}${fileExtension}`;
+    const videoOutputFileName = `${uploadedVideoOriginalName}_${Date.now()}${fileExtension}`;
 
    const scriptDirectory = './src/DashcamCleaner';
 
     process.chdir(scriptDirectory);
 
-    const mosaicCommand = `python cli.py -i ${uploadedVideoOriginalName} -o ${outputFileName} -w 360p_nano_v8.pt`
+    const mosaicCommand = `python cli.py -i ${uploadedVideoOriginalName} -o ${videoOutputFileName} -w 360p_nano_v8.pt`
     
     await updateVideoStautsToBlurringStart(uploadedVideoOriginalName);
 
@@ -125,30 +130,70 @@ export const mosaicProcessing = async (req:Request, res: Response) => {
       }
 
       if (blurringDoneVideo) {
+
         await updateVideoStautsToBlurringDone(uploadedVideoOriginalName);
+        await updateVideoUrlToOutputFileName(uploadedVideoOriginalName, videoOutputFileName);
         
         const uploadParams = {
           Bucket: 'batshu-observe-input', 
-          Key: outputFileName, 
-          Body: outputFileName,
+          Key: videoOutputFileName, 
+          Body: fs.createReadStream(videoOutputFileName), 
         };
-
+        
+        
+        //generate Thumbnail
         try {
+
+          const currentWorkingDirectory = process.cwd();
+          const thumbnailFileName = `thumbnail_${Date.now()}To${uploadedVideoOriginalName}.png`;
+
+          const thumbnailInfo: any = await new Promise((resolve, reject) => { 
+            ffmpeg(videoOutputFileName)
+              .screenshots({
+                timestamps: ['50%'],
+                filename: thumbnailFileName,
+                folder: currentWorkingDirectory,
+                size: '320x240'
+            })
+            .on('end', (stdout: unknown, stderr: any) => {
+              console.log('썸네일 추출 완료');
+              resolve(stdout);
+
+            })
+            .on('error', (err: any) => {
+              console.error('썸네일 추출 오류:', err);
+              reject(err);
+
+            });
+        });
+
+          const thumbnailFilePath = `${currentWorkingDirectory}/${thumbnailFileName}`;
+            
+          const thumbnailUploadParams = {
+            Bucket: 'batshu-observe-input',
+            Key: thumbnailFileName,
+            Body: fs.createReadStream(thumbnailFilePath),
+          };
+
+          const uploadThumbnailcommand = new PutObjectCommand(thumbnailUploadParams);
+          await S3.send(uploadThumbnailcommand);
+
           const command = new PutObjectCommand(uploadParams);
           await S3.send(command);
 
+          const videoLocationUrl = `https://batshu-observe-input.s3.amazonaws.com/${videoOutputFileName}`;
 
-          // get S3 video url
-          const params = { Bucket: 'batshu-observe-input', Key: outputFileName };
-
-
-          const url = await s3.getSignedUrlPromise('getObject', params);
+          const thumbnailLocationUrl = `https://batshu-observe-input.s3.amazonaws.com/${thumbnailFileName}`;
           
-          //TODO: url insert to database
 
+          const mosaicedFinalVideoUrl = await insertMosaicedFinalVideoUrl(videoOutputFileName, videoLocationUrl);
+          
+          const thumbnail = await insertThumbnailUrl(videoLocationUrl, thumbnailLocationUrl);
+          
         } catch (error) {
           console.log(error);
         }
+        
         
       } else {
         console.log("blurringDoneVideo is not defined");
@@ -187,27 +232,35 @@ export const registerObserve = async (req: CustomRequest, res: Response) => {
   
   }
 
+
   const registerObserveResult = await createObserve(registerObserveData);
 
-// const finalVideo = await findFinalVideoByVideoId(registerObserveData.videoId);
+  const videoInfo : any = await findvideoInfo(registerObserveData.videoId);
+  const registerObserveInfo : any = await findregisterObserveInfo(registerObserveData.videoId);
 
-    //TODO: add video url to response
+  return res.status(200).json({
+    ok: true,
+    msg: "Successfully registered",
+    data: {
+      observeId: registerObserveInfo[0].id,
+      uid : registerObserveInfo[0].uid,
+      videoUrl: videoInfo[0].video_url,
+      thumbnailUrl: videoInfo[0].thumbnail_url,
+      contentTitle: registerObserveInfo[0].content_title,
+      contentDescription: registerObserveInfo[0].content_description,
+      observeStartTime: registerObserveInfo[0].observe_start_time,
+      observeEndTime: registerObserveInfo[0].observe_end_time,
+      observeLocation: registerObserveInfo[0].observe_location,
+      createdAt: registerObserveInfo[0].created_at,
+    }
+    
+  });
 
-    // const resData: reigsterObserveResponse = {
-    //   ok: true,
-    //   msg: "Successfully reegister observe data",
-    //   videoUrl: findVideo,
-    //   thumbnailUrl: "",
-    //   createdAt: registerObserveResult.createdAt,
-    // }
-
-}
-  } catch(err) {
+  }
+} catch(err) {
     console.log(err);
   }
-
 }
-
 
 
 //TODO: make function to get videoUrl by videoId
