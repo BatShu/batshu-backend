@@ -36,15 +36,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getObserve = exports.registerObserve = exports.videoProcessing = exports.getObserveOnTheMap = exports.uploadVideo = void 0;
+
 var child_process_1 = require("child_process");
 var client_s3_1 = require("@aws-sdk/client-s3");
 var aws_s3_1 = require("../utils/aws-s3");
 var ObserveService_1 = require("../service/ObserveService");
 var AWS = require('aws-sdk');
 var path = require('path');
-var fs = require('fs');
-var ffmpeg = require('fluent-ffmpeg');
+
 AWS.config.update({
     accessKeyId: aws_s3_1.accessKey,
     secretAccessKey: aws_s3_1.secretAccessKey,
@@ -59,7 +58,9 @@ var uploadVideo = function (req, res, next) { return __awaiter(void 0, void 0, v
             case 0:
                 _a.trys.push([0, 3, , 4]);
                 uploadedVideo = req.file;
+
                 console.log(uploadedVideo);
+
                 uploadedVideoOriginalName = uploadedVideo.originalname;
                 return [4 /*yield*/, (0, ObserveService_1.insertVideoStatus)(uploadedVideoOriginalName)];
             case 1:
@@ -127,8 +128,7 @@ var getObserveOnTheMap = function (req, res) { return __awaiter(void 0, void 0, 
     });
 }); };
 exports.getObserveOnTheMap = getObserveOnTheMap;
-var videoProcessing = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var uploadedVideo, uploadedVideoOriginalName_1, fileExtension, videoOutputFileName_1, scriptDirectory, mosaicCommand, blurringDoneVideo_1, error_2, resData;
+
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -244,29 +244,12 @@ var videoProcessing = function (req, res) { return __awaiter(void 0, void 0, voi
 }); };
 exports.videoProcessing = videoProcessing;
 var registerObserve = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var uid, registerObserveData, registerObserveResult, videoInfo, registerObserveInfo, err_2;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 5, , 6]);
-                if (!(typeof req.uid === 'string')) return [3 /*break*/, 4];
-                uid = req.uid;
-                registerObserveData = {
-                    contentTitle: req.body.contentTitle,
-                    contentDescription: req.body.contentDescription,
-                    videoId: req.body.videoId,
-                    observeTime: req.body.observeTime,
-                    accidentLocation: req.body.observeLocation,
-                    uid: uid,
-                };
-                return [4 /*yield*/, (0, ObserveService_1.createObserve)(registerObserveData)];
-            case 1:
-                registerObserveResult = _a.sent();
-                return [4 /*yield*/, (0, ObserveService_1.findvideoInfo)(registerObserveData.videoId)];
-            case 2:
-                videoInfo = _a.sent();
-                return [4 /*yield*/, (0, ObserveService_1.findregisterObserveInfo)(registerObserveData.videoId)];
-            case 3:
+
+                err_2 = _a.sent();
+                console.log(err_2);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+
                 registerObserveInfo = _a.sent();
                 return [2 /*return*/, res.status(200).json({
                         ok: true,
@@ -290,6 +273,7 @@ var registerObserve = function (req, res) { return __awaiter(void 0, void 0, voi
                 console.log(err_2);
                 return [3 /*break*/, 6];
             case 6: return [2 /*return*/];
+
         }
     });
 }); };
