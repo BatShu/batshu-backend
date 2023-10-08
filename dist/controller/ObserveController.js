@@ -36,10 +36,64 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-
-exports.getObserve = exports.registerObserve = exports.mosaicProcessing = exports.getObserveOnTheMap = void 0;
+exports.getObserve = exports.registerObserve = exports.videoProcessing = exports.getObserveOnTheMap = exports.uploadVideo = void 0;
 var child_process_1 = require("child_process");
+var client_s3_1 = require("@aws-sdk/client-s3");
+var aws_s3_1 = require("../utils/aws-s3");
+var ObserveService_1 = require("../service/ObserveService");
+var AWS = require('aws-sdk');
+var path = require('path');
+var fs = require('fs');
+var ffmpeg = require('fluent-ffmpeg');
+AWS.config.update({
+    accessKeyId: aws_s3_1.accessKey,
+    secretAccessKey: aws_s3_1.secretAccessKey,
+    region: aws_s3_1.bucketRegion,
+});
+var s3 = new AWS.S3();
 var observeService = require("../service/ObserveService");
+var uploadVideo = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var uploadedVideo, uploadedVideoOriginalName, updateUploadedVideoStatus, videoId, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                uploadedVideo = req.file;
+                console.log(uploadedVideo);
+                uploadedVideoOriginalName = uploadedVideo.originalname;
+                return [4 /*yield*/, (0, ObserveService_1.insertVideoStatus)(uploadedVideoOriginalName)];
+            case 1:
+                updateUploadedVideoStatus = _a.sent();
+                return [4 /*yield*/, (0, ObserveService_1.findVideoId)(uploadedVideoOriginalName)];
+            case 2:
+                videoId = _a.sent();
+                if (!videoId) {
+                    return [2 /*return*/, res.status(500).json({
+                            ok: false,
+                            msg: "해당 비디오가 존재하지 않습니다."
+                        })];
+                }
+                else {
+                    next();
+                    return [2 /*return*/, res.status(200).json({
+                            ok: true,
+                            msg: "This is uploaded videoId",
+                            videoId: videoId,
+                        })];
+                }
+                return [3 /*break*/, 4];
+            case 3:
+                error_1 = _a.sent();
+                console.log(error_1);
+                return [2 /*return*/, res.status(500).json({
+                        ok: false,
+                        msg: "INTERNAL SERVER ERROR"
+                    })];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.uploadVideo = uploadVideo;
 var getObserveOnTheMap = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, x, y, radius, xCoord, yCoord, radiusValue, Obj, resData, err_1, resData;
     return __generator(this, function (_b) {
@@ -73,48 +127,8 @@ var getObserveOnTheMap = function (req, res) { return __awaiter(void 0, void 0, 
     });
 }); };
 exports.getObserveOnTheMap = getObserveOnTheMap;
-var mosaicProcessing = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var uploadedVideo, uploadedVideoOriginalName, outputFileName, scriptDirectory, mosaicCommand, resData;
-    return __generator(this, function (_a) {
-        try {
-            uploadedVideo = req.file;
-            uploadedVideoOriginalName = uploadedVideo.originalname;
-            outputFileName = 'blurred_video.mp4';
-            scriptDirectory = '/Users/jincheol/Desktop/BatShu-backend/src/DashcamCleaner';
-            // 원하는 디렉토리로 이동
-            process.chdir(scriptDirectory);
-            mosaicCommand = "python cli.py -i ".concat(uploadedVideoOriginalName, " -o ").concat(outputFileName, " -w 720p_nano_v8.pt -bw 3 -t 0.6");
-            (0, child_process_1.exec)(mosaicCommand, function (error, stdout, stderr) {
-                if (error) {
-                    console.log("error: ".concat(error.message));
-                }
-                else if (stderr) {
-                    console.log("stderr: ".concat(stderr));
-
-                }
-                else {
-                    next();
-                    return [2 /*return*/, res.status(200).json({
-                            ok: true,
-                            msg: "This is uploaded videoId",
-                            videoId: videoId,
-                        })];
-                }
-                return [3 /*break*/, 4];
-            case 3:
-                error_1 = _a.sent();
-                console.log(error_1);
-                return [2 /*return*/, res.status(500).json({
-                        ok: false,
-                        msg: "INTERNAL SERVER ERROR"
-                    })];
-            case 4: return [2 /*return*/];
-        }
-    });
-}); };
-exports.uploadVideo = uploadVideo;
-var mosaicProcessing = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var uploadedVideo, uploadedVideoOriginalName_1, fileExtension, outputFileName_1, scriptDirectory, mosaicCommand, blurringDoneVideo_1, error_2, resData;
+var videoProcessing = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var uploadedVideo, uploadedVideoOriginalName_1, fileExtension, videoOutputFileName_1, scriptDirectory, mosaicCommand, blurringDoneVideo_1, error_2, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -122,15 +136,15 @@ var mosaicProcessing = function (req, res) { return __awaiter(void 0, void 0, vo
                 uploadedVideo = req.file;
                 uploadedVideoOriginalName_1 = uploadedVideo.originalname;
                 fileExtension = path.extname(uploadedVideoOriginalName_1);
-                outputFileName_1 = "blurred_video_".concat(Date.now()).concat(fileExtension);
+                videoOutputFileName_1 = "".concat(uploadedVideoOriginalName_1, "_").concat(Date.now()).concat(fileExtension);
                 scriptDirectory = './src/DashcamCleaner';
                 process.chdir(scriptDirectory);
-                mosaicCommand = "python cli.py -i ".concat(uploadedVideoOriginalName_1, " -o ").concat(outputFileName_1, " -w 360p_nano_v8.pt");
+                mosaicCommand = "python cli.py -i ".concat(uploadedVideoOriginalName_1, " -o ").concat(videoOutputFileName_1, " -w 360p_nano_v8.pt");
                 return [4 /*yield*/, (0, ObserveService_1.updateVideoStautsToBlurringStart)(uploadedVideoOriginalName_1)];
             case 1:
                 _a.sent();
                 blurringDoneVideo_1 = (0, child_process_1.exec)(mosaicCommand, function (error, stdout, stderr) { return __awaiter(void 0, void 0, void 0, function () {
-                    var uploadParams, command, params, url, error_3;
+                    var uploadParams, currentWorkingDirectory_1, thumbnailFileName_1, thumbnailInfo, thumbnailFilePath, thumbnailUploadParams, uploadThumbnailcommand, command, videoLocationUrl, thumbnailLocationUrl, mosaicedFinalVideoUrl, thumbnail, error_3;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
@@ -143,36 +157,74 @@ var mosaicProcessing = function (req, res) { return __awaiter(void 0, void 0, vo
                                 else {
                                     console.log('stdout:', stdout);
                                 }
-                                if (!blurringDoneVideo_1) return [3 /*break*/, 7];
+                                if (!blurringDoneVideo_1) return [3 /*break*/, 11];
                                 return [4 /*yield*/, (0, ObserveService_1.updateVideoStautsToBlurringDone)(uploadedVideoOriginalName_1)];
                             case 1:
                                 _a.sent();
+                                return [4 /*yield*/, (0, ObserveService_1.updateVideoUrlToOutputFileName)(uploadedVideoOriginalName_1, videoOutputFileName_1)];
+                            case 2:
+                                _a.sent();
                                 uploadParams = {
                                     Bucket: 'batshu-observe-input',
-                                    Key: outputFileName_1,
-                                    Body: outputFileName_1,
+                                    Key: videoOutputFileName_1,
+                                    Body: fs.createReadStream(videoOutputFileName_1),
                                 };
-                                _a.label = 2;
-                            case 2:
-                                _a.trys.push([2, 5, , 6]);
+                                _a.label = 3;
+                            case 3:
+                                _a.trys.push([3, 9, , 10]);
+                                currentWorkingDirectory_1 = process.cwd();
+                                thumbnailFileName_1 = "thumbnail_".concat(Date.now(), "To").concat(uploadedVideoOriginalName_1, ".png");
+                                return [4 /*yield*/, new Promise(function (resolve, reject) {
+                                        ffmpeg(videoOutputFileName_1)
+                                            .screenshots({
+                                            timestamps: ['50%'],
+                                            filename: thumbnailFileName_1,
+                                            folder: currentWorkingDirectory_1,
+                                            size: '320x240'
+                                        })
+                                            .on('end', function (stdout, stderr) {
+                                            console.log('썸네일 추출 완료');
+                                            resolve(stdout);
+                                        })
+                                            .on('error', function (err) {
+                                            console.error('썸네일 추출 오류:', err);
+                                            reject(err);
+                                        });
+                                    })];
+                            case 4:
+                                thumbnailInfo = _a.sent();
+                                thumbnailFilePath = "".concat(currentWorkingDirectory_1, "/").concat(thumbnailFileName_1);
+                                thumbnailUploadParams = {
+                                    Bucket: 'batshu-observe-input',
+                                    Key: thumbnailFileName_1,
+                                    Body: fs.createReadStream(thumbnailFilePath),
+                                };
+                                uploadThumbnailcommand = new client_s3_1.PutObjectCommand(thumbnailUploadParams);
+                                return [4 /*yield*/, aws_s3_1.S3.send(uploadThumbnailcommand)];
+                            case 5:
+                                _a.sent();
                                 command = new client_s3_1.PutObjectCommand(uploadParams);
                                 return [4 /*yield*/, aws_s3_1.S3.send(command)];
-                            case 3:
+                            case 6:
                                 _a.sent();
-                                params = { Bucket: 'batshu-observe-input', Key: outputFileName_1 };
-                                return [4 /*yield*/, s3.getSignedUrlPromise('getObject', params)];
-                            case 4:
-                                url = _a.sent();
-                                return [3 /*break*/, 6];
-                            case 5:
+                                videoLocationUrl = "https://batshu-observe-input.s3.amazonaws.com/".concat(videoOutputFileName_1);
+                                thumbnailLocationUrl = "https://batshu-observe-input.s3.amazonaws.com/".concat(thumbnailFileName_1);
+                                return [4 /*yield*/, (0, ObserveService_1.insertMosaicedFinalVideoUrl)(videoOutputFileName_1, videoLocationUrl)];
+                            case 7:
+                                mosaicedFinalVideoUrl = _a.sent();
+                                return [4 /*yield*/, (0, ObserveService_1.insertThumbnailUrl)(videoLocationUrl, thumbnailLocationUrl)];
+                            case 8:
+                                thumbnail = _a.sent();
+                                return [3 /*break*/, 10];
+                            case 9:
                                 error_3 = _a.sent();
                                 console.log(error_3);
-                                return [3 /*break*/, 6];
-                            case 6: return [3 /*break*/, 8];
-                            case 7:
+                                return [3 /*break*/, 10];
+                            case 10: return [3 /*break*/, 12];
+                            case 11:
                                 console.log("blurringDoneVideo is not defined");
-                                _a.label = 8;
-                            case 8: return [2 /*return*/];
+                                _a.label = 12;
+                            case 12: return [2 /*return*/];
                         }
                     });
                 }); });
@@ -190,14 +242,14 @@ var mosaicProcessing = function (req, res) { return __awaiter(void 0, void 0, vo
         }
     });
 }); };
-exports.mosaicProcessing = mosaicProcessing;
+exports.videoProcessing = videoProcessing;
 var registerObserve = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var uid, registerObserveData, registerObserveResult, err_1;
+    var uid, registerObserveData, registerObserveResult, videoInfo, registerObserveInfo, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 3, , 4]);
-                if (!(typeof req.uid === 'string')) return [3 /*break*/, 2];
+                _a.trys.push([0, 5, , 6]);
+                if (!(typeof req.uid === 'string')) return [3 /*break*/, 4];
                 uid = req.uid;
                 registerObserveData = {
                     contentTitle: req.body.contentTitle,
@@ -210,13 +262,34 @@ var registerObserve = function (req, res) { return __awaiter(void 0, void 0, voi
                 return [4 /*yield*/, (0, ObserveService_1.createObserve)(registerObserveData)];
             case 1:
                 registerObserveResult = _a.sent();
-                _a.label = 2;
-            case 2: return [3 /*break*/, 4];
+                return [4 /*yield*/, (0, ObserveService_1.findvideoInfo)(registerObserveData.videoId)];
+            case 2:
+                videoInfo = _a.sent();
+                return [4 /*yield*/, (0, ObserveService_1.findregisterObserveInfo)(registerObserveData.videoId)];
             case 3:
-                err_1 = _a.sent();
-                console.log(err_1);
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
+                registerObserveInfo = _a.sent();
+                return [2 /*return*/, res.status(200).json({
+                        ok: true,
+                        msg: "Successfully registered",
+                        data: {
+                            observeId: registerObserveInfo[0].id,
+                            uid: registerObserveInfo[0].uid,
+                            videoUrl: videoInfo[0].video_url,
+                            thumbnailUrl: videoInfo[0].thumbnail_url,
+                            contentTitle: registerObserveInfo[0].content_title,
+                            contentDescription: registerObserveInfo[0].content_description,
+                            observeStartTime: registerObserveInfo[0].observe_start_time,
+                            observeEndTime: registerObserveInfo[0].observe_end_time,
+                            observeLocation: registerObserveInfo[0].observe_location,
+                            createdAt: registerObserveInfo[0].created_at,
+                        }
+                    })];
+            case 4: return [3 /*break*/, 6];
+            case 5:
+                err_2 = _a.sent();
+                console.log(err_2);
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); };
