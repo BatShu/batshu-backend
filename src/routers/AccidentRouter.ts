@@ -9,7 +9,7 @@ const upload = multer({storage: storage});
 
 const AccidentRouter = express.Router();
 
-AccidentRouter.route('/').get(tokenToUid,getAccidentOnTheMap);
+AccidentRouter.route('/').get(getAccidentOnTheMap);
 AccidentRouter.route('/').post(tokenToUid,upload.array('pictureUrl'),postAccident);
 AccidentRouter.route('/:accidentId').get(tokenToUid,getAccident);
 

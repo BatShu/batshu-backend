@@ -1,6 +1,6 @@
 import pool from "../config/database"
 import { registerObserveRequest } from "../interface/observe";
-import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData } from "../Repository/ObserveRepository"
+import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow } from "../Repository/ObserveRepository"
 
 
 export const insertVideoStatus = async (uploadedVideoOriginalName: string) => {
@@ -46,3 +46,37 @@ export const createObserve = async (registerObserveData : registerObserveRequest
 
     return observeData;
 }   
+
+exports.readObserveOnTheMap = async (locationObject:LocationObject) => {
+    try{
+    const observeRows = await ObserveRepository.selectObserveOnTheMapRow(locationObject) as ResultSetHeader[];
+    
+    const data:ObserveLocationObject[] = []
+    
+    for (let observeRow of observeRows){
+        const location:LocationObject = {
+            x : observeRow.x,
+            y : observeRow.y
+        }
+        const observeLocationObject:ObserveLocationObject = {
+            observeId: observeRow.id,
+            observeLocation: location
+        };
+        data.push(observeLocationObject);
+    }
+
+    const resData = {
+        ok: true,
+        msg: "Successfully Get",
+        data: data
+    } 
+    return resData;
+
+    }  catch (error) {
+        const resData: ApiResponse = {
+            ok: false,
+            msg: "INTERNAL SERVER ERROR"
+        }
+        return resData;
+    }
+}

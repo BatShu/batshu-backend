@@ -1,6 +1,7 @@
 import express from "express";
 import multer from "multer";
-import { getObserve, mosaicProcessing, registerObserve, uploadVideo } from "../controller/ObserveController"
+
+import { getObserve, mosaicProcessing, registerObserve, uploadVideo,getObserveOnTheMap } from "../controller/ObserveController"
 import { tokenToUid } from "../auth/auth";
 import { localStorage, fileFilter } from "../utils/aws-s3";
 
@@ -14,6 +15,7 @@ ObserverRouter.route('/video').post(tokenToUid, observeVideoUpload.single("video
 
 ObserverRouter.route('/register').post(tokenToUid, registerObserve);
 
+ObserverRouter.route('/').get(getObserveOnTheMap)
 ObserverRouter.route('/:observeId').get(tokenToUid,getObserve);
 
 export default ObserverRouter

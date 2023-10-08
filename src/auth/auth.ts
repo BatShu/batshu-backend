@@ -20,7 +20,7 @@ declare global {
     interface ApiResponse {
         ok: boolean;
         msg: string;
-        data?: UserInfo;
+        data?: UserInfo | Accident;
     }
 
     export interface CustomRequest extends Request {

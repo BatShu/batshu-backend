@@ -17,6 +17,8 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
+const observeService = require("../service/ObserveService");
+
 
 export const uploadVideo = async (req:Request, res: Response, next: NextFunction) => {
   
@@ -59,7 +61,34 @@ export const uploadVideo = async (req:Request, res: Response, next: NextFunction
 
 }
 
+export const getObserveOnTheMap =async (req:CustomRequest,res:Response) => {
+  try {
+    const { x, y, radius } = req.query;
 
+    const xCoord:number = parseFloat(x as string);
+    const yCoord:number = parseFloat(y as string);
+    const radiusValue:number = parseFloat(radius as string);
+
+
+    if (isNaN(xCoord) || isNaN(yCoord) || isNaN(radiusValue)) {
+      return res.status(400).json({ ok: false, msg: 'Invalid values for x, y, or radius' });
+    }
+
+    const Obj:LocationObject = { x: xCoord, y: yCoord, radius: radiusValue };
+    
+    const resData:ApiResponse = await observeService.readAccidentOnTheMap(Obj);
+
+    res.status(200).json(resData);
+
+  } catch (err) {
+    console.error('Error:', err);
+    const resData: ApiResponse = {
+        ok: false,
+        msg: "INTERNAL SERVER ERROR"
+    }
+    res.status(500).json(resData);
+  }
+}
 
 export const mosaicProcessing = async (req:Request, res: Response) => {
 

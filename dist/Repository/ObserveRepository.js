@@ -35,6 +35,39 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.selectObserveOnTheMapRow = void 0;
+var database_1 = __importDefault(require("../config/database"));
+var selectObserveOnTheMapRow = function (locationObject) { return __awaiter(void 0, void 0, void 0, function () {
+    var connection, observeSelectQuery, observeRows, err_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, database_1.default.getConnection()];
+            case 1:
+                connection = _a.sent();
+                observeSelectQuery = "\n        SELECT id, ST_X(observe_location) AS x, ST_Y(observe_location) AS y\n        FROM observe\n        WHERE ST_Distance_Sphere(\n          observe_location,\n          ST_GeomFromText('POINT(".concat(locationObject.x, " ").concat(locationObject.y, ")')\n        ) <= ?;");
+                return [4 /*yield*/, connection.execute(observeSelectQuery, [
+                        locationObject.radius
+                    ])];
+            case 2:
+                observeRows = _a.sent();
+                connection.release();
+                return [2 /*return*/, observeRows[0]];
+            case 3:
+                err_1 = _a.sent();
+                return [2 /*return*/, err_1];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.selectObserveOnTheMapRow = selectObserveOnTheMapRow;
+exports.default = { selectObserveOnTheMapRow: exports.selectObserveOnTheMapRow };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createObserveData = exports.updateVideoStatusWithBlurringDone = exports.updateVideoStatusWithBlurring = exports.findUploadedVideoId = exports.updateVideoStatus = void 0;
 // 비디오 업로드.
@@ -118,3 +151,4 @@ var createObserveData = function (connection, registerObserveData) { return __aw
     });
 }); };
 exports.createObserveData = createObserveData;
+

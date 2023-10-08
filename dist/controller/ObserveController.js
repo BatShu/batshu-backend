@@ -36,38 +36,61 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getObserve = exports.registerObserve = exports.mosaicProcessing = exports.uploadVideo = void 0;
+
+exports.getObserve = exports.registerObserve = exports.mosaicProcessing = exports.getObserveOnTheMap = void 0;
 var child_process_1 = require("child_process");
-var client_s3_1 = require("@aws-sdk/client-s3");
-var aws_s3_1 = require("../utils/aws-s3");
-var ObserveService_1 = require("../service/ObserveService");
-var AWS = require('aws-sdk');
-var path = require('path');
-AWS.config.update({
-    accessKeyId: aws_s3_1.accessKey,
-    secretAccessKey: aws_s3_1.secretAccessKey,
-    region: aws_s3_1.bucketRegion,
-});
-var s3 = new AWS.S3();
-var uploadVideo = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var uploadedVideo, uploadedVideoOriginalName, updateUploadedVideoStatus, videoId, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+var observeService = require("../service/ObserveService");
+var getObserveOnTheMap = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, x, y, radius, xCoord, yCoord, radiusValue, Obj, resData, err_1, resData;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _a.trys.push([0, 3, , 4]);
-                uploadedVideo = req.file;
-                uploadedVideoOriginalName = uploadedVideo.originalname;
-                return [4 /*yield*/, (0, ObserveService_1.insertVideoStatus)(uploadedVideoOriginalName)];
+                _b.trys.push([0, 2, , 3]);
+                _a = req.query, x = _a.x, y = _a.y, radius = _a.radius;
+                xCoord = parseFloat(x);
+                yCoord = parseFloat(y);
+                radiusValue = parseFloat(radius);
+                if (isNaN(xCoord) || isNaN(yCoord) || isNaN(radiusValue)) {
+                    return [2 /*return*/, res.status(400).json({ ok: false, msg: 'Invalid values for x, y, or radius' })];
+                }
+                Obj = { x: xCoord, y: yCoord, radius: radiusValue };
+                return [4 /*yield*/, observeService.readAccidentOnTheMap(Obj)];
             case 1:
-                updateUploadedVideoStatus = _a.sent();
-                return [4 /*yield*/, (0, ObserveService_1.findVideoId)(uploadedVideoOriginalName)];
+                resData = _b.sent();
+                res.status(200).json(resData);
+                return [3 /*break*/, 3];
             case 2:
-                videoId = _a.sent();
-                if (!videoId) {
-                    return [2 /*return*/, res.status(500).json({
-                            ok: false,
-                            msg: "해당 비디오가 존재하지 않습니다."
-                        })];
+                err_1 = _b.sent();
+                console.error('Error:', err_1);
+                resData = {
+                    ok: false,
+                    msg: "INTERNAL SERVER ERROR"
+                };
+                res.status(500).json(resData);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getObserveOnTheMap = getObserveOnTheMap;
+var mosaicProcessing = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var uploadedVideo, uploadedVideoOriginalName, outputFileName, scriptDirectory, mosaicCommand, resData;
+    return __generator(this, function (_a) {
+        try {
+            uploadedVideo = req.file;
+            uploadedVideoOriginalName = uploadedVideo.originalname;
+            outputFileName = 'blurred_video.mp4';
+            scriptDirectory = '/Users/jincheol/Desktop/BatShu-backend/src/DashcamCleaner';
+            // 원하는 디렉토리로 이동
+            process.chdir(scriptDirectory);
+            mosaicCommand = "python cli.py -i ".concat(uploadedVideoOriginalName, " -o ").concat(outputFileName, " -w 720p_nano_v8.pt -bw 3 -t 0.6");
+            (0, child_process_1.exec)(mosaicCommand, function (error, stdout, stderr) {
+                if (error) {
+                    console.log("error: ".concat(error.message));
+                }
+                else if (stderr) {
+                    console.log("stderr: ".concat(stderr));
+
                 }
                 else {
                     next();
