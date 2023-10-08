@@ -81,7 +81,7 @@ export const getObserveOnTheMap =async (req:CustomRequest,res:Response) => {
 
     const Obj:LocationObject = { x: xCoord, y: yCoord, radius: radiusValue };
     
-    const resData:ApiResponse = await observeService.readAccidentOnTheMap(Obj);
+    const resData:ApiResponse = await observeService.readObserveOnTheMap(Obj);
 
     res.status(200).json(resData);
 

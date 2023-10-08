@@ -54,6 +54,7 @@ var selectAccidentRow = function (accidentId) { return __awaiter(void 0, void 0,
                     ])];
             case 2:
                 accidentRows = (_a.sent())[0];
+                console.log(accidentRows);
                 connection.release();
                 return [2 /*return*/, accidentRows[0]];
         }
@@ -67,14 +68,15 @@ var selectAccidentPictureRow = function (accidentId) { return __awaiter(void 0, 
             case 0: return [4 /*yield*/, database_1.default.getConnection()];
             case 1:
                 connection = _a.sent();
-                accidentPictureSelectQuery = "SELECT * FROM accident_picture WHERE accident_id = ?";
+                accidentPictureSelectQuery = "SELECT accident_id ,picture_url FROM accident_picture WHERE accident_id = ?";
                 return [4 /*yield*/, connection.execute(accidentPictureSelectQuery, [
                         accidentId
                     ])];
             case 2:
-                accidentPictureRows = _a.sent();
+                accidentPictureRows = (_a.sent())[0];
                 connection.release();
-                return [2 /*return*/, accidentPictureRows[0]];
+                console.log(accidentPictureRows);
+                return [2 /*return*/, accidentPictureRows];
         }
     });
 }); };
@@ -128,12 +130,10 @@ var insertAccidentPictureRow = function (data) { return __awaiter(void 0, void 0
 }); };
 exports.insertAccidentPictureRow = insertAccidentPictureRow;
 var selectAccidentOnTheMapRow = function (locationObject) { return __awaiter(void 0, void 0, void 0, function () {
-    var connection, accidentSelectQuery, accidentRows, err_1;
+    var connection, accidentSelectQuery, accidentRows;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 3, , 4]);
-                return [4 /*yield*/, database_1.default.getConnection()];
+            case 0: return [4 /*yield*/, database_1.default.getConnection()];
             case 1:
                 connection = _a.sent();
                 accidentSelectQuery = "\n      SELECT id, ST_X(accident_location) AS x, ST_Y(accident_location) AS y\n      FROM accident\n      WHERE ST_Distance_Sphere(\n        accident_location,\n        ST_GeomFromText('POINT(".concat(locationObject.x, " ").concat(locationObject.y, ")')\n      ) <= ?;");
@@ -141,13 +141,10 @@ var selectAccidentOnTheMapRow = function (locationObject) { return __awaiter(voi
                         locationObject.radius
                     ])];
             case 2:
-                accidentRows = _a.sent();
+                accidentRows = (_a.sent())[0];
+                console.log(accidentRows);
                 connection.release();
-                return [2 /*return*/, accidentRows[0]];
-            case 3:
-                err_1 = _a.sent();
-                return [2 /*return*/, err_1];
-            case 4: return [2 /*return*/];
+                return [2 /*return*/, accidentRows];
         }
     });
 }); };

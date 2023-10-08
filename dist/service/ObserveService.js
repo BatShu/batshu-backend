@@ -39,9 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-
 exports.findregisterObserveInfo = exports.findvideoInfo = exports.insertThumbnailUrl = exports.updateVideoUrlToOutputFileName = exports.insertMosaicedFinalVideoUrl = exports.createObserve = exports.updateVideoStautsToBlurringDone = exports.updateVideoStautsToBlurringStart = exports.findVideoId = exports.insertVideoStatus = void 0;
-
 var database_1 = __importDefault(require("../config/database"));
 var ObserveRepository_1 = require("../Repository/ObserveRepository");
 var insertVideoStatus = function (uploadedVideoOriginalName) { return __awaiter(void 0, void 0, void 0, function () {
@@ -124,3 +122,122 @@ var createObserve = function (registerObserveData) { return __awaiter(void 0, vo
     });
 }); };
 exports.createObserve = createObserve;
+var insertMosaicedFinalVideoUrl = function (videoOutputFileName, mosaicedVideoUrl) { return __awaiter(void 0, void 0, void 0, function () {
+    var conneciton, mosaicedVideo;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, database_1.default.getConnection()];
+            case 1:
+                conneciton = _a.sent();
+                return [4 /*yield*/, (0, ObserveRepository_1.insertMosaicedVideoUrlResult)(conneciton, videoOutputFileName, mosaicedVideoUrl)];
+            case 2:
+                mosaicedVideo = _a.sent();
+                conneciton.release();
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.insertMosaicedFinalVideoUrl = insertMosaicedFinalVideoUrl;
+var updateVideoUrlToOutputFileName = function (uploadedVideoOriginalName, outputFileName) { return __awaiter(void 0, void 0, void 0, function () {
+    var conneciton, updateVideoUrl;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, database_1.default.getConnection()];
+            case 1:
+                conneciton = _a.sent();
+                return [4 /*yield*/, (0, ObserveRepository_1.updateVideoUrlToOutputFileNameResult)(conneciton, uploadedVideoOriginalName, outputFileName)];
+            case 2:
+                updateVideoUrl = _a.sent();
+                conneciton.release();
+                return [2 /*return*/, updateVideoUrl];
+        }
+    });
+}); };
+exports.updateVideoUrlToOutputFileName = updateVideoUrlToOutputFileName;
+var insertThumbnailUrl = function (locationUrl, thumbnailLocationUrl) { return __awaiter(void 0, void 0, void 0, function () {
+    var conneciton, thumbnail;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, database_1.default.getConnection()];
+            case 1:
+                conneciton = _a.sent();
+                return [4 /*yield*/, (0, ObserveRepository_1.insertThumbnailUrlResult)(conneciton, locationUrl, thumbnailLocationUrl)];
+            case 2:
+                thumbnail = _a.sent();
+                conneciton.release();
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.insertThumbnailUrl = insertThumbnailUrl;
+var findvideoInfo = function (videoId) { return __awaiter(void 0, void 0, void 0, function () {
+    var conneciton, videoInfo;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, database_1.default.getConnection()];
+            case 1:
+                conneciton = _a.sent();
+                return [4 /*yield*/, (0, ObserveRepository_1.selectVideoInfo)(conneciton, videoId)];
+            case 2:
+                videoInfo = _a.sent();
+                conneciton.release();
+                return [2 /*return*/, videoInfo];
+        }
+    });
+}); };
+exports.findvideoInfo = findvideoInfo;
+var findregisterObserveInfo = function (videoId) { return __awaiter(void 0, void 0, void 0, function () {
+    var conneciton, createdAt;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, database_1.default.getConnection()];
+            case 1:
+                conneciton = _a.sent();
+                return [4 /*yield*/, (0, ObserveRepository_1.selectfindregisterObserveInfo)(conneciton, videoId)];
+            case 2:
+                createdAt = _a.sent();
+                conneciton.release();
+                return [2 /*return*/, createdAt];
+        }
+    });
+}); };
+exports.findregisterObserveInfo = findregisterObserveInfo;
+exports.readObserveOnTheMap = function (locationObject) { return __awaiter(void 0, void 0, void 0, function () {
+    var observeRows, data, _i, observeRows_1, observeRow, location_1, observeLocationObject, resData, error_1, resData;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, (0, ObserveRepository_1.selectObserveOnTheMapRow)(locationObject)];
+            case 1:
+                observeRows = _a.sent();
+                data = [];
+                for (_i = 0, observeRows_1 = observeRows; _i < observeRows_1.length; _i++) {
+                    observeRow = observeRows_1[_i];
+                    location_1 = {
+                        x: observeRow.x,
+                        y: observeRow.y
+                    };
+                    observeLocationObject = {
+                        observeId: observeRow.id,
+                        observeLocation: location_1
+                    };
+                    data.push(observeLocationObject);
+                }
+                resData = {
+                    ok: true,
+                    msg: "Successfully Get",
+                    data: data
+                };
+                return [2 /*return*/, resData];
+            case 2:
+                error_1 = _a.sent();
+                resData = {
+                    ok: false,
+                    msg: "INTERNAL SERVER ERROR"
+                };
+                return [2 /*return*/, resData];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };

@@ -12,6 +12,6 @@ var ObserverRouter = express_1.default.Router();
 var observeVideoUpload = (0, multer_1.default)({ storage: aws_s3_1.localStorage, fileFilter: aws_s3_1.fileFilter });
 ObserverRouter.route('/video').post(auth_1.tokenToUid, observeVideoUpload.single("video"), ObserveController_1.uploadVideo, ObserveController_1.videoProcessing);
 ObserverRouter.route('/register').post(auth_1.tokenToUid, ObserveController_1.registerObserve);
-ObserverRouter.route('/').get(ObserveController_1.getObserveOnTheMap);
+ObserverRouter.route('/').get(auth_1.tokenToUid, ObserveController_1.getObserveOnTheMap);
 ObserverRouter.route('/:observeId').get(auth_1.tokenToUid, ObserveController_1.getObserve);
 exports.default = ObserverRouter;

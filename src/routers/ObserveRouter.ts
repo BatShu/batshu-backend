@@ -11,9 +11,9 @@ const ObserverRouter = express.Router();
 const observeVideoUpload = multer({ storage: localStorage, fileFilter: fileFilter });
 
 
-ObserverRouter.route('/video').post(tokenToUid, observeVideoUpload.single("video"), uploadVideo,videoProcessing);
-ObserverRouter.route('/register').post(tokenToUid, registerObserve);
-ObserverRouter.route('/').get(getObserveOnTheMap)
+ObserverRouter.route('/video').post(tokenToUid,observeVideoUpload.single("video"),uploadVideo,videoProcessing);
+ObserverRouter.route('/register').post(tokenToUid,registerObserve);
+ObserverRouter.route('/').get(tokenToUid,getObserveOnTheMap);
 ObserverRouter.route('/:observeId').get(tokenToUid,getObserve);
 
 export default ObserverRouter

@@ -33,35 +33,35 @@ exports.createAccident = async (data:Accident) => {
 exports.readAccident =async (accidentId:number) => {
     try{
         // as a ResultSetHeader[] 제거
-        const accidentRow = await AccidentRepository.selectAccidentRow(accidentId)
+        const accidentRow = await AccidentRepository.selectAccidentRow(accidentId);
 
-        const accidnetPictureRows = await AccidentRepository.selectAccidentPictureRow(accidentId) as ResultSetHeader[];
-
+        const accidentPictureRows = await AccidentRepository.selectAccidentPictureRow(accidentId);
         
-
         const accidentLocation:LocationObject = {
-            x : accidentRow[0].x,
-            y : accidentRow[0].y
+            x : accidentRow.x,
+            y : accidentRow.y
         }
-
+        
         const data:Accident = {
-            contentTitle: accidentRow[0].content_title,
-            contentDescription: accidentRow[0].content_description,
+
+            contentTitle: accidentRow.content_title,
+            contentDescription: accidentRow.content_description,
             pictureUrl: [],
             accidentTime: [
-                accidentRow[0].accident_start_time,
-                accidentRow[0].accident_end_time
+                accidentRow.accident_start_time,
+                accidentRow.accident_end_time
             ],
-            createdAt: accidentRow[0].created_at,
+            createdAt: accidentRow.created_at,
             accidentLocation: accidentLocation,
-            carModelName: accidentRow[0].car_model_name,
-            licensePlate: accidentRow[0].license_plate,
-            bounty: accidentRow[0].bounty
+            carModelName: accidentRow.car_model_name,
+            licensePlate: accidentRow.license_plate,
+            bounty: accidentRow.bounty
         }
 
-        for (let accidentPictureRow of accidnetPictureRows){
+        for (let accidentPictureRow of accidentPictureRows){
             data.pictureUrl.push(accidentPictureRow.picture_url);
         }
+
         
         const resData = {
             ok: true,
@@ -81,7 +81,7 @@ exports.readAccident =async (accidentId:number) => {
 
 exports.readAccidentOnTheMap = async (locationObject:LocationObject) => {
     try{
-    const accidentRows = await AccidentRepository.selectAccidentOnTheMapRow(locationObject) as ResultSetHeader[];
+    const accidentRows = await AccidentRepository.selectAccidentOnTheMapRow(locationObject);
     
     const data:AccidentLocationObject[] = []
     
