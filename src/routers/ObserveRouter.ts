@@ -1,20 +1,21 @@
 import express from "express";
 import multer from "multer";
-import { getObserve, mosaicProcessing, registerObserve, getObserveOnTheMap } from "../controller/ObserveController"
+
+import { getObserve, mosaicProcessing, registerObserve, uploadVideo,getObserveOnTheMap } from "../controller/ObserveController"
 import { tokenToUid } from "../auth/auth";
-import { localStorage } from "../utils/aws-s3";
+import { localStorage, fileFilter } from "../utils/aws-s3";
 
 const ObserverRouter = express.Router();
 
 
-const observeVideoUpload = multer({storage: localStorage});
+const observeVideoUpload = multer({ storage: localStorage, fileFilter: fileFilter });
 
 
-// 동영상 업로드
-ObserverRouter.route('/video').post(observeVideoUpload.single("video"), mosaicProcessing);
-ObserverRouter.route('/register').post(registerObserve);
+ObserverRouter.route('/video').post(tokenToUid, observeVideoUpload.single("video"), uploadVideo,mosaicProcessing);
+
+ObserverRouter.route('/register').post(tokenToUid, registerObserve);
 
 ObserverRouter.route('/').get(getObserveOnTheMap)
 ObserverRouter.route('/:observeId').get(tokenToUid,getObserve);
 
-export default ObserverRouter;
+export default ObserverRouter

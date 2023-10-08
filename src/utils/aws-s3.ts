@@ -1,16 +1,29 @@
 import express, {Express, Request, Response } from "express";
 import dotenv from "dotenv";
 dotenv.config();
+import multer from 'multer'; 
+import { S3Client } from '@aws-sdk/client-s3';
 
-const multer = require('multer');
+
 const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const path = require('path');
 
 
-const accessKey:string = process.env.ACCESS_KEY!;
-const secretAccessKey:string = process.env.SECRET_ACCESS_KEY!;
-const bucketRegion:string = process.env.BUCKET_REGION!;
+export const accessKey:string = process.env.ACCESS_KEY!;
+export const secretAccessKey:string = process.env.SECRET_ACCESS_KEY!;
+export const bucketRegion:string = process.env.BUCKET_REGION!;
+
+
+const s3params = {
+  credentials: {
+    accessKeyId: accessKey,
+    secretAccessKey: secretAccessKey
+  },
+  region: bucketRegion
+}
+
+export const S3 = new S3Client(s3params);
 
 
 AWS.config.update({
@@ -32,6 +45,22 @@ export const s3Upload = multer({
      },
   }),
 });
+
+
+
+// 확장자 필터 함수 정의
+export const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+  const allowedExtensions = ["mp4", "wmv", "mov", "avi", "dat"];
+  const fileExtension = String(file.originalname.split('.').pop()); // 문자열로 형변환
+
+  if (allowedExtensions.includes(fileExtension)) {
+    // 허용된 확장자인 경우
+    cb(null, true); // 파일 허용
+  } else {
+    // 허용되지 않은 확장자인 경우
+    cb(null, false); // 파일 거부
+  }
+};
 
 
 

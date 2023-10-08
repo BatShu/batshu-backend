@@ -9,6 +9,7 @@ const AWS = require('aws-sdk');
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 import dotenv from "dotenv";
+import pool from "../config/database";
 
 declare global {
   interface LocationObject {
@@ -34,7 +35,7 @@ declare global {
       pictureUrl : string;
       accidentId : number;
   }
-
+  
   interface AccidentLocationObject {
     accidentId : number;
     accidentLocation : LocationObject
@@ -205,7 +206,7 @@ export const postAccident = async (req: CustomRequest, res: Response) => {
           uid : uid,
           bounty : req.body.bounty
         }
-
+          
         const resData:ApiResponse = await accidentService.createAccident(passedData);
         res.status(200).json(resData);
       }

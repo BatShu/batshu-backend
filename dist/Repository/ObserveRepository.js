@@ -35,6 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -67,3 +68,87 @@ var selectObserveOnTheMapRow = function (locationObject) { return __awaiter(void
 }); };
 exports.selectObserveOnTheMapRow = selectObserveOnTheMapRow;
 exports.default = { selectObserveOnTheMapRow: exports.selectObserveOnTheMapRow };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createObserveData = exports.updateVideoStatusWithBlurringDone = exports.updateVideoStatusWithBlurring = exports.findUploadedVideoId = exports.updateVideoStatus = void 0;
+// 비디오 업로드.
+var updateVideoStatus = function (connection, uploadedVideoOriginalName) { return __awaiter(void 0, void 0, void 0, function () {
+    var updateVideoStatusQuery, updateVideoStatusRows;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                updateVideoStatusQuery = "INSERT INTO video (status, video_url) VALUES (?, ?);";
+                return [4 /*yield*/, connection.query(updateVideoStatusQuery, ['uploaded', uploadedVideoOriginalName])];
+            case 1:
+                updateVideoStatusRows = (_a.sent())[0];
+                return [2 /*return*/, updateVideoStatusRows];
+        }
+    });
+}); };
+exports.updateVideoStatus = updateVideoStatus;
+var findUploadedVideoId = function (connection, uploadedVideoOriginalName) { return __awaiter(void 0, void 0, void 0, function () {
+    var findUploadedVideoIdQuery, findUploadedVideoIdRows;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                findUploadedVideoIdQuery = "SELECT id FROM video WHERE video_url = ?;";
+                return [4 /*yield*/, connection.query(findUploadedVideoIdQuery, [uploadedVideoOriginalName])];
+            case 1:
+                findUploadedVideoIdRows = (_a.sent())[0];
+                return [2 /*return*/, findUploadedVideoIdRows];
+        }
+    });
+}); };
+exports.findUploadedVideoId = findUploadedVideoId;
+var updateVideoStatusWithBlurring = function (connection, uploadedVideoOriginalName) { return __awaiter(void 0, void 0, void 0, function () {
+    var updateVideoStatusWithBlurringStartQuery, updateVideoStatusWithBlurringStartRows;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                updateVideoStatusWithBlurringStartQuery = "UPDATE video SET status = ? WHERE video_url = ?;";
+                return [4 /*yield*/, connection.query(updateVideoStatusWithBlurringStartQuery, ['blurring', uploadedVideoOriginalName])];
+            case 1:
+                updateVideoStatusWithBlurringStartRows = (_a.sent())[0];
+                return [2 /*return*/, updateVideoStatusWithBlurringStartRows];
+        }
+    });
+}); };
+exports.updateVideoStatusWithBlurring = updateVideoStatusWithBlurring;
+var updateVideoStatusWithBlurringDone = function (connection, uploadedVideoOriginalName) { return __awaiter(void 0, void 0, void 0, function () {
+    var updateVideoStatusWithBlurringDoneQuery, updateVideoStatusWithBlurringDoneRows;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                updateVideoStatusWithBlurringDoneQuery = "UPDATE video SET status = ? WHERE video_url = ?;";
+                return [4 /*yield*/, connection.query(updateVideoStatusWithBlurringDoneQuery, ['blurringDone', uploadedVideoOriginalName])];
+            case 1:
+                updateVideoStatusWithBlurringDoneRows = (_a.sent())[0];
+                return [2 /*return*/, updateVideoStatusWithBlurringDoneRows];
+        }
+    });
+}); };
+exports.updateVideoStatusWithBlurringDone = updateVideoStatusWithBlurringDone;
+var createObserveData = function (connection, registerObserveData) { return __awaiter(void 0, void 0, void 0, function () {
+    var createObserveQuery, results;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                createObserveQuery = "INSERT INTO observe (content_title, content_description, video_id, observe_start_time, observe_end_time, observe_location, created_at, uid) VALUES (?, ?, ?, ?, ?, POINT(?, ?), NOW(), ?);";
+                return [4 /*yield*/, connection.query(createObserveQuery, [
+                        registerObserveData.contentTitle,
+                        registerObserveData.contentDescription,
+                        registerObserveData.videoId,
+                        registerObserveData.observeTime[0],
+                        registerObserveData.observeTime[1],
+                        registerObserveData.accidentLocation.x,
+                        registerObserveData.accidentLocation.y,
+                        registerObserveData.uid,
+                    ])];
+            case 1:
+                results = _a.sent();
+                console.log(results);
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.createObserveData = createObserveData;
+
