@@ -103,7 +103,6 @@ var postAccident = function (req, res) { return __awaiter(void 0, void 0, void 0
             case 0:
                 _a.trys.push([0, 7, , 8]);
                 if (!(typeof req.uid === 'string')) return [3 /*break*/, 6];
-                console.log(req);
                 images = req.files;
                 uid = req.uid;
                 photoUrls = [];
@@ -141,7 +140,6 @@ var postAccident = function (req, res) { return __awaiter(void 0, void 0, void 0
                     uid: uid,
                     bounty: req.body.bounty
                 };
-                console.log(passedData);
                 return [4 /*yield*/, accidentService.createAccident(passedData)];
             case 5:
                 resData = _a.sent();

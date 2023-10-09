@@ -54,9 +54,8 @@ var selectAccidentRow = function (accidentId) { return __awaiter(void 0, void 0,
                     ])];
             case 2:
                 accidentRows = (_a.sent())[0];
-                console.log(accidentRows);
                 connection.release();
-                return [2 /*return*/, accidentRows[0]];
+                return [2 /*return*/, accidentRows];
         }
     });
 }); };
@@ -75,7 +74,6 @@ var selectAccidentPhotoRow = function (accidentId) { return __awaiter(void 0, vo
             case 2:
                 accidentPhotoRows = (_a.sent())[0];
                 connection.release();
-                console.log(accidentPhotoRows);
                 return [2 /*return*/, accidentPhotoRows];
         }
     });
@@ -143,7 +141,6 @@ var selectAccidentOnTheMapRow = function (locationObject) { return __awaiter(voi
                     ])];
             case 2:
                 accidentRows = (_a.sent())[0];
-                console.log(accidentRows);
                 connection.release();
                 return [2 /*return*/, accidentRows];
         }

@@ -135,7 +135,6 @@ export const getAccidentOnTheMap = async (req:CustomRequest, res: Response) => {
 export const postAccident = async (req: CustomRequest, res: Response) => {
     try {
       if (typeof req.uid === 'string') {
-        console.log(req);
         const images:imageData[] = req.files as Express.Multer.File[];
         
         const uid:string = req.uid;
@@ -168,8 +167,6 @@ export const postAccident = async (req: CustomRequest, res: Response) => {
           uid : uid,
           bounty : req.body.bounty
         }
-
-        console.log(passedData)
           
         const resData:ApiResponse = await accidentService.createAccident(passedData);
         res.status(200).json(resData);

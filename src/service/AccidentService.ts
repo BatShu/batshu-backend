@@ -5,7 +5,7 @@ exports.createAccident = async (data:Accident) => {
         // 의미적 데이터 처리
 
         const accidentRows = await AccidentRepository.insertAccidentRow(data);
-        console.log(accidentRows);
+        
         const insertId = (accidentRows as unknown as ResultSetHeader[])[0].insertId;
 
         for (let photo of data.photoUrls){
@@ -32,8 +32,17 @@ exports.createAccident = async (data:Accident) => {
 
 exports.readAccident =async (accidentId:number) => {
     try{
-        // as a ResultSetHeader[] 제거
-        const accidentRow = await AccidentRepository.selectAccidentRow(accidentId);
+        const accidentRows = await AccidentRepository.selectAccidentRow(accidentId);
+
+        if (accidentRows.length == 0) {
+            const resData: ApiResponse = {
+                ok: false,
+                msg: "해당 사고 아이디가 존재하지 않습니다."
+            }
+            return resData;
+        }
+
+        const accidentRow = accidentRows[0];
 
         const accidentPhotoRows = await AccidentRepository.selectAccidentPhotoRow(accidentId);
         

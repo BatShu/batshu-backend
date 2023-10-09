@@ -3,7 +3,7 @@ import pool from "../config/database";
 import { AccidentRow, AccidentPhotoRow } from "../interface/accident";
 import { LocationRow } from "../interface/both";
 
-export const selectAccidentRow = async (accidentId:number):Promise<AccidentRow> => {
+export const selectAccidentRow = async (accidentId:number):Promise<AccidentRow[]> => {
   const connection = await pool.getConnection();
 
   const accidentSelectQuery:string = 
@@ -26,10 +26,9 @@ export const selectAccidentRow = async (accidentId:number):Promise<AccidentRow> 
     accidentId
   ]);
 
-  console.log(accidentRows)
   connection.release();
 
-  return accidentRows[0];
+  return accidentRows;
 }
 
 export const selectAccidentPhotoRow = async (accidentId:number): Promise<AccidentPhotoRow[]> => {
@@ -41,7 +40,7 @@ export const selectAccidentPhotoRow = async (accidentId:number): Promise<Acciden
     accidentId
   ]);
   connection.release();
-  console.log(accidentPhotoRows)
+  
   return accidentPhotoRows;
 }
 
@@ -109,8 +108,6 @@ export const selectAccidentOnTheMapRow = async (locationObject:LocationObject):P
     const [accidentRows]:[LocationRow[], FieldPacket[]]  = await connection.execute<LocationRow[]>(accidentSelectQuery, [
       locationObject.radius
     ])
-
-    console.log(accidentRows)
 
     connection.release();
     return accidentRows;

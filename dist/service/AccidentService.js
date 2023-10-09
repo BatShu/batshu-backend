@@ -49,7 +49,6 @@ exports.createAccident = function (data) { return __awaiter(void 0, void 0, void
                 return [4 /*yield*/, AccidentRepository_1.default.insertAccidentRow(data)];
             case 1:
                 accidentRows = _b.sent();
-                console.log(accidentRows);
                 insertId = accidentRows[0].insertId;
                 _i = 0, _a = data.photoUrls;
                 _b.label = 2;
@@ -84,14 +83,22 @@ exports.createAccident = function (data) { return __awaiter(void 0, void 0, void
     });
 }); };
 exports.readAccident = function (accidentId) { return __awaiter(void 0, void 0, void 0, function () {
-    var accidentRow, accidentPhotoRows, accidentLocation, data, _i, accidentPhotoRows_1, accidentPhotoRow, resData, error_2, resData;
+    var accidentRows, resData_1, accidentRow, accidentPhotoRows, accidentLocation, data, _i, accidentPhotoRows_1, accidentPhotoRow, resData, error_2, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 3, , 4]);
                 return [4 /*yield*/, AccidentRepository_1.default.selectAccidentRow(accidentId)];
             case 1:
-                accidentRow = _a.sent();
+                accidentRows = _a.sent();
+                if (accidentRows.length == 0) {
+                    resData_1 = {
+                        ok: false,
+                        msg: "해당 사고 아이디가 존재하지 않습니다."
+                    };
+                    return [2 /*return*/, resData_1];
+                }
+                accidentRow = accidentRows[0];
                 return [4 /*yield*/, AccidentRepository_1.default.selectAccidentPhotoRow(accidentId)];
             case 2:
                 accidentPhotoRows = _a.sent();
