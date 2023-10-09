@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.selectAccidentOnTheMapRow = exports.insertAccidentPictureRow = exports.insertAccidentRow = exports.selectAccidentPictureRow = exports.selectAccidentRow = void 0;
+exports.selectAccidentOnTheMapRow = exports.insertAccidentPhotoRow = exports.insertAccidentRow = exports.selectAccidentPhotoRow = exports.selectAccidentRow = void 0;
 var database_1 = __importDefault(require("../config/database"));
 var selectAccidentRow = function (accidentId) { return __awaiter(void 0, void 0, void 0, function () {
     var connection, accidentSelectQuery, accidentRows;
@@ -61,26 +61,26 @@ var selectAccidentRow = function (accidentId) { return __awaiter(void 0, void 0,
     });
 }); };
 exports.selectAccidentRow = selectAccidentRow;
-var selectAccidentPictureRow = function (accidentId) { return __awaiter(void 0, void 0, void 0, function () {
-    var connection, accidentPictureSelectQuery, accidentPictureRows;
+var selectAccidentPhotoRow = function (accidentId) { return __awaiter(void 0, void 0, void 0, function () {
+    var connection, accidentPhotoSelectQuery, accidentPhotoRows;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, database_1.default.getConnection()];
             case 1:
                 connection = _a.sent();
-                accidentPictureSelectQuery = "SELECT accident_id ,picture_url FROM accident_picture WHERE accident_id = ?";
-                return [4 /*yield*/, connection.execute(accidentPictureSelectQuery, [
+                accidentPhotoSelectQuery = "SELECT accident_id ,photo_url FROM accident_photo WHERE accident_id = ?";
+                return [4 /*yield*/, connection.execute(accidentPhotoSelectQuery, [
                         accidentId
                     ])];
             case 2:
-                accidentPictureRows = (_a.sent())[0];
+                accidentPhotoRows = (_a.sent())[0];
                 connection.release();
-                console.log(accidentPictureRows);
-                return [2 /*return*/, accidentPictureRows];
+                console.log(accidentPhotoRows);
+                return [2 /*return*/, accidentPhotoRows];
         }
     });
 }); };
-exports.selectAccidentPictureRow = selectAccidentPictureRow;
+exports.selectAccidentPhotoRow = selectAccidentPhotoRow;
 var insertAccidentRow = function (data) { return __awaiter(void 0, void 0, void 0, function () {
     var connection, accidentInsertQuery, accidentRows;
     return __generator(this, function (_a) {
@@ -88,7 +88,7 @@ var insertAccidentRow = function (data) { return __awaiter(void 0, void 0, void 
             case 0: return [4 /*yield*/, database_1.default.getConnection()];
             case 1:
                 connection = _a.sent();
-                accidentInsertQuery = "\n      INSERT INTO accident (\n        content_title,\n        content_description,\n        accident_start_time,\n        accident_end_time,\n        created_at,\n        accident_location,\n        car_model_name,\n        license_plate,\n        uid,\n        bounty\n      ) VALUES (?, ?, ?, ?, NOW(), POINT(?, ?), ?, ?, ?, ?)\n    ";
+                accidentInsertQuery = "\n      INSERT INTO accident (\n        content_title,\n        content_description,\n        accident_start_time,\n        accident_end_time,\n        created_at,\n        accident_location,\n        car_model_name,\n        license_plate,\n        uid,\n        bounty,\n        place_name\n      ) VALUES (?, ?, ?, ?, NOW(), POINT(?, ?), ?, ?, ?, ?, ?)\n    ";
                 return [4 /*yield*/, connection.execute(accidentInsertQuery, [
                         data.contentTitle,
                         data.contentDescription,
@@ -99,7 +99,8 @@ var insertAccidentRow = function (data) { return __awaiter(void 0, void 0, void 
                         data.carModelName,
                         data.licensePlate,
                         data.uid,
-                        data.bounty
+                        data.bounty,
+                        data.placeName
                     ])];
             case 2:
                 accidentRows = _a.sent();
@@ -109,16 +110,16 @@ var insertAccidentRow = function (data) { return __awaiter(void 0, void 0, void 
     });
 }); };
 exports.insertAccidentRow = insertAccidentRow;
-var insertAccidentPictureRow = function (data) { return __awaiter(void 0, void 0, void 0, function () {
-    var connection, accidentPictureInsertQuery;
+var insertAccidentPhotoRow = function (data) { return __awaiter(void 0, void 0, void 0, function () {
+    var connection, accidentPhotoInsertQuery;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, database_1.default.getConnection()];
             case 1:
                 connection = _a.sent();
-                accidentPictureInsertQuery = "\n        INSERT INTO accident_picture (\n          picture_url,\n          accident_id\n        ) VALUES (?, ?)\n      ";
-                return [4 /*yield*/, connection.execute(accidentPictureInsertQuery, [
-                        data.pictureUrl,
+                accidentPhotoInsertQuery = "\n        INSERT INTO accident_photo (\n          photo_url,\n          accident_id\n        ) VALUES (?, ?)\n      ";
+                return [4 /*yield*/, connection.execute(accidentPhotoInsertQuery, [
+                        data.photoUrl,
                         data.accidentId
                     ])];
             case 2:
@@ -128,7 +129,7 @@ var insertAccidentPictureRow = function (data) { return __awaiter(void 0, void 0
         }
     });
 }); };
-exports.insertAccidentPictureRow = insertAccidentPictureRow;
+exports.insertAccidentPhotoRow = insertAccidentPhotoRow;
 var selectAccidentOnTheMapRow = function (locationObject) { return __awaiter(void 0, void 0, void 0, function () {
     var connection, accidentSelectQuery, accidentRows;
     return __generator(this, function (_a) {
@@ -149,4 +150,4 @@ var selectAccidentOnTheMapRow = function (locationObject) { return __awaiter(voi
     });
 }); };
 exports.selectAccidentOnTheMapRow = selectAccidentOnTheMapRow;
-exports.default = { insertAccidentRow: exports.insertAccidentRow, insertAccidentPictureRow: exports.insertAccidentPictureRow, selectAccidentRow: exports.selectAccidentRow, selectAccidentPictureRow: exports.selectAccidentPictureRow, selectAccidentOnTheMapRow: exports.selectAccidentOnTheMapRow };
+exports.default = { insertAccidentRow: exports.insertAccidentRow, insertAccidentPhotoRow: exports.insertAccidentPhotoRow, selectAccidentRow: exports.selectAccidentRow, selectAccidentPhotoRow: exports.selectAccidentPhotoRow, selectAccidentOnTheMapRow: exports.selectAccidentOnTheMapRow };

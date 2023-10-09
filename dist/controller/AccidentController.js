@@ -63,27 +63,6 @@ var s3params = {
     region: bucketRegion
 };
 var s3 = new client_s3_1.S3Client(s3params);
-// Ex.
-// Header - 
-// key  : Authorization
-// value : Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjE5MGFkMTE4YTk0MGFkYzlmMmY1Mzc2YjM1MjkyZmVkZThjMmQwZWUiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoi7KCV7ZWY656MIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FBY0hUdGNXLUJOZ21qOWV0N0J5UUlzYjNfLVJKUnFQX3dQaFZKTmRTZGNpWXNnVj1zOTYtYyIsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9zeW5lcmd5LXRlc3QtYTFmMjQiLCJhdWQiOiJzeW5lcmd5LXRlc3QtYTFmMjQiLCJhdXRoX3RpbWUiOjE2OTQ4ODQyMzQsInVzZXJfaWQiOiJGWG55SlozcWw2UzJoaVpGRG5NaGNRckZSNWcyIiwic3ViIjoiRlhueUpaM3FsNlMyaGlaRkRuTWhjUXJGUjVnMiIsImlhdCI6MTY5NDg4NDIzNCwiZXhwIjoxNjk0ODg3ODM0LCJlbWFpbCI6IjA0aGFyYW1zNzdAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZ29vZ2xlLmNvbSI6WyIxMTU5MDQzMjk4NzY5MzQ1MTQ1NzYiXSwiZW1haWwiOlsiMDRoYXJhbXM3N0BnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJnb29nbGUuY29tIn19.cmcO6RKWQMJaD4pUruiQ8ofYo-DT11n86om0R0W80crdnAragSR-hARBJ7FoQuuieCHokRnuNkVAHRrSxDjm1DuCpnKgHXcOleA82QSUcjY2BSvAQBkGsqACR6Vp6XDXRpbDnsBG3tpgu0TS76EJUzcWTIVkTLZJnH4Gyn4-onD2L8yiyqVWj6U2IIYxzrAhcIWA7Dejw7cJltouwwMVRYpvIVnBKHLd8hs64RihLgOxtaZAD5T8fsn5eyDyBjcRWRZ6lBPSOfqbENVUPJGNUY0buFqbad1auPbCSieGuSp3XXxMDyiWKoutWY3jWyJ0Qgy9llxPjIG7cXwTAAm6wg
-// body - multi form-data
-// {
-//   "contentTitle" : "아..큰일남",
-//   "contentDescription"  : "뺑소니당했어",
-//   "accidentTime" : [
-//     "2023-11-02T00:05:04.123",
-//     "2023-11-02T00:06:04.123"
-//   ],
-//   "pictureUrl" : -> 이미지 파일들 select
-//   "accidentLocation" : {
-//        "x" : "32.234234234",
-//        "y" : "152.234234234"
-//   },
-//   "carModelName" : "avante",
-//   "licensePlate" : "13어 1342",
-//   "bounty" : 400000
-// }
 var getAccidentOnTheMap = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, x, y, radius, xCoord, yCoord, radiusValue, Obj, resData, err_1, resData;
     return __generator(this, function (_b) {
@@ -118,15 +97,16 @@ var getAccidentOnTheMap = function (req, res) { return __awaiter(void 0, void 0,
 }); };
 exports.getAccidentOnTheMap = getAccidentOnTheMap;
 var postAccident = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var images, uid, pictureUrl, _i, images_1, img, fileName, params, command, passedData, resData, error_1, resData;
+    var images, uid, photoUrls, _i, images_1, img, fileName, params, command, passedData, resData, error_1, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 7, , 8]);
                 if (!(typeof req.uid === 'string')) return [3 /*break*/, 6];
+                console.log(req);
                 images = req.files;
                 uid = req.uid;
-                pictureUrl = [];
+                photoUrls = [];
                 _i = 0, images_1 = images;
                 _a.label = 1;
             case 1:
@@ -139,7 +119,7 @@ var postAccident = function (req, res) { return __awaiter(void 0, void 0, void 0
                     Body: img.buffer,
                     ContentType: img.mimetype
                 };
-                pictureUrl.push("https://".concat(params.Bucket, ".s3.amazonaws.com/").concat(params.Key));
+                photoUrls.push("https://".concat(params.Bucket, ".s3.amazonaws.com/").concat(params.Key));
                 command = new client_s3_1.PutObjectCommand(params);
                 return [4 /*yield*/, s3.send(command)];
             case 2:
@@ -152,14 +132,16 @@ var postAccident = function (req, res) { return __awaiter(void 0, void 0, void 0
                 passedData = {
                     contentTitle: req.body.contentTitle,
                     contentDescription: req.body.contentDescription,
-                    pictureUrl: pictureUrl,
+                    photoUrls: photoUrls,
                     accidentTime: req.body.accidentTime,
                     accidentLocation: req.body.accidentLocation,
+                    placeName: req.body.placeName,
                     carModelName: req.body.carModelName,
                     licensePlate: req.body.licensePlate,
                     uid: uid,
                     bounty: req.body.bounty
                 };
+                console.log(passedData);
                 return [4 /*yield*/, accidentService.createAccident(passedData)];
             case 5:
                 resData = _a.sent();

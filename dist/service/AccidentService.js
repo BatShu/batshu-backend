@@ -41,7 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var AccidentRepository_1 = __importDefault(require("../Repository/AccidentRepository"));
 exports.createAccident = function (data) { return __awaiter(void 0, void 0, void 0, function () {
-    var accidentRows, insertId, _i, _a, picture, resData, error_1, resData;
+    var accidentRows, insertId, _i, _a, photo, resData, error_1, resData;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -49,14 +49,15 @@ exports.createAccident = function (data) { return __awaiter(void 0, void 0, void
                 return [4 /*yield*/, AccidentRepository_1.default.insertAccidentRow(data)];
             case 1:
                 accidentRows = _b.sent();
+                console.log(accidentRows);
                 insertId = accidentRows[0].insertId;
-                _i = 0, _a = data.pictureUrl;
+                _i = 0, _a = data.photoUrls;
                 _b.label = 2;
             case 2:
                 if (!(_i < _a.length)) return [3 /*break*/, 5];
-                picture = _a[_i];
-                return [4 /*yield*/, AccidentRepository_1.default.insertAccidentPictureRow({
-                        pictureUrl: picture,
+                photo = _a[_i];
+                return [4 /*yield*/, AccidentRepository_1.default.insertAccidentPhotoRow({
+                        photoUrl: photo,
                         accidentId: insertId
                     })];
             case 3:
@@ -83,7 +84,7 @@ exports.createAccident = function (data) { return __awaiter(void 0, void 0, void
     });
 }); };
 exports.readAccident = function (accidentId) { return __awaiter(void 0, void 0, void 0, function () {
-    var accidentRow, accidentPictureRows, accidentLocation, data, _i, accidentPictureRows_1, accidentPictureRow, resData, error_2, resData;
+    var accidentRow, accidentPhotoRows, accidentLocation, data, _i, accidentPhotoRows_1, accidentPhotoRow, resData, error_2, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -91,9 +92,9 @@ exports.readAccident = function (accidentId) { return __awaiter(void 0, void 0, 
                 return [4 /*yield*/, AccidentRepository_1.default.selectAccidentRow(accidentId)];
             case 1:
                 accidentRow = _a.sent();
-                return [4 /*yield*/, AccidentRepository_1.default.selectAccidentPictureRow(accidentId)];
+                return [4 /*yield*/, AccidentRepository_1.default.selectAccidentPhotoRow(accidentId)];
             case 2:
-                accidentPictureRows = _a.sent();
+                accidentPhotoRows = _a.sent();
                 accidentLocation = {
                     x: accidentRow.x,
                     y: accidentRow.y
@@ -101,20 +102,21 @@ exports.readAccident = function (accidentId) { return __awaiter(void 0, void 0, 
                 data = {
                     contentTitle: accidentRow.content_title,
                     contentDescription: accidentRow.content_description,
-                    pictureUrl: [],
+                    photoUrls: [],
                     accidentTime: [
                         accidentRow.accident_start_time,
                         accidentRow.accident_end_time
                     ],
                     createdAt: accidentRow.created_at,
                     accidentLocation: accidentLocation,
+                    placeName: accidentRow.placeName,
                     carModelName: accidentRow.car_model_name,
                     licensePlate: accidentRow.license_plate,
                     bounty: accidentRow.bounty
                 };
-                for (_i = 0, accidentPictureRows_1 = accidentPictureRows; _i < accidentPictureRows_1.length; _i++) {
-                    accidentPictureRow = accidentPictureRows_1[_i];
-                    data.pictureUrl.push(accidentPictureRow.picture_url);
+                for (_i = 0, accidentPhotoRows_1 = accidentPhotoRows; _i < accidentPhotoRows_1.length; _i++) {
+                    accidentPhotoRow = accidentPhotoRows_1[_i];
+                    data.photoUrls.push(accidentPhotoRow.photo_url);
                 }
                 resData = {
                     ok: true,
