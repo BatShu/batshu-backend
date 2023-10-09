@@ -88,7 +88,7 @@ export const findregisterObserveInfo = async (videoId : number) => {
 
 exports.readObserveOnTheMap = async (locationObject:LocationObject) => {
     try{
-    const observeRows = await selectObserveOnTheMapRow(locationObject) as ResultSetHeader[];
+    const observeRows = await selectObserveOnTheMapRow(locationObject);
     
     const data:ObserveLocationObject[] = []
     
