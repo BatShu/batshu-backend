@@ -14,7 +14,7 @@ export interface AccidentRow extends RowDataPacket {
   uid: string;
 }
 
-export interface AccidentPictureRow extends RowDataPacket {
+export interface AccidentPhotoRow extends RowDataPacket {
     accident_id: number;
-    picture_url: string;
+    photo_url: string;
 }
