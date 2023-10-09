@@ -114,8 +114,8 @@ var getUserInfo = function (req, res) { return __awaiter(void 0, void 0, void 0,
                         data: {
                             uid: userInfo.uid,
                             email: userInfo.email || '',
-                            nickname: userInfo.displayName || '',
-                            photoUrl: userInfo.photoURL || '',
+                            displayName: userInfo.displayName || '',
+                            googleProfilePhotoUrl: userInfo.photoURL || '',
                         }
                     };
                     res.status(200).json(resData);

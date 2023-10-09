@@ -13,8 +13,8 @@ declare global {
     interface UserInfo {
         uid: string;
         email: string;
-        nickname: string;
-        photoUrl: string;
+        displayName: string;
+        googleProfilePhotoUrl: string;
     }
 
     interface ApiResponse {
@@ -93,8 +93,8 @@ export const getUserInfo = async (req:CustomRequest,res:Response):Promise<void>=
                 data : {
                     uid: userInfo.uid,
                     email: userInfo.email || '',
-                    nickname: userInfo.displayName || '',
-                    photoUrl: userInfo.photoURL || '',
+                    displayName: userInfo.displayName || '',
+                    googleProfilePhotoUrl: userInfo.photoURL || '',
                 }
             }
             res.status(200).json(resData);
