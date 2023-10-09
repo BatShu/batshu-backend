@@ -5,12 +5,12 @@ exports.createAccident = async (data:Accident) => {
         // 의미적 데이터 처리
 
         const accidentRows = await AccidentRepository.insertAccidentRow(data);
-
+        
         const insertId = (accidentRows as unknown as ResultSetHeader[])[0].insertId;
 
-        for (let picture of data.pictureUrl){
-            await AccidentRepository.insertAccidentPictureRow({
-                pictureUrl : picture,
+        for (let photo of data.photoUrls){
+            await AccidentRepository.insertAccidentPhotoRow({
+                photoUrl : photo,
                 accidentId : insertId
             })
         }
@@ -32,10 +32,19 @@ exports.createAccident = async (data:Accident) => {
 
 exports.readAccident =async (accidentId:number) => {
     try{
-        // as a ResultSetHeader[] 제거
-        const accidentRow = await AccidentRepository.selectAccidentRow(accidentId);
+        const accidentRows = await AccidentRepository.selectAccidentRow(accidentId);
 
-        const accidentPictureRows = await AccidentRepository.selectAccidentPictureRow(accidentId);
+        if (accidentRows.length == 0) {
+            const resData: ApiResponse = {
+                ok: false,
+                msg: "해당 사고 아이디가 존재하지 않습니다."
+            }
+            return resData;
+        }
+
+        const accidentRow = accidentRows[0];
+
+        const accidentPhotoRows = await AccidentRepository.selectAccidentPhotoRow(accidentId);
         
         const accidentLocation:LocationObject = {
             x : accidentRow.x,
@@ -46,20 +55,21 @@ exports.readAccident =async (accidentId:number) => {
 
             contentTitle: accidentRow.content_title,
             contentDescription: accidentRow.content_description,
-            pictureUrl: [],
+            photoUrls: [],
             accidentTime: [
                 accidentRow.accident_start_time,
                 accidentRow.accident_end_time
             ],
             createdAt: accidentRow.created_at,
             accidentLocation: accidentLocation,
+            placeName: accidentRow.placeName,
             carModelName: accidentRow.car_model_name,
             licensePlate: accidentRow.license_plate,
             bounty: accidentRow.bounty
         }
 
-        for (let accidentPictureRow of accidentPictureRows){
-            data.pictureUrl.push(accidentPictureRow.picture_url);
+        for (let accidentPhotoRow of accidentPhotoRows){
+            data.photoUrls.push(accidentPhotoRow.photo_url);
         }
 
         

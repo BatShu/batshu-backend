@@ -1,9 +1,9 @@
 import { FieldPacket } from "mysql2";
 import pool from "../config/database";
-import { AccidentRow, AccidentPictureRow } from "../interface/accident";
+import { AccidentRow, AccidentPhotoRow } from "../interface/accident";
 import { LocationRow } from "../interface/both";
 
-export const selectAccidentRow = async (accidentId:number):Promise<AccidentRow> => {
+export const selectAccidentRow = async (accidentId:number):Promise<AccidentRow[]> => {
   const connection = await pool.getConnection();
 
   const accidentSelectQuery:string = 
@@ -26,23 +26,22 @@ export const selectAccidentRow = async (accidentId:number):Promise<AccidentRow> 
     accidentId
   ]);
 
-  console.log(accidentRows)
   connection.release();
 
-  return accidentRows[0];
+  return accidentRows;
 }
 
-export const selectAccidentPictureRow = async (accidentId:number): Promise<AccidentPictureRow[]> => {
+export const selectAccidentPhotoRow = async (accidentId:number): Promise<AccidentPhotoRow[]> => {
   const connection = await pool.getConnection();
 
-  const accidentPictureSelectQuery:string = `SELECT accident_id ,picture_url FROM accident_picture WHERE accident_id = ?`;
+  const accidentPhotoSelectQuery:string = `SELECT accident_id ,photo_url FROM accident_photo WHERE accident_id = ?`;
 
-  const [accidentPictureRows]:[AccidentPictureRow[], FieldPacket[]] = await connection.execute<AccidentPictureRow[]>(accidentPictureSelectQuery, [ 
+  const [accidentPhotoRows]:[AccidentPhotoRow[], FieldPacket[]] = await connection.execute<AccidentPhotoRow[]>(accidentPhotoSelectQuery, [ 
     accidentId
   ]);
   connection.release();
-  console.log(accidentPictureRows)
-  return accidentPictureRows;
+  
+  return accidentPhotoRows;
 }
 
 export const insertAccidentRow = async (data:Accident) => {
@@ -58,8 +57,9 @@ export const insertAccidentRow = async (data:Accident) => {
         car_model_name,
         license_plate,
         uid,
-        bounty
-      ) VALUES (?, ?, ?, ?, NOW(), POINT(?, ?), ?, ?, ?, ?)
+        bounty,
+        place_name
+      ) VALUES (?, ?, ?, ?, NOW(), POINT(?, ?), ?, ?, ?, ?, ?)
     `;
     
     const accidentRows = await connection.execute(accidentInsertQuery, [
@@ -72,22 +72,23 @@ export const insertAccidentRow = async (data:Accident) => {
       data.carModelName,
       data.licensePlate,
       data.uid,
-      data.bounty
+      data.bounty,
+      data.placeName
     ]);
     connection.release();
     return accidentRows
 }
 
-export const insertAccidentPictureRow = async (data:AccidentPicture):Promise<void> => {
+export const insertAccidentPhotoRow = async (data:AccidentPhoto):Promise<void> => {
     const connection = await pool.getConnection();
-    const accidentPictureInsertQuery: string = `
-        INSERT INTO accident_picture (
-          picture_url,
+    const accidentPhotoInsertQuery: string = `
+        INSERT INTO accident_photo (
+          photo_url,
           accident_id
         ) VALUES (?, ?)
       `
-    await connection.execute(accidentPictureInsertQuery, [
-      data.pictureUrl,
+    await connection.execute(accidentPhotoInsertQuery, [
+      data.photoUrl,
       data.accidentId
     ])
     connection.release();
@@ -108,11 +109,9 @@ export const selectAccidentOnTheMapRow = async (locationObject:LocationObject):P
       locationObject.radius
     ])
 
-    console.log(accidentRows)
-
     connection.release();
     return accidentRows;
 }
 
 
-export default { insertAccidentRow, insertAccidentPictureRow, selectAccidentRow, selectAccidentPictureRow, selectAccidentOnTheMapRow } ;
+export default { insertAccidentRow, insertAccidentPhotoRow, selectAccidentRow, selectAccidentPhotoRow, selectAccidentOnTheMapRow } ;
