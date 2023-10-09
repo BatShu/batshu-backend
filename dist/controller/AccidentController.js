@@ -42,7 +42,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAccident = exports.postAccident = exports.getAccidentOnTheMap = void 0;
 var accidentService = require("../service/AccidentService");
 var crypto = require('crypto');
-var sharp = require('sharp');
 var AWS = require('aws-sdk');
 var client_s3_1 = require("@aws-sdk/client-s3");
 var dotenv_1 = __importDefault(require("dotenv"));
@@ -119,40 +118,37 @@ var getAccidentOnTheMap = function (req, res) { return __awaiter(void 0, void 0,
 }); };
 exports.getAccidentOnTheMap = getAccidentOnTheMap;
 var postAccident = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var images, uid, pictureUrl, _i, images_1, img, fileName, buffer, params, command, passedData, resData, error_1, resData;
+    var images, uid, pictureUrl, _i, images_1, img, fileName, params, command, passedData, resData, error_1, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 8, , 9]);
-                if (!(typeof req.uid === 'string')) return [3 /*break*/, 7];
+                _a.trys.push([0, 7, , 8]);
+                if (!(typeof req.uid === 'string')) return [3 /*break*/, 6];
                 images = req.files;
                 uid = req.uid;
                 pictureUrl = [];
                 _i = 0, images_1 = images;
                 _a.label = 1;
             case 1:
-                if (!(_i < images_1.length)) return [3 /*break*/, 5];
+                if (!(_i < images_1.length)) return [3 /*break*/, 4];
                 img = images_1[_i];
                 fileName = crypto.randomBytes(16).toString('hex');
-                return [4 /*yield*/, sharp(img.buffer).resize({ height: 1920, width: 1080, fit: "contain" }).toBuffer()];
-            case 2:
-                buffer = _a.sent();
                 params = {
                     Bucket: bucketName,
                     Key: "".concat(fileName, ".").concat(img.originalname.split('.').pop()),
-                    Body: buffer,
+                    Body: img.buffer,
                     ContentType: img.mimetype
                 };
                 pictureUrl.push("https://".concat(params.Bucket, ".s3.amazonaws.com/").concat(params.Key));
                 command = new client_s3_1.PutObjectCommand(params);
                 return [4 /*yield*/, s3.send(command)];
-            case 3:
+            case 2:
                 _a.sent();
-                _a.label = 4;
-            case 4:
+                _a.label = 3;
+            case 3:
                 _i++;
                 return [3 /*break*/, 1];
-            case 5:
+            case 4:
                 passedData = {
                     contentTitle: req.body.contentTitle,
                     contentDescription: req.body.contentDescription,
@@ -165,12 +161,12 @@ var postAccident = function (req, res) { return __awaiter(void 0, void 0, void 0
                     bounty: req.body.bounty
                 };
                 return [4 /*yield*/, accidentService.createAccident(passedData)];
-            case 6:
+            case 5:
                 resData = _a.sent();
                 res.status(200).json(resData);
-                _a.label = 7;
-            case 7: return [3 /*break*/, 9];
-            case 8:
+                _a.label = 6;
+            case 6: return [3 /*break*/, 8];
+            case 7:
                 error_1 = _a.sent();
                 console.error('Error:', error_1);
                 resData = {
@@ -178,8 +174,8 @@ var postAccident = function (req, res) { return __awaiter(void 0, void 0, void 0
                     msg: "INTERNAL SERVER ERROR"
                 };
                 res.status(500).json(resData);
-                return [3 /*break*/, 9];
-            case 9: return [2 /*return*/];
+                return [3 /*break*/, 8];
+            case 8: return [2 /*return*/];
         }
     });
 }); };

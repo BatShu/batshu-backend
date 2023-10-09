@@ -1,0 +1,35 @@
+version: '3.8'
+networks:
+  monitoring:
+    driver: bridge
+volumes:
+    mysql-data:
+
+services:
+  batshu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    ports:
+      - 3000:3000
+    networks:
+      - monitoring
+    volumes:
+      - .:/src
+    depends_on:
+      - mysql-server
+  mysql-server:
+    image: mysql:8.0
+    restart: always
+
+    environment:
+      - MYSQL_DATABASE=batshu_db
+      - MYSQL_ROOT_PASSWORD=tkfkdgo12!
+
+
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+
