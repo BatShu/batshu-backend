@@ -58,8 +58,8 @@ var uploadVideo = function (req, res, next) { return __awaiter(void 0, void 0, v
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 3, , 4]);
+                console.log(process.cwd);
                 uploadedVideo = req.file;
-                console.log(uploadedVideo);
                 uploadedVideoOriginalName = uploadedVideo.originalname;
                 return [4 /*yield*/, (0, ObserveService_1.insertVideoStatus)(uploadedVideoOriginalName)];
             case 1:
@@ -128,7 +128,7 @@ var getObserveOnTheMap = function (req, res) { return __awaiter(void 0, void 0, 
 }); };
 exports.getObserveOnTheMap = getObserveOnTheMap;
 var videoProcessing = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var uploadedVideo, uploadedVideoOriginalName_1, fileExtension, videoOutputFileName_1, scriptDirectory, mosaicCommand, blurringDoneVideo_1, error_2, resData;
+    var uploadedVideo, uploadedVideoOriginalName_1, fileExtension, videoOutputFileName_1, mosaicCommand, blurringDoneVideo_1, error_2, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -137,8 +137,7 @@ var videoProcessing = function (req, res) { return __awaiter(void 0, void 0, voi
                 uploadedVideoOriginalName_1 = uploadedVideo.originalname;
                 fileExtension = path.extname(uploadedVideoOriginalName_1);
                 videoOutputFileName_1 = "".concat(uploadedVideoOriginalName_1, "_").concat(Date.now()).concat(fileExtension);
-                scriptDirectory = './src/DashcamCleaner';
-                process.chdir(scriptDirectory);
+                console.log("현재작업경로", process.cwd);
                 mosaicCommand = "python cli.py -i ".concat(uploadedVideoOriginalName_1, " -o ").concat(videoOutputFileName_1, " -w 360p_nano_v8.pt");
                 return [4 /*yield*/, (0, ObserveService_1.updateVideoStautsToBlurringStart)(uploadedVideoOriginalName_1)];
             case 1:
@@ -254,6 +253,8 @@ var registerObserve = function (req, res) { return __awaiter(void 0, void 0, voi
                 registerObserveData = {
                     contentTitle: req.body.contentTitle,
                     contentDescription: req.body.contentDescription,
+                    carModelName: req.body.carModelName,
+                    licensePlate: req.body.licensePlate,
                     videoId: req.body.videoId,
                     observeTime: req.body.observeTime,
                     accidentLocation: req.body.observeLocation,
