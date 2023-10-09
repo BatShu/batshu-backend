@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 
 const accidentService = require("../service/AccidentService");
 const crypto = require('crypto');
-const sharp = require('sharp')
 
 const AWS = require('aws-sdk');
 
@@ -165,11 +164,10 @@ export const postAccident = async (req: CustomRequest, res: Response) => {
         
         for (let img of images){
           const fileName:string = crypto.randomBytes(16).toString('hex');
-          const buffer = await sharp(img.buffer).resize({height: 1920, width: 1080, fit: "contain"}).toBuffer()
           const params = {
             Bucket: bucketName,
             Key: `${fileName}.${img.originalname.split('.').pop()}`,
-            Body: buffer,
+            Body: img.buffer,
             ContentType: img.mimetype
           }
 
