@@ -27,9 +27,7 @@ export const uploadVideo = async (req:Request, res: Response, next: NextFunction
   
   try {
 
-
     const uploadedVideo: video = req.file as Express.Multer.File;
-    console.log(uploadedVideo)
   
     const uploadedVideoOriginalName: string = uploadedVideo.originalname;
   
@@ -107,8 +105,8 @@ export const videoProcessing = async (req:Request, res: Response) => {
 
     const videoOutputFileName = `${uploadedVideoOriginalName}_${Date.now()}${fileExtension}`;
 
-   const scriptDirectory = './src/DashcamCleaner';
-
+    const scriptDirectory = './src/DashcamCleaner';
+   
     process.chdir(scriptDirectory);
 
     const mosaicCommand = `python cli.py -i ${uploadedVideoOriginalName} -o ${videoOutputFileName} -w 360p_nano_v8.pt`
@@ -225,6 +223,8 @@ export const registerObserve = async (req: CustomRequest, res: Response) => {
 
     contentTitle: req.body.contentTitle,
     contentDescription: req.body.contentDescription,
+    carModelName: req.body.carModelName,
+    licensePlate: req.body.licensePlate,
     videoId: req.body.videoId,
     observeTime: req.body.observeTime,
     accidentLocation: req.body.observeLocation,

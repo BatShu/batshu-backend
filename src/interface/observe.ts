@@ -22,6 +22,8 @@ export interface registerObserveRequest {
   contentTitle : string;
   contentDescription : string;
   videoId : number;
+  carModelName : string;
+  licensePlate : string;
   observeTime : Date[];
   createdAt? : Date;
   accidentLocation : LocationObject;
