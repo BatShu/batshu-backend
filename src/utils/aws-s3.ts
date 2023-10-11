@@ -66,10 +66,8 @@ export const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.F
 
 export const localStorage = multer.diskStorage({
   destination: function (req:Request, file: any, cb: (arg0: null, arg1: string) => void) {
-    console.log(process.cwd)
-
     // 파일이 저장될 디렉토리 경로를 지정합니다.
-    cb(null, 'src/DashcamCleaner/');
+    cb(null, '/DashcamCleaner');
   },
   filename: function (req:Request, file: { originalname: any; }, cb: (arg0: null, arg1: any) => void) {
     // 파일의 이름을 지정합니다.

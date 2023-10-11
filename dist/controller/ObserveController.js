@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -37,12 +60,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getObserve = exports.registerObserve = exports.videoProcessing = exports.getObserveOnTheMap = exports.uploadVideo = void 0;
+var path = __importStar(require("path"));
 var child_process_1 = require("child_process");
 var client_s3_1 = require("@aws-sdk/client-s3");
 var aws_s3_1 = require("../utils/aws-s3");
 var ObserveService_1 = require("../service/ObserveService");
 var AWS = require('aws-sdk');
-var path = require('path');
 var fs = require('fs');
 var ffmpeg = require('fluent-ffmpeg');
 AWS.config.update({
@@ -58,7 +81,6 @@ var uploadVideo = function (req, res, next) { return __awaiter(void 0, void 0, v
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 3, , 4]);
-                console.log(process.cwd);
                 uploadedVideo = req.file;
                 uploadedVideoOriginalName = uploadedVideo.originalname;
                 return [4 /*yield*/, (0, ObserveService_1.insertVideoStatus)(uploadedVideoOriginalName)];
@@ -137,7 +159,7 @@ var videoProcessing = function (req, res) { return __awaiter(void 0, void 0, voi
                 uploadedVideoOriginalName_1 = uploadedVideo.originalname;
                 fileExtension = path.extname(uploadedVideoOriginalName_1);
                 videoOutputFileName_1 = "".concat(uploadedVideoOriginalName_1, "_").concat(Date.now()).concat(fileExtension);
-                console.log("현재작업경로", process.cwd);
+                console.log(process.cwd());
                 mosaicCommand = "python cli.py -i ".concat(uploadedVideoOriginalName_1, " -o ").concat(videoOutputFileName_1, " -w 360p_nano_v8.pt");
                 return [4 /*yield*/, (0, ObserveService_1.updateVideoStautsToBlurringStart)(uploadedVideoOriginalName_1)];
             case 1:
@@ -253,9 +275,10 @@ var registerObserve = function (req, res) { return __awaiter(void 0, void 0, voi
                 registerObserveData = {
                     contentTitle: req.body.contentTitle,
                     contentDescription: req.body.contentDescription,
+                    videoId: req.body.videoId,
                     carModelName: req.body.carModelName,
                     licensePlate: req.body.licensePlate,
-                    videoId: req.body.videoId,
+                    placeName: req.body.placeName,
                     observeTime: req.body.observeTime,
                     accidentLocation: req.body.observeLocation,
                     uid: uid,

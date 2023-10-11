@@ -184,13 +184,14 @@ var createObserveData = function (connection, registerObserveData) { return __aw
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                createObserveQuery = "INSERT INTO observe (content_title, content_description, video_id, car_model_name, license_plate, observe_start_time, observe_end_time, observe_location, created_at, uid) VALUES (?, ?, ?, ?, ?, ?, ?, POINT(?, ?), NOW(), ?);";
+                createObserveQuery = "INSERT INTO observe (content_title, content_description, video_id, car_model_name, license_plate, place_name, observe_start_time, observe_end_time, observe_location, created_at, uid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, POINT(?, ?), NOW(), ?);";
                 return [4 /*yield*/, connection.query(createObserveQuery, [
                         registerObserveData.contentTitle,
                         registerObserveData.contentDescription,
                         registerObserveData.videoId,
                         registerObserveData.carModelName,
                         registerObserveData.licensePlate,
+                        registerObserveData.placeName,
                         registerObserveData.observeTime[0],
                         registerObserveData.observeTime[1],
                         registerObserveData.accidentLocation.x,
