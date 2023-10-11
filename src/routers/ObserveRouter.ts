@@ -7,7 +7,6 @@ import { localStorage, fileFilter } from "../utils/aws-s3";
 
 const ObserverRouter = express.Router();
 
-
 const observeVideoUpload = multer({ storage: localStorage, fileFilter: fileFilter });
 
 

@@ -90,7 +90,7 @@ export const selectVideoInfo = async(connection: PoolConnection, videoId : numbe
 }
 
 export const createObserveData = async(connection: PoolConnection, registerObserveData : registerObserveRequest) => {
-    const createObserveQuery = `INSERT INTO observe (content_title, content_description, video_id, car_model_name, license_plate, observe_start_time, observe_end_time, observe_location, created_at, uid) VALUES (?, ?, ?, ?, ?, ?, ?, POINT(?, ?), NOW(), ?);`;
+    const createObserveQuery = `INSERT INTO observe (content_title, content_description, video_id, car_model_name, license_plate, place_name, observe_start_time, observe_end_time, observe_location, created_at, uid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, POINT(?, ?), NOW(), ?);`;
     
     const results = await connection.query(createObserveQuery, [
           registerObserveData.contentTitle,
@@ -98,6 +98,7 @@ export const createObserveData = async(connection: PoolConnection, registerObser
           registerObserveData.videoId,
           registerObserveData.carModelName,
           registerObserveData.licensePlate,
+          registerObserveData.placeName,
           registerObserveData.observeTime[0],
           registerObserveData.observeTime[1],
           registerObserveData.accidentLocation.x,

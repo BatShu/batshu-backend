@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import * as path from 'path';
 import { exec } from 'child_process'
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { S3, accessKey, secretAccessKey, bucketRegion } from "../utils/aws-s3";
@@ -7,7 +8,6 @@ import CustomRequest from "../auth/auth";
 import { insertVideoStatus, findVideoId, updateVideoStautsToBlurringStart, updateVideoStautsToBlurringDone, createObserve, insertMosaicedFinalVideoUrl, updateVideoUrlToOutputFileName, insertThumbnailUrl, findvideoInfo, findregisterObserveInfo } from "../service/ObserveService";
 
 const AWS = require('aws-sdk');
-const path = require('path');
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
 
@@ -105,10 +105,12 @@ export const videoProcessing = async (req:Request, res: Response) => {
 
     const videoOutputFileName = `${uploadedVideoOriginalName}_${Date.now()}${fileExtension}`;
 
-    const scriptDirectory = './src/DashcamCleaner';
+    console.log(process.cwd());
    
-    process.chdir(scriptDirectory);
-
+    //const scriptDirectory = './src/DashcamCleaner';
+   
+    //process.chdir(scriptDirectory);
+    
     const mosaicCommand = `python cli.py -i ${uploadedVideoOriginalName} -o ${videoOutputFileName} -w 360p_nano_v8.pt`
     
     await updateVideoStautsToBlurringStart(uploadedVideoOriginalName);
@@ -223,9 +225,10 @@ export const registerObserve = async (req: CustomRequest, res: Response) => {
 
     contentTitle: req.body.contentTitle,
     contentDescription: req.body.contentDescription,
+    videoId: req.body.videoId,
     carModelName: req.body.carModelName,
     licensePlate: req.body.licensePlate,
-    videoId: req.body.videoId,
+    placeName: req.body.placeName,
     observeTime: req.body.observeTime,
     accidentLocation: req.body.observeLocation,
     uid: uid,
