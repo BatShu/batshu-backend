@@ -1,10 +1,25 @@
-# Use the official Python image as the base
-FROM python:3.9-slim
+FROM ubuntu:latest
 
-RUN apt-get update && apt-get install -y gcc python3-dev nodejs npm
+RUN apt-get update && apt-get install -y \
+    curl \
+    software-properties-common \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && apt-get install -y nodejs
+ENV LANG C.UTF-8
+
+# PPA를 추가하고 Python 3.7 설치
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt-get update && apt-get install -y \
+    python3.6 \
+    gdb \
+    python3-dbg \
+    python3-pip
+
+# Node.js 설치
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+RUN apt-get install -y nodejs
+
 
 # 작업 디렉터리를 /src로 설정
 WORKDIR /src
@@ -12,12 +27,12 @@ WORKDIR /src
 # 현재 디렉터리의 모든 파일을 컨테이너 내 /src 디렉터리로 복사
 COPY . .
 
-COPY src/DashcamCleaner /src/DashcamCleaner
-
-RUN pip3 install --upgrade pip
+# COPY src/DashcamCleaner /src/DashcamCleaner
+RUN pip install --upgrade pip
 
 # Python 패키지를 설치
-RUN pip3 install -r requirements.txt
+RUN pip install -r requirements.txt
+RUN apt-get install -y libgl1-mesa-glx
 
 # Node.js 패키지를 설치
 RUN npm install

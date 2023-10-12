@@ -46,10 +46,10 @@ var AWS = require('aws-sdk');
 var client_s3_1 = require("@aws-sdk/client-s3");
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-var bucketName = process.env.BUCKET_NAME;
-var accessKey = process.env.ACCESS_KEY;
-var bucketRegion = process.env.BUCKET_REGION;
-var secretAccessKey = process.env.SECRET_ACCESS_KEY;
+var bucketName = process.env.BUCKET_NAME_HARAM;
+var accessKey = process.env.ACCESS_KEY_HARAM;
+var bucketRegion = process.env.BUCKET_REGION_HARAM;
+var secretAccessKey = process.env.SECRET_ACCESS_KEY_HARAM;
 AWS.config.update({
     accessKeyId: accessKey,
     secretAccessKey: secretAccessKey,

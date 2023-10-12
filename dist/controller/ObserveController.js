@@ -61,7 +61,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getObserve = exports.registerObserve = exports.videoProcessing = exports.getObserveOnTheMap = exports.uploadVideo = void 0;
 var path = __importStar(require("path"));
-var child_process_1 = require("child_process");
 var client_s3_1 = require("@aws-sdk/client-s3");
 var aws_s3_1 = require("../utils/aws-s3");
 var ObserveService_1 = require("../service/ObserveService");
@@ -150,116 +149,81 @@ var getObserveOnTheMap = function (req, res) { return __awaiter(void 0, void 0, 
 }); };
 exports.getObserveOnTheMap = getObserveOnTheMap;
 var videoProcessing = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var uploadedVideo, uploadedVideoOriginalName_1, fileExtension, videoOutputFileName_1, mosaicCommand, blurringDoneVideo_1, error_2, resData;
+    var uploadedVideo, uploadedVideoOriginalName_1, fileExtension, scriptDirectory, uploadParams, currentWorkingDirectory_1, thumbnailFileName_1, thumbnailInfo, thumbnailFilePath, thumbnailUploadParams, uploadThumbnailcommand, command, videoLocationUrl, thumbnailLocationUrl, thumbnail, error_2, error_3, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
+                _a.trys.push([0, 8, , 9]);
                 uploadedVideo = req.file;
                 uploadedVideoOriginalName_1 = uploadedVideo.originalname;
                 fileExtension = path.extname(uploadedVideoOriginalName_1);
-                videoOutputFileName_1 = "".concat(uploadedVideoOriginalName_1, "_").concat(Date.now()).concat(fileExtension);
-                console.log(process.cwd());
-                mosaicCommand = "python cli.py -i ".concat(uploadedVideoOriginalName_1, " -o ").concat(videoOutputFileName_1, " -w 360p_nano_v8.pt");
-                return [4 /*yield*/, (0, ObserveService_1.updateVideoStautsToBlurringStart)(uploadedVideoOriginalName_1)];
+                scriptDirectory = 'DashcamCleaner';
+                process.chdir(scriptDirectory);
+                uploadParams = {
+                    Bucket: 'batshu-observe-input',
+                    Key: uploadedVideoOriginalName_1,
+                    Body: fs.createReadStream(uploadedVideoOriginalName_1),
+                };
+                _a.label = 1;
             case 1:
-                _a.sent();
-                blurringDoneVideo_1 = (0, child_process_1.exec)(mosaicCommand, function (error, stdout, stderr) { return __awaiter(void 0, void 0, void 0, function () {
-                    var uploadParams, currentWorkingDirectory_1, thumbnailFileName_1, thumbnailInfo, thumbnailFilePath, thumbnailUploadParams, uploadThumbnailcommand, command, videoLocationUrl, thumbnailLocationUrl, mosaicedFinalVideoUrl, thumbnail, error_3;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                if (error) {
-                                    console.log("error: ".concat(error.message));
-                                }
-                                else if (stderr) {
-                                    console.log("stderr: ".concat(stderr));
-                                }
-                                else {
-                                    console.log('stdout:', stdout);
-                                }
-                                if (!blurringDoneVideo_1) return [3 /*break*/, 11];
-                                return [4 /*yield*/, (0, ObserveService_1.updateVideoStautsToBlurringDone)(uploadedVideoOriginalName_1)];
-                            case 1:
-                                _a.sent();
-                                return [4 /*yield*/, (0, ObserveService_1.updateVideoUrlToOutputFileName)(uploadedVideoOriginalName_1, videoOutputFileName_1)];
-                            case 2:
-                                _a.sent();
-                                uploadParams = {
-                                    Bucket: 'batshu-observe-input',
-                                    Key: videoOutputFileName_1,
-                                    Body: fs.createReadStream(videoOutputFileName_1),
-                                };
-                                _a.label = 3;
-                            case 3:
-                                _a.trys.push([3, 9, , 10]);
-                                currentWorkingDirectory_1 = process.cwd();
-                                thumbnailFileName_1 = "thumbnail_".concat(Date.now(), "To").concat(uploadedVideoOriginalName_1, ".png");
-                                return [4 /*yield*/, new Promise(function (resolve, reject) {
-                                        ffmpeg(videoOutputFileName_1)
-                                            .screenshots({
-                                            timestamps: ['50%'],
-                                            filename: thumbnailFileName_1,
-                                            folder: currentWorkingDirectory_1,
-                                            size: '320x240'
-                                        })
-                                            .on('end', function (stdout, stderr) {
-                                            console.log('썸네일 추출 완료');
-                                            resolve(stdout);
-                                        })
-                                            .on('error', function (err) {
-                                            console.error('썸네일 추출 오류:', err);
-                                            reject(err);
-                                        });
-                                    })];
-                            case 4:
-                                thumbnailInfo = _a.sent();
-                                thumbnailFilePath = "".concat(currentWorkingDirectory_1, "/").concat(thumbnailFileName_1);
-                                thumbnailUploadParams = {
-                                    Bucket: 'batshu-observe-input',
-                                    Key: thumbnailFileName_1,
-                                    Body: fs.createReadStream(thumbnailFilePath),
-                                };
-                                uploadThumbnailcommand = new client_s3_1.PutObjectCommand(thumbnailUploadParams);
-                                return [4 /*yield*/, aws_s3_1.S3.send(uploadThumbnailcommand)];
-                            case 5:
-                                _a.sent();
-                                command = new client_s3_1.PutObjectCommand(uploadParams);
-                                return [4 /*yield*/, aws_s3_1.S3.send(command)];
-                            case 6:
-                                _a.sent();
-                                videoLocationUrl = "https://batshu-observe-input.s3.amazonaws.com/".concat(videoOutputFileName_1);
-                                thumbnailLocationUrl = "https://batshu-observe-input.s3.amazonaws.com/".concat(thumbnailFileName_1);
-                                return [4 /*yield*/, (0, ObserveService_1.insertMosaicedFinalVideoUrl)(videoOutputFileName_1, videoLocationUrl)];
-                            case 7:
-                                mosaicedFinalVideoUrl = _a.sent();
-                                return [4 /*yield*/, (0, ObserveService_1.insertThumbnailUrl)(videoLocationUrl, thumbnailLocationUrl)];
-                            case 8:
-                                thumbnail = _a.sent();
-                                return [3 /*break*/, 10];
-                            case 9:
-                                error_3 = _a.sent();
-                                console.log(error_3);
-                                return [3 /*break*/, 10];
-                            case 10: return [3 /*break*/, 12];
-                            case 11:
-                                console.log("blurringDoneVideo is not defined");
-                                _a.label = 12;
-                            case 12: return [2 /*return*/];
-                        }
-                    });
-                }); });
-                return [3 /*break*/, 3];
+                _a.trys.push([1, 6, , 7]);
+                currentWorkingDirectory_1 = process.cwd();
+                console.log(currentWorkingDirectory_1);
+                thumbnailFileName_1 = "thumbnail_".concat(Date.now(), "To").concat(uploadedVideoOriginalName_1, ".png");
+                return [4 /*yield*/, new Promise(function (resolve, reject) {
+                        ffmpeg(uploadedVideoOriginalName_1)
+                            .screenshots({
+                            timestamps: ['50%'],
+                            filename: thumbnailFileName_1,
+                            folder: currentWorkingDirectory_1,
+                            size: '320x240'
+                        })
+                            .on('end', function (stdout, stderr) {
+                            console.log('썸네일 추출 완료');
+                            resolve(stdout);
+                        })
+                            .on('error', function (err) {
+                            console.error('썸네일 추출 오류:', err);
+                            reject(err);
+                        });
+                    })];
             case 2:
+                thumbnailInfo = _a.sent();
+                thumbnailFilePath = "".concat(currentWorkingDirectory_1, "/").concat(thumbnailFileName_1);
+                thumbnailUploadParams = {
+                    Bucket: 'batshu-observe-input',
+                    Key: thumbnailFileName_1,
+                    Body: fs.createReadStream(thumbnailFilePath),
+                };
+                uploadThumbnailcommand = new client_s3_1.PutObjectCommand(thumbnailUploadParams);
+                return [4 /*yield*/, aws_s3_1.S3.send(uploadThumbnailcommand)];
+            case 3:
+                _a.sent();
+                command = new client_s3_1.PutObjectCommand(uploadParams);
+                return [4 /*yield*/, aws_s3_1.S3.send(command)];
+            case 4:
+                _a.sent();
+                videoLocationUrl = "https://batshu-observe-input.s3.amazonaws.com/".concat(uploadedVideoOriginalName_1);
+                thumbnailLocationUrl = "https://batshu-observe-input.s3.amazonaws.com/".concat(thumbnailFileName_1);
+                return [4 /*yield*/, (0, ObserveService_1.insertThumbnailUrl)(videoLocationUrl, thumbnailLocationUrl)];
+            case 5:
+                thumbnail = _a.sent();
+                return [3 /*break*/, 7];
+            case 6:
                 error_2 = _a.sent();
-                console.error('Error:', error_2);
+                console.log(error_2);
+                return [3 /*break*/, 7];
+            case 7: return [3 /*break*/, 9];
+            case 8:
+                error_3 = _a.sent();
+                console.error('Error:', error_3);
                 resData = {
                     ok: false,
                     msg: "INTERNAL SERVER ERROR"
                 };
                 res.status(500).json(resData);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 9];
+            case 9: return [2 /*return*/];
         }
     });
 }); };

@@ -1,6 +1,6 @@
 imageio>=2.9.0
 imageio-ffmpeg>=0.4.5
-ipython>=7.0.0
+ipython>=8.4.0
 matplotlib>=3.2.2
 more_itertools>=8.7.0
 numpy>=1.18.5
