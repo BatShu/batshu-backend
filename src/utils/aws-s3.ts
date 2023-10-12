@@ -2,13 +2,13 @@ import express, {Express, Request, Response } from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import multer from 'multer'; 
+
 import { S3Client } from '@aws-sdk/client-s3';
 
 
 const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const path = require('path');
-
 
 export const accessKey:string = process.env.ACCESS_KEY!;
 export const secretAccessKey:string = process.env.SECRET_ACCESS_KEY!;
@@ -67,7 +67,7 @@ export const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.F
 export const localStorage = multer.diskStorage({
   destination: function (req:Request, file: any, cb: (arg0: null, arg1: string) => void) {
     // 파일이 저장될 디렉토리 경로를 지정합니다.
-    cb(null, '/DashcamCleaner');
+    cb(null, 'DashcamCleaner');
   },
   filename: function (req:Request, file: { originalname: any; }, cb: (arg0: null, arg1: any) => void) {
     // 파일의 이름을 지정합니다.

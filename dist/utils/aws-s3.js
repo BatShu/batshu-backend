@@ -56,7 +56,7 @@ exports.fileFilter = fileFilter;
 exports.localStorage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
         // 파일이 저장될 디렉토리 경로를 지정합니다.
-        cb(null, '/DashcamCleaner');
+        cb(null, 'DashcamCleaner');
     },
     filename: function (req, file, cb) {
         // 파일의 이름을 지정합니다.
