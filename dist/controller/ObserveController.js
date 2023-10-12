@@ -150,7 +150,7 @@ var getObserveOnTheMap = function (req, res) { return __awaiter(void 0, void 0, 
 }); };
 exports.getObserveOnTheMap = getObserveOnTheMap;
 var videoProcessing = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var uploadedVideo, uploadedVideoOriginalName_1, fileExtension, videoOutputFileName_1, mosaicCommand, blurringDoneVideo_1, error_2, resData;
+    var uploadedVideo, uploadedVideoOriginalName_1, fileExtension, videoOutputFileName_1, scriptDirectory, mosaicCommand, blurringDoneVideo_1, error_2, resData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -160,7 +160,16 @@ var videoProcessing = function (req, res) { return __awaiter(void 0, void 0, voi
                 fileExtension = path.extname(uploadedVideoOriginalName_1);
                 videoOutputFileName_1 = "".concat(uploadedVideoOriginalName_1, "_").concat(Date.now()).concat(fileExtension);
                 console.log(process.cwd());
-                mosaicCommand = "python cli.py -i ".concat(uploadedVideoOriginalName_1, " -o ").concat(videoOutputFileName_1, " -w 360p_nano_v8.pt");
+                scriptDirectory = 'DashcamCleaner';
+                process.chdir(scriptDirectory);
+                console.log(process.cwd());
+                (0, child_process_1.exec)("chmod +w ".concat(uploadedVideoOriginalName_1), function (error, stdout, stderr) {
+                    if (error) {
+                        console.error("\uC624\uB958 \uBC1C\uC0DD: ".concat(error));
+                    }
+                    console.log("\uC4F0\uAE30 \uAD8C\uD55C\uC744 \uCD94\uAC00\uD588\uC2B5\uB2C8\uB2E4: ".concat(uploadedVideoOriginalName_1));
+                });
+                mosaicCommand = "python3 cli.py -i ".concat(uploadedVideoOriginalName_1, " -o ").concat(videoOutputFileName_1, " -w 360p_nano_v8.pt");
                 return [4 /*yield*/, (0, ObserveService_1.updateVideoStautsToBlurringStart)(uploadedVideoOriginalName_1)];
             case 1:
                 _a.sent();
@@ -169,6 +178,7 @@ var videoProcessing = function (req, res) { return __awaiter(void 0, void 0, voi
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
+                                console.log(1);
                                 if (error) {
                                     console.log("error: ".concat(error.message));
                                 }
@@ -178,6 +188,7 @@ var videoProcessing = function (req, res) { return __awaiter(void 0, void 0, voi
                                 else {
                                     console.log('stdout:', stdout);
                                 }
+                                console.log(2);
                                 if (!blurringDoneVideo_1) return [3 /*break*/, 11];
                                 return [4 /*yield*/, (0, ObserveService_1.updateVideoStautsToBlurringDone)(uploadedVideoOriginalName_1)];
                             case 1:

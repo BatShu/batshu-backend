@@ -107,17 +107,24 @@ export const videoProcessing = async (req:Request, res: Response) => {
 
     console.log(process.cwd());
    
-    //const scriptDirectory = './src/DashcamCleaner';
+    const scriptDirectory = 'DashcamCleaner';
    
-    //process.chdir(scriptDirectory);
-    
-    const mosaicCommand = `python cli.py -i ${uploadedVideoOriginalName} -o ${videoOutputFileName} -w 360p_nano_v8.pt`
-    
+    process.chdir(scriptDirectory);
+    console.log(process.cwd());
+
+    exec(`chmod +w ${uploadedVideoOriginalName}`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`오류 발생: ${error}`);
+      }
+      console.log(`쓰기 권한을 추가했습니다: ${uploadedVideoOriginalName}`);
+    });
+
+    const mosaicCommand = `python3 cli.py -i ${uploadedVideoOriginalName} -o ${videoOutputFileName} -w 360p_nano_v8.pt`
     await updateVideoStautsToBlurringStart(uploadedVideoOriginalName);
 
     // execute child_process to do processig of mosaic
     const blurringDoneVideo = exec(mosaicCommand, async (error, stdout, stderr) => {
-    
+      console.log(1)
       if (error) {
         console.log(`error: ${error.message}`);
       }
@@ -128,6 +135,7 @@ export const videoProcessing = async (req:Request, res: Response) => {
         
         console.log('stdout:', stdout); 
       }
+      console.log(2)
 
       if (blurringDoneVideo) {
 

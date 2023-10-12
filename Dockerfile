@@ -12,7 +12,7 @@ WORKDIR /src
 # 현재 디렉터리의 모든 파일을 컨테이너 내 /src 디렉터리로 복사
 COPY . .
 
-COPY src/DashcamCleaner /src/DashcamCleaner
+# COPY src/DashcamCleaner /src/DashcamCleaner
 
 RUN pip3 install --upgrade pip
 
