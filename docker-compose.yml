@@ -26,9 +26,8 @@ services:
       - batshu-net
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=tkfkdgo12!
+      - MYSQL_ROOT_PASSWORD=10261026jh!!
     ports:
       - '3306:3306'
     volumes:
       - mysql-data:/var/lib/mysql
-

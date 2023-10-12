@@ -12,9 +12,8 @@ ENV LANG C.UTF-8
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get update && apt-get install -y \
     python3.6 \
-    gdb \
-    python3-dbg \
-    python3-pip
+    python3-pip \
+    libgl1-mesa-glx
 
 # Node.js 설치
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -

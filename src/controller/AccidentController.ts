@@ -55,19 +55,6 @@ declare global {
   }
 
   interface ResultSetHeader {
-    id: number;
-    y: number;
-    x: number;
-    radius: number;
-    bounty: number;
-    license_plate: string;
-    car_model_name: string;
-    accident_end_time: Date;
-    accident_start_time: Date;
-    created_at: Date;
-    content_description: string;
-    content_title: string;
-    photo_url: string;
     fieldCount: number;
     affectedRows: number;
     insertId: number;
@@ -75,7 +62,6 @@ declare global {
     serverStatus: number;
     warningStatus: number;
   }
-
 }
 
 dotenv.config();

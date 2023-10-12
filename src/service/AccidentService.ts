@@ -65,7 +65,8 @@ exports.readAccident =async (accidentId:number) => {
             placeName: accidentRow.placeName,
             carModelName: accidentRow.car_model_name,
             licensePlate: accidentRow.license_plate,
-            bounty: accidentRow.bounty
+            bounty: accidentRow.bounty,
+            uid: accidentRow.uid
         }
 
         for (let accidentPhotoRow of accidentPhotoRows){

@@ -48,14 +48,14 @@ var selectObserveOnTheMapRow = function (locationObject) { return __awaiter(void
             case 0: return [4 /*yield*/, database_1.default.getConnection()];
             case 1:
                 connection = _a.sent();
-                observeSelectQuery = "\n        SELECT id, ST_X(observe_location) AS x, ST_Y(observe_location) AS y\n        FROM observe\n        WHERE ST_Distance_Sphere(\n          observe_location,\n          ST_GeomFromText('POINT(".concat(locationObject.x, " ").concat(locationObject.y, ")')\n        ) <= ?;");
+                observeSelectQuery = "\n      SELECT id, ST_X(observe_location) AS x, ST_Y(observe_location) AS y\n      FROM observe\n      WHERE ST_Distance_Sphere(\n        observe_location,\n        ST_GeomFromText('POINT(".concat(locationObject.x, " ").concat(locationObject.y, ")')\n      ) <= ?;");
                 return [4 /*yield*/, connection.execute(observeSelectQuery, [
                         locationObject.radius
                     ])];
             case 2:
-                observeRows = _a.sent();
+                observeRows = (_a.sent())[0];
                 connection.release();
-                return [2 /*return*/, observeRows[0]];
+                return [2 /*return*/, observeRows];
         }
     });
 }); };

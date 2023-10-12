@@ -4,23 +4,23 @@ import { LocationRow } from "../interface/both";
 import pool from "../config/database";
 
 export const selectObserveOnTheMapRow = async (locationObject:LocationObject):Promise<LocationRow[]> => {
-      const connection = await pool.getConnection();
+    const connection = await pool.getConnection();
 
-      const observeSelectQuery: string = `
-        SELECT id, ST_X(observe_location) AS x, ST_Y(observe_location) AS y
-        FROM observe
-        WHERE ST_Distance_Sphere(
-          observe_location,
-          ST_GeomFromText('POINT(${locationObject.x} ${locationObject.y})')
-        ) <= ?;`;
-      
-      const observeRows: [LocationRow[], FieldPacket[]] = await connection.execute(observeSelectQuery, [
-        locationObject.radius
-      ])
+    const observeSelectQuery: string = `
+      SELECT id, ST_X(observe_location) AS x, ST_Y(observe_location) AS y
+      FROM observe
+      WHERE ST_Distance_Sphere(
+        observe_location,
+        ST_GeomFromText('POINT(${locationObject.x} ${locationObject.y})')
+      ) <= ?;`;
+    
+    const [observeRows]: [LocationRow[], FieldPacket[]] = await connection.execute(observeSelectQuery, [
+      locationObject.radius
+    ])
 
-      connection.release();
-      return observeRows[0];
-    }
+    connection.release();
+    return observeRows;
+  }
 
 // 비디오 업로드.
 export const updateVideoStatus = async(connection: PoolConnection, uploadedVideoOriginalName:string) => {

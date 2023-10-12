@@ -2,13 +2,13 @@ import express, {Express, Request, Response } from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import multer from 'multer'; 
+
 import { S3Client } from '@aws-sdk/client-s3';
 
 
 const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const path = require('path');
-
 
 export const accessKey:string = process.env.ACCESS_KEY!;
 export const secretAccessKey:string = process.env.SECRET_ACCESS_KEY!;
