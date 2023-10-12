@@ -119,7 +119,8 @@ exports.readAccident = function (accidentId) { return __awaiter(void 0, void 0, 
                     placeName: accidentRow.placeName,
                     carModelName: accidentRow.car_model_name,
                     licensePlate: accidentRow.license_plate,
-                    bounty: accidentRow.bounty
+                    bounty: accidentRow.bounty,
+                    uid: accidentRow.uid
                 };
                 for (_i = 0, accidentPhotoRows_1 = accidentPhotoRows; _i < accidentPhotoRows_1.length; _i++) {
                     accidentPhotoRow = accidentPhotoRows_1[_i];
