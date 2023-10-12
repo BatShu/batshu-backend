@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+ENV LANG C.UTF-8
 
 # PPA를 추가하고 Python 3.7 설치
 RUN add-apt-repository ppa:deadsnakes/ppa
@@ -26,10 +27,11 @@ WORKDIR /src
 COPY . .
 
 # COPY src/DashcamCleaner /src/DashcamCleaner
-RUN pip3 install --upgrade pip
+RUN pip install --upgrade pip
 
 # Python 패키지를 설치
-RUN pip3 install -r requirements.txt
+RUN pip install -r requirements.txt
+RUN apt-get install -y libgl1-mesa-glx
 
 # Node.js 패키지를 설치
 RUN npm install

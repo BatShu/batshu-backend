@@ -103,60 +103,51 @@ export const videoProcessing = async (req:Request, res: Response) => {
 
     const fileExtension = path.extname(uploadedVideoOriginalName);
 
-    const videoOutputFileName = `${uploadedVideoOriginalName}_${Date.now()}${fileExtension}`;
-
-    console.log(process.cwd());
+    //const videoOutputFileName = `${uploadedVideoOriginalName}_${Date.now()}${fileExtension}`;
    
     const scriptDirectory = 'DashcamCleaner';
    
     process.chdir(scriptDirectory);
-    console.log(process.cwd());
+    
+    //const mosaicCommand = `python3 cli.py -i ${uploadedVideoOriginalName} -o ${videoOutputFileName} -w 360p_nano_v8.pt`
+    
+    // await updateVideoStautsToBlurringStart(uploadedVideoOriginalName);
 
-    exec(`chmod +w ${uploadedVideoOriginalName}`, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`오류 발생: ${error}`);
-      }
-      console.log(`쓰기 권한을 추가했습니다: ${uploadedVideoOriginalName}`);
-    });
-
-    const mosaicCommand = `python3 cli.py -i ${uploadedVideoOriginalName} -o ${videoOutputFileName} -w 360p_nano_v8.pt`
-    await updateVideoStautsToBlurringStart(uploadedVideoOriginalName);
-
-    // execute child_process to do processig of mosaic
-    const blurringDoneVideo = exec(mosaicCommand, async (error, stdout, stderr) => {
-      console.log(1)
-      if (error) {
-        console.log(`error: ${error.message}`);
-      }
-      else if (stderr) {
-        console.log(`stderr: ${stderr}`);
-      }
-      else {
+    // // execute child_process to do processig of mosaic
+    // const blurringDoneVideo = exec(mosaicCommand, async (error, stdout, stderr) => {
+    
+    //   if (error) {
+    //     console.log(`error: ${error.message}`);
+    //   }
+    //   else if (stderr) {
+    //     console.log(`stderr: ${stderr}`);
+    //   }
+    //   else {
         
-        console.log('stdout:', stdout); 
-      }
-      console.log(2)
+    //     console.log('stdout:', stdout); 
+    //   }
 
-      if (blurringDoneVideo) {
+    //   if (blurringDoneVideo) {
 
-        await updateVideoStautsToBlurringDone(uploadedVideoOriginalName);
-        await updateVideoUrlToOutputFileName(uploadedVideoOriginalName, videoOutputFileName);
+    //     await updateVideoStautsToBlurringDone(uploadedVideoOriginalName);
+    //     await updateVideoUrlToOutputFileName(uploadedVideoOriginalName, videoOutputFileName);
         
-        const uploadParams = {
-          Bucket: 'batshu-observe-input', 
-          Key: videoOutputFileName, 
-          Body: fs.createReadStream(videoOutputFileName), 
-        };
+         const uploadParams = {
+           Bucket: 'batshu-observe-input', 
+           Key: uploadedVideoOriginalName, 
+           Body: fs.createReadStream(uploadedVideoOriginalName), 
+         };
         
         
         //generate Thumbnail
         try {
 
           const currentWorkingDirectory = process.cwd();
+          console.log(currentWorkingDirectory);
           const thumbnailFileName = `thumbnail_${Date.now()}To${uploadedVideoOriginalName}.png`;
 
           const thumbnailInfo: any = await new Promise((resolve, reject) => { 
-            ffmpeg(videoOutputFileName)
+            ffmpeg(uploadedVideoOriginalName)
               .screenshots({
                 timestamps: ['50%'],
                 filename: thumbnailFileName,
@@ -189,12 +180,12 @@ export const videoProcessing = async (req:Request, res: Response) => {
           const command = new PutObjectCommand(uploadParams);
           await S3.send(command);
 
-          const videoLocationUrl = `https://batshu-observe-input.s3.amazonaws.com/${videoOutputFileName}`;
+          const videoLocationUrl = `https://batshu-observe-input.s3.amazonaws.com/${uploadedVideoOriginalName}`;
 
           const thumbnailLocationUrl = `https://batshu-observe-input.s3.amazonaws.com/${thumbnailFileName}`;
           
 
-          const mosaicedFinalVideoUrl = await insertMosaicedFinalVideoUrl(videoOutputFileName, videoLocationUrl);
+          //const mosaicedFinalVideoUrl = await insertMosaicedFinalVideoUrl//(videoOutputFileName, videoLocationUrl);
           
           const thumbnail = await insertThumbnailUrl(videoLocationUrl, thumbnailLocationUrl);
           
@@ -203,11 +194,11 @@ export const videoProcessing = async (req:Request, res: Response) => {
         }
         
         
-      } else {
-        console.log("blurringDoneVideo is not defined");
-      }
+      //} else {
+     //   console.log("blurringDoneVideo is not defined");
+    //  }
 
-    })
+  //  })
 
   } catch (error) {
     console.error('Error:', error);
