@@ -1,4 +1,5 @@
 import pool from "../config/database"
+import { LocationRow } from "../interface/both";
 import { registerObserveRequest } from "../interface/observe";
 import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow, insertMosaicedVideoUrlResult, updateVideoUrlToOutputFileNameResult, insertThumbnailUrlResult, selectVideoInfo, selectfindregisterObserveInfo, insertVideoName, selectObserveInfoByObserveId} from "../Repository/ObserveRepository"
 
@@ -103,10 +104,12 @@ export const findObserveDetailInfo = async(observeId : number) => {
 }
 
 
-exports.readObserveOnTheMap = async (locationObject:LocationObject) => {
+export const readObserveOnTheMap = async (locationObject:LocationObject) => {
     try{
-    const observeRows = await selectObserveOnTheMapRow(locationObject);
-    
+        
+    const observeRows = await selectObserveOnTheMapRow(locationObject) as LocationRow[];
+
+        
     const data:ObserveLocationObject[] = []
     
     for (let observeRow of observeRows){

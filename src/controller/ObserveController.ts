@@ -15,6 +15,7 @@ const
     ffprobePath = require("@ffprobe-installer/ffprobe").path,
     ffmpeg = require("fluent-ffmpeg");
 
+
 ffmpeg.setFfprobePath(ffprobePath);
 ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -84,6 +85,7 @@ export const getObserveOnTheMap = async (req: CustomRequest, res: Response) => {
     }
 
     const Obj: LocationObject = { x: xCoord, y: yCoord, radius: radiusValue };
+
 
     const resData: ApiResponse = await observeService.readObserveOnTheMap(Obj);
 
