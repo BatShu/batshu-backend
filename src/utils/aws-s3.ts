@@ -10,8 +10,8 @@ const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const path = require('path');
 
-export const accessKey:string = process.env.ACCESS_KEY!;
-export const secretAccessKey:string = process.env.SECRET_ACCESS_KEY!;
+export const accessKey:string = process.env.ACCESS_KEY_JC!;
+export const secretAccessKey:string = process.env.SECRET_ACCESS_KEY_JC!;
 export const bucketRegion:string = process.env.BUCKET_REGION!;
 
 
