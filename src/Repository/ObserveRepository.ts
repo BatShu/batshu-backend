@@ -3,24 +3,32 @@ import { registerObserveRequest } from "../interface/observe"
 import { LocationRow } from "../interface/both";
 import pool from "../config/database";
 
-export const selectObserveOnTheMapRow = async (locationObject:LocationObject):Promise<LocationRow[]> => {
-    const connection = await pool.getConnection();
+export const selectObserveOnTheMapRow = async (locationObject:LocationObject) => {
+try {
+  const connection = await pool.getConnection();
 
-    const observeSelectQuery: string = `
-      SELECT id, ST_X(observe_location) AS x, ST_Y(observe_location) AS y
-      FROM observe
-      WHERE ST_Distance_Sphere(
-        observe_location,
-        ST_GeomFromText('POINT(${locationObject.x} ${locationObject.y})')
-      ) <= ?;`;
-    
-    const [observeRows]: [LocationRow[], FieldPacket[]] = await connection.execute(observeSelectQuery, [
-      locationObject.radius
-    ])
+  const observeSelectQuery: string = `
+    SELECT id, ST_X(observe_location) AS x, ST_Y(observe_location) AS y
+    FROM observe
+    WHERE ST_Distance_Sphere(
+      observe_location,
+      ST_GeomFromText('POINT(${locationObject.x} ${locationObject.y})')
+    ) <= ?;`;
+  
+  const [observeRows]: [LocationRow[], FieldPacket[]] = await connection.execute<LocationRow[]>(observeSelectQuery, [
+    locationObject.radius
+  ])
 
-    connection.release();
-    return observeRows;
-  }
+  connection.release();
+  return observeRows;
+
+
+} catch (error) {
+  console.log(error);
+}
+
+
+}
 
 // 비디오 업로드.
 export const updateVideoStatus = async(connection: PoolConnection, uploadedVideoOriginalName:string) => {

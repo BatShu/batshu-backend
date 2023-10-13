@@ -42,13 +42,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.selectObserveInfoByObserveId = exports.selectfindregisterObserveInfo = exports.createObserveData = exports.selectVideoInfo = exports.insertThumbnailUrlResult = exports.updateVideoUrlToOutputFileNameResult = exports.insertMosaicedVideoUrlResult = exports.updateVideoStatusWithBlurringDone = exports.updateVideoStatusWithBlurring = exports.findUploadedVideoId = exports.insertVideoName = exports.updateVideoStatus = exports.selectObserveOnTheMapRow = void 0;
 var database_1 = __importDefault(require("../config/database"));
 var selectObserveOnTheMapRow = function (locationObject) { return __awaiter(void 0, void 0, void 0, function () {
-    var connection, observeSelectQuery, observeRows;
+    var connection, observeSelectQuery, observeRows, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, database_1.default.getConnection()];
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, database_1.default.getConnection()];
             case 1:
                 connection = _a.sent();
-                observeSelectQuery = "\n      SELECT id, ST_X(observe_location) AS x, ST_Y(observe_location) AS y\n      FROM observe\n      WHERE ST_Distance_Sphere(\n        observe_location,\n        ST_GeomFromText('POINT(".concat(locationObject.x, " ").concat(locationObject.y, ")')\n      ) <= ?;");
+                observeSelectQuery = "\n    SELECT id, ST_X(observe_location) AS x, ST_Y(observe_location) AS y\n    FROM observe\n    WHERE ST_Distance_Sphere(\n      observe_location,\n      ST_GeomFromText('POINT(".concat(locationObject.x, " ").concat(locationObject.y, ")')\n    ) <= ?;");
                 return [4 /*yield*/, connection.execute(observeSelectQuery, [
                         locationObject.radius
                     ])];
@@ -56,6 +58,11 @@ var selectObserveOnTheMapRow = function (locationObject) { return __awaiter(void
                 observeRows = (_a.sent())[0];
                 connection.release();
                 return [2 /*return*/, observeRows];
+            case 3:
+                error_1 = _a.sent();
+                console.log(error_1);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); };
