@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findregisterObserveInfo = exports.findvideoInfo = exports.insertThumbnailUrl = exports.updateVideoUrlToOutputFileName = exports.insertMosaicedFinalVideoUrl = exports.createObserve = exports.updateVideoStautsToBlurringDone = exports.updateVideoStautsToBlurringStart = exports.findVideoId = exports.insertVideoStatus = void 0;
+exports.findObserveDetailInfo = exports.findregisterObserveInfo = exports.findvideoInfo = exports.insertThumbnailUrl = exports.updateVideoUrlToOutputFileName = exports.insertMosaicedFinalVideoUrl = exports.createObserve = exports.updateVideoStautsToBlurringDone = exports.updateVideoStautsToBlurringStart = exports.insertUploadedVideoOriginalName = exports.findVideoId = exports.insertVideoStatus = void 0;
 var database_1 = __importDefault(require("../config/database"));
 var ObserveRepository_1 = require("../Repository/ObserveRepository");
 var insertVideoStatus = function (uploadedVideoOriginalName) { return __awaiter(void 0, void 0, void 0, function () {
@@ -74,6 +74,22 @@ var findVideoId = function (uploadedVideoOriginalName) { return __awaiter(void 0
     });
 }); };
 exports.findVideoId = findVideoId;
+var insertUploadedVideoOriginalName = function (uploadedVideoOriginalName) { return __awaiter(void 0, void 0, void 0, function () {
+    var conneciton, videoName;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, database_1.default.getConnection()];
+            case 1:
+                conneciton = _a.sent();
+                return [4 /*yield*/, (0, ObserveRepository_1.insertVideoName)(conneciton, uploadedVideoOriginalName)];
+            case 2:
+                videoName = _a.sent();
+                conneciton.release();
+                return [2 /*return*/, videoName];
+        }
+    });
+}); };
+exports.insertUploadedVideoOriginalName = insertUploadedVideoOriginalName;
 var updateVideoStautsToBlurringStart = function (uploadedVideoOriginalName) { return __awaiter(void 0, void 0, void 0, function () {
     var conneciton, updateUploadedVideoStatus;
     return __generator(this, function (_a) {
@@ -154,14 +170,14 @@ var updateVideoUrlToOutputFileName = function (uploadedVideoOriginalName, output
     });
 }); };
 exports.updateVideoUrlToOutputFileName = updateVideoUrlToOutputFileName;
-var insertThumbnailUrl = function (locationUrl, thumbnailLocationUrl) { return __awaiter(void 0, void 0, void 0, function () {
+var insertThumbnailUrl = function (uploadedVideoOriginalName, videoLocationUrl, thumbnailLocationUrl) { return __awaiter(void 0, void 0, void 0, function () {
     var conneciton, thumbnail;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, database_1.default.getConnection()];
             case 1:
                 conneciton = _a.sent();
-                return [4 /*yield*/, (0, ObserveRepository_1.insertThumbnailUrlResult)(conneciton, locationUrl, thumbnailLocationUrl)];
+                return [4 /*yield*/, (0, ObserveRepository_1.insertThumbnailUrlResult)(conneciton, uploadedVideoOriginalName, videoLocationUrl, thumbnailLocationUrl)];
             case 2:
                 thumbnail = _a.sent();
                 conneciton.release();
@@ -202,6 +218,22 @@ var findregisterObserveInfo = function (videoId) { return __awaiter(void 0, void
     });
 }); };
 exports.findregisterObserveInfo = findregisterObserveInfo;
+var findObserveDetailInfo = function (observeId) { return __awaiter(void 0, void 0, void 0, function () {
+    var conneciton, observeDetailInfo;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, database_1.default.getConnection()];
+            case 1:
+                conneciton = _a.sent();
+                return [4 /*yield*/, (0, ObserveRepository_1.selectObserveInfoByObserveId)(conneciton, observeId)];
+            case 2:
+                observeDetailInfo = _a.sent();
+                conneciton.release();
+                return [2 /*return*/, observeDetailInfo];
+        }
+    });
+}); };
+exports.findObserveDetailInfo = findObserveDetailInfo;
 exports.readObserveOnTheMap = function (locationObject) { return __awaiter(void 0, void 0, void 0, function () {
     var observeRows, data, _i, observeRows_1, observeRow, location_1, observeLocationObject, resData, error_1, resData;
     return __generator(this, function (_a) {

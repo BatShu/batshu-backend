@@ -31,6 +31,14 @@ export const updateVideoStatus = async(connection: PoolConnection, uploadedVideo
     return updateVideoStatusRows;
 }
 
+export const insertVideoName = async(connection: PoolConnection, uploadedVideoOriginalName:string) => {
+  
+      const insertVideoNameQuery = `INSERT INTO video (video_url) VALUES (?);`;
+      const [insertVideoNameRows] = await connection.query(insertVideoNameQuery, [uploadedVideoOriginalName]);
+  
+      return insertVideoNameRows;
+}
+
 export const findUploadedVideoId = async(connection: PoolConnection, uploadedVideoOriginalName:string) => {
     const findUploadedVideoIdQuery = `SELECT id FROM video WHERE video_url = ?;`;
     const [findUploadedVideoIdRows] = await connection.query(findUploadedVideoIdQuery, [uploadedVideoOriginalName]);
@@ -70,16 +78,15 @@ export const updateVideoUrlToOutputFileNameResult = async(connection: PoolConnec
 }
 
 
-export const insertThumbnailUrlResult = async(connection: PoolConnection, locationUrl : string, thumbnailLocationUrl : string) => {
-  try {
-    const updateThumbnailUrlQuery = `UPDATE video SET thumbnail_url = ? WHERE video_url = ?;`;
-    const [insertThumbnailUrlRows] = await connection.query(updateThumbnailUrlQuery, [thumbnailLocationUrl, locationUrl]);
+export const insertThumbnailUrlResult = async(connection: PoolConnection, uploadedVideoOriginalName: string, videoLocationUrl : string, thumbnailLocationUrl : string) => {
+
+  const updateThumbnailUrlQuery = `UPDATE video SET video_url = ?, thumbnail_url = ? WHERE video_url = ?;`;
+
+  const [insertThumbnailUrlRows] = await connection.query(updateThumbnailUrlQuery, [videoLocationUrl, thumbnailLocationUrl, uploadedVideoOriginalName]);
     return insertThumbnailUrlRows;
-} catch (error) {
-    console.error('썸네일 URL 삽입 오류:', error);
-    throw error; // 더 높은 수준에서 처리하기 위해 오류를 다시 던집니다.
+
 }
-}
+
 
 
 export const selectVideoInfo = async(connection: PoolConnection, videoId : number) => {
@@ -113,5 +120,12 @@ export const selectfindregisterObserveInfo = async(connection: PoolConnection, v
     const [selectCreatedAtRows] = await connection.query(selectCreatedAtQuery, [videoId]);
 
     return selectCreatedAtRows;
+}
+
+export const selectObserveInfoByObserveId = async(connection: PoolConnection, observeId : number) => {
+    const selectObserveInfoByObserveIdQuery = `SELECT * FROM observe WHERE id = ?;`;
+    const [selectObserveInfoByObserveIdRows] = await connection.query(selectObserveInfoByObserveIdQuery, [observeId]);
+
+    return selectObserveInfoByObserveIdRows;
 }
 
