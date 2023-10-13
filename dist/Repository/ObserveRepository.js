@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.selectfindregisterObserveInfo = exports.createObserveData = exports.selectVideoInfo = exports.insertThumbnailUrlResult = exports.updateVideoUrlToOutputFileNameResult = exports.insertMosaicedVideoUrlResult = exports.updateVideoStatusWithBlurringDone = exports.updateVideoStatusWithBlurring = exports.findUploadedVideoId = exports.updateVideoStatus = exports.selectObserveOnTheMapRow = void 0;
+exports.selectObserveInfoByObserveId = exports.selectfindregisterObserveInfo = exports.createObserveData = exports.selectVideoInfo = exports.insertThumbnailUrlResult = exports.updateVideoUrlToOutputFileNameResult = exports.insertMosaicedVideoUrlResult = exports.updateVideoStatusWithBlurringDone = exports.updateVideoStatusWithBlurring = exports.findUploadedVideoId = exports.insertVideoName = exports.updateVideoStatus = exports.selectObserveOnTheMapRow = void 0;
 var database_1 = __importDefault(require("../config/database"));
 var selectObserveOnTheMapRow = function (locationObject) { return __awaiter(void 0, void 0, void 0, function () {
     var connection, observeSelectQuery, observeRows;
@@ -75,6 +75,20 @@ var updateVideoStatus = function (connection, uploadedVideoOriginalName) { retur
     });
 }); };
 exports.updateVideoStatus = updateVideoStatus;
+var insertVideoName = function (connection, uploadedVideoOriginalName) { return __awaiter(void 0, void 0, void 0, function () {
+    var insertVideoNameQuery, insertVideoNameRows;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                insertVideoNameQuery = "INSERT INTO video (video_url) VALUES (?);";
+                return [4 /*yield*/, connection.query(insertVideoNameQuery, [uploadedVideoOriginalName])];
+            case 1:
+                insertVideoNameRows = (_a.sent())[0];
+                return [2 /*return*/, insertVideoNameRows];
+        }
+    });
+}); };
+exports.insertVideoName = insertVideoName;
 var findUploadedVideoId = function (connection, uploadedVideoOriginalName) { return __awaiter(void 0, void 0, void 0, function () {
     var findUploadedVideoIdQuery, findUploadedVideoIdRows;
     return __generator(this, function (_a) {
@@ -145,22 +159,16 @@ var updateVideoUrlToOutputFileNameResult = function (connection, uploadedVideoOr
     });
 }); };
 exports.updateVideoUrlToOutputFileNameResult = updateVideoUrlToOutputFileNameResult;
-var insertThumbnailUrlResult = function (connection, locationUrl, thumbnailLocationUrl) { return __awaiter(void 0, void 0, void 0, function () {
-    var updateThumbnailUrlQuery, insertThumbnailUrlRows, error_1;
+var insertThumbnailUrlResult = function (connection, uploadedVideoOriginalName, videoLocationUrl, thumbnailLocationUrl) { return __awaiter(void 0, void 0, void 0, function () {
+    var updateThumbnailUrlQuery, insertThumbnailUrlRows;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                updateThumbnailUrlQuery = "UPDATE video SET thumbnail_url = ? WHERE video_url = ?;";
-                return [4 /*yield*/, connection.query(updateThumbnailUrlQuery, [thumbnailLocationUrl, locationUrl])];
+                updateThumbnailUrlQuery = "UPDATE video SET video_url = ?, thumbnail_url = ? WHERE video_url = ?;";
+                return [4 /*yield*/, connection.query(updateThumbnailUrlQuery, [videoLocationUrl, thumbnailLocationUrl, uploadedVideoOriginalName])];
             case 1:
                 insertThumbnailUrlRows = (_a.sent())[0];
                 return [2 /*return*/, insertThumbnailUrlRows];
-            case 2:
-                error_1 = _a.sent();
-                console.error('썸네일 URL 삽입 오류:', error_1);
-                throw error_1; // 더 높은 수준에서 처리하기 위해 오류를 다시 던집니다.
-            case 3: return [2 /*return*/];
         }
     });
 }); };
@@ -219,3 +227,17 @@ var selectfindregisterObserveInfo = function (connection, videoId) { return __aw
     });
 }); };
 exports.selectfindregisterObserveInfo = selectfindregisterObserveInfo;
+var selectObserveInfoByObserveId = function (connection, observeId) { return __awaiter(void 0, void 0, void 0, function () {
+    var selectObserveInfoByObserveIdQuery, selectObserveInfoByObserveIdRows;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                selectObserveInfoByObserveIdQuery = "SELECT * FROM observe WHERE id = ?;";
+                return [4 /*yield*/, connection.query(selectObserveInfoByObserveIdQuery, [observeId])];
+            case 1:
+                selectObserveInfoByObserveIdRows = (_a.sent())[0];
+                return [2 /*return*/, selectObserveInfoByObserveIdRows];
+        }
+    });
+}); };
+exports.selectObserveInfoByObserveId = selectObserveInfoByObserveId;

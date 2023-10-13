@@ -59,14 +59,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getObserve = exports.registerObserve = exports.videoProcessing = exports.getObserveOnTheMap = exports.uploadVideo = void 0;
+exports.getObserveInfoByObserveId = exports.registerObserve = exports.videoProcessing = exports.getObserveOnTheMap = exports.uploadVideo = void 0;
 var path = __importStar(require("path"));
 var client_s3_1 = require("@aws-sdk/client-s3");
 var aws_s3_1 = require("../utils/aws-s3");
 var ObserveService_1 = require("../service/ObserveService");
 var AWS = require('aws-sdk');
 var fs = require('fs');
-var ffmpeg = require('fluent-ffmpeg');
+var ffmpegPath = require("@ffmpeg-installer/ffmpeg").path, ffprobePath = require("@ffprobe-installer/ffprobe").path, ffmpeg = require("fluent-ffmpeg");
+ffmpeg.setFfprobePath(ffprobePath);
+ffmpeg.setFfmpegPath(ffmpegPath);
 AWS.config.update({
     accessKeyId: aws_s3_1.accessKey,
     secretAccessKey: aws_s3_1.secretAccessKey,
@@ -171,8 +173,8 @@ var videoProcessing = function (req, res) { return __awaiter(void 0, void 0, voi
                 console.log(currentWorkingDirectory_1);
                 thumbnailFileName_1 = "thumbnail_".concat(Date.now(), "To").concat(uploadedVideoOriginalName_1, ".png");
                 return [4 /*yield*/, new Promise(function (resolve, reject) {
-                        ffmpeg(uploadedVideoOriginalName_1)
-                            .screenshots({
+                        ffmpeg(uploadedVideoOriginalName_1, {})
+                            .thumbnail({
                             timestamps: ['50%'],
                             filename: thumbnailFileName_1,
                             folder: currentWorkingDirectory_1,
@@ -205,7 +207,7 @@ var videoProcessing = function (req, res) { return __awaiter(void 0, void 0, voi
                 _a.sent();
                 videoLocationUrl = "https://batshu-observe-input.s3.amazonaws.com/".concat(uploadedVideoOriginalName_1);
                 thumbnailLocationUrl = "https://batshu-observe-input.s3.amazonaws.com/".concat(thumbnailFileName_1);
-                return [4 /*yield*/, (0, ObserveService_1.insertThumbnailUrl)(videoLocationUrl, thumbnailLocationUrl)];
+                return [4 /*yield*/, (0, ObserveService_1.insertThumbnailUrl)(uploadedVideoOriginalName_1, videoLocationUrl, thumbnailLocationUrl)];
             case 5:
                 thumbnail = _a.sent();
                 return [3 /*break*/, 7];
@@ -283,21 +285,32 @@ var registerObserve = function (req, res) { return __awaiter(void 0, void 0, voi
 }); };
 exports.registerObserve = registerObserve;
 //TODO: make function to get videoUrl by videoId
-var getObserve = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var resData;
+var getObserveInfoByObserveId = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var observeId, oberseveInfo, error_4, resData;
     return __generator(this, function (_a) {
-        try {
-            console.log(req.params.observeId);
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                observeId = parseInt(req.params.observeId);
+                return [4 /*yield*/, (0, ObserveService_1.findObserveDetailInfo)(observeId)];
+            case 1:
+                oberseveInfo = _a.sent();
+                return [2 /*return*/, res.status(200).json({
+                        ok: true,
+                        msg: "Successfully Get",
+                        data: oberseveInfo
+                    })];
+            case 2:
+                error_4 = _a.sent();
+                console.error('Error:', error_4);
+                resData = {
+                    ok: false,
+                    msg: "INTERNAL SERVER ERROR"
+                };
+                res.status(500).json(resData);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
-        catch (error) {
-            console.error('Error:', error);
-            resData = {
-                ok: false,
-                msg: "INTERNAL SERVER ERROR"
-            };
-            res.status(500).json(resData);
-        }
-        return [2 /*return*/];
     });
 }); };
-exports.getObserve = getObserve;
+exports.getObserveInfoByObserveId = getObserveInfoByObserveId;

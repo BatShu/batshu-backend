@@ -1,6 +1,6 @@
 import pool from "../config/database"
 import { registerObserveRequest } from "../interface/observe";
-import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow, insertMosaicedVideoUrlResult, updateVideoUrlToOutputFileNameResult, insertThumbnailUrlResult, selectVideoInfo, selectfindregisterObserveInfo } from "../Repository/ObserveRepository"
+import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow, insertMosaicedVideoUrlResult, updateVideoUrlToOutputFileNameResult, insertThumbnailUrlResult, selectVideoInfo, selectfindregisterObserveInfo, insertVideoName, selectObserveInfoByObserveId} from "../Repository/ObserveRepository"
 
 
 export const insertVideoStatus = async (uploadedVideoOriginalName: string) => {
@@ -18,6 +18,14 @@ export const findVideoId = async(uploadedVideoOriginalName : string) => {
     conneciton.release();
 
     return uploadedVideoId;
+}
+
+export const insertUploadedVideoOriginalName = async (uploadedVideoOriginalName: string) => {
+    const conneciton = await pool.getConnection();
+    const videoName = await insertVideoName(conneciton, uploadedVideoOriginalName);
+    conneciton.release();
+
+    return videoName;
 }
 
 export const updateVideoStautsToBlurringStart = async (uploadedVideoOriginalName: string) => {
@@ -63,11 +71,12 @@ export const updateVideoUrlToOutputFileName = async (uploadedVideoOriginalName :
 
 }
 
-export const insertThumbnailUrl = async (locationUrl : string, thumbnailLocationUrl : string) => {
+export const insertThumbnailUrl = async (uploadedVideoOriginalName: string, videoLocationUrl : string, thumbnailLocationUrl : string) => {
     const conneciton = await pool.getConnection();
-    const thumbnail = await insertThumbnailUrlResult(conneciton, locationUrl, thumbnailLocationUrl);
+    const thumbnail = await insertThumbnailUrlResult(conneciton, uploadedVideoOriginalName, videoLocationUrl, thumbnailLocationUrl);
     conneciton.release();
 }
+
 
 export const findvideoInfo = async (videoId : number) => {
     const conneciton = await pool.getConnection();
@@ -83,6 +92,14 @@ export const findregisterObserveInfo = async (videoId : number) => {
     conneciton.release();
 
     return createdAt;
+}
+
+export const findObserveDetailInfo = async(observeId : number) => {
+    const conneciton = await pool.getConnection();
+    const observeDetailInfo = await selectObserveInfoByObserveId(conneciton, observeId);
+    conneciton.release();
+
+    return observeDetailInfo;
 }
 
 
