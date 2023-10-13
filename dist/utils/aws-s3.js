@@ -11,8 +11,8 @@ var client_s3_1 = require("@aws-sdk/client-s3");
 var AWS = require('aws-sdk');
 var multerS3 = require('multer-s3');
 var path = require('path');
-exports.accessKey = process.env.ACCESS_KEY;
-exports.secretAccessKey = process.env.SECRET_ACCESS_KEY;
+exports.accessKey = process.env.ACCESS_KEY_JC;
+exports.secretAccessKey = process.env.SECRET_ACCESS_KEY_JC;
 exports.bucketRegion = process.env.BUCKET_REGION;
 var s3params = {
     credentials: {
