@@ -1,24 +1,16 @@
-FROM ubuntu:latest
+FROM node:20-bullseye
 
+# 시스템 종속성 설치 및 정리
 RUN apt-get update && apt-get install -y \
     curl \
     software-properties-common \
+    python3.6 \
+    python3-pip \
+    libgl1-mesa-glx \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 ENV LANG C.UTF-8
-
-# PPA를 추가하고 Python 3.7 설치
-RUN add-apt-repository ppa:deadsnakes/ppa
-RUN apt-get update && apt-get install -y \
-    python3.6 \
-    python3-pip \
-    libgl1-mesa-glx
-
-# Node.js 설치
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
-RUN apt-get install -y nodejs
-
 
 # 작업 디렉터리를 /src로 설정
 WORKDIR /src
@@ -34,10 +26,16 @@ RUN pip install -r requirements.txt
 RUN apt-get install -y libgl1-mesa-glx
 
 # Node.js 패키지를 설치
+RUN npm install -g npm@10.2.0
+RUN npm uninstall @ffmpeg-installer/ffmpeg --save
+RUN npm uninstall @ffprobe-installer/ffprobe --save
+# 아래 패키지는 플랫폼 종속적이기에 자신의 플랫폼에 맞게 x64 혹은 arm64로 변경 필요
 RUN npm install
+RUN npm install @ffmpeg-installer/linux-arm64 --save --force 
+RUN npm install @ffprobe-installer/linux-arm64 --save --force
+RUN npm run build
 
 # 앱 실행 명령
-CMD ["npm", "run", "serve"]
-
+CMD ["npm", "run", "start"]
 # 포트 3000을 노출
 EXPOSE 3000
