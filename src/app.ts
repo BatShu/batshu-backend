@@ -1,9 +1,18 @@
-require("dotenv").config();
+import dotenv from 'dotenv'
+import path from 'path';
+const envPath = process.env.NODE_ENV === "production" ? "../.env.production" : "../.env.development"
+dotenv.config({
+  debug: true,
+  path: path.resolve(__dirname, envPath)
+});
 import express, {Express, Request, Response } from "express";
 import bodyParser from 'body-parser';
 import AccidentRouter from "./routers/AccidentRouter";
 import ObserveRouter from "./routers/ObserveRouter";
 import UserRouter from "./routers/UserRouter";
+
+
+
 
 
 const app = express();
