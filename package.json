@@ -5,7 +5,7 @@
   "type": "commonjs",
   "main": "app.js",
   "scripts": {
-    "build": "rimraf dist && npx tsc",
+    "build": "tsc",
     "prestart": "npm run build",
     "start": "node dist/app.js",
     "preserve": "npm run build",
@@ -36,7 +36,6 @@
     "mysql2": "^3.6.1",
     "nodemon": "^3.0.1",
     "reflect-metadata": "^0.1.13",
-    "rimraf": "^5.0.1",
     "typeorm": "^0.3.17"
   },
   "devDependencies": {
