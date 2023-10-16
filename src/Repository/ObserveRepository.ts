@@ -1,5 +1,5 @@
-import type { FieldPacket, PoolConnection, RowDataPacket } from 'mysql2/promise';
-import { type registerObserveRequest } from '../interface/observe';
+import type { FieldPacket, PoolConnection } from 'mysql2/promise';
+import { type registerObserveRequest, type videoId, type RegisterObserveResponse, type videoInfo } from '../interface/observe';
 import { type LocationRow } from '../interface/both';
 import pool from '../config/database';
 
@@ -36,9 +36,9 @@ export const insertVideoName = async (connection: PoolConnection, uploadedVideoO
   return insertVideoNameRows;
 };
 
-export const findUploadedVideoId = async (connection: PoolConnection, uploadedVideoOriginalName: string): Promise<ResultSetHeader> => {
+export const findUploadedVideoId = async (connection: PoolConnection, uploadedVideoOriginalName: string): Promise<videoId[]> => {
   const findUploadedVideoIdQuery = 'SELECT id FROM video WHERE video_url = ?;';
-  const [findUploadedVideoIdRows]: any = await connection.query(findUploadedVideoIdQuery, [uploadedVideoOriginalName]);
+  const [findUploadedVideoIdRows]: [videoId[], FieldPacket[]] = await connection.query<videoId[]>(findUploadedVideoIdQuery, [uploadedVideoOriginalName]);
   return findUploadedVideoIdRows;
 };
 
@@ -72,9 +72,9 @@ export const insertThumbnailUrlResult = async (connection: PoolConnection, uploa
   return insertThumbnailUrlRows;
 };
 
-export const selectVideoInfo = async (connection: PoolConnection, videoId: number): Promise<RowDataPacket[]> => {
+export const selectVideoInfo = async (connection: PoolConnection, videoId: number): Promise<videoInfo[]> => {
   const selectVideoInfoQuery = 'SELECT id, video_url, thumbnail_url FROM video WHERE id = ?;';
-  const [selectVideoInfoRows]: any = await connection.query(selectVideoInfoQuery, [videoId]);
+  const [selectVideoInfoRows]: [videoInfo[], FieldPacket[]] = await connection.query<videoInfo[]>(selectVideoInfoQuery, [videoId]);
   return selectVideoInfoRows;
 };
 
@@ -96,9 +96,9 @@ export const createObserveData = async (connection: PoolConnection, registerObse
   return results;
 };
 
-export const selectfindregisterObserveInfo = async (connection: PoolConnection, videoId: number): Promise<ResultSetHeader> => {
+export const selectfindregisterObserveInfo = async (connection: PoolConnection, videoId: number): Promise<RegisterObserveResponse[]> => {
   const selectCreatedAtQuery = 'SELECT * FROM observe WHERE video_id = ?;';
-  const [selectCreatedAtRows]: any = await connection.query(selectCreatedAtQuery, [videoId]);
+  const [selectCreatedAtRows]: [RegisterObserveResponse[], FieldPacket[]] = await connection.query<RegisterObserveResponse[]>(selectCreatedAtQuery, [videoId]);
   return selectCreatedAtRows;
 };
 

@@ -1,7 +1,7 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { s3, accessKey, secretAccessKey, bucketRegion } from '../utils/aws-s3';
-import { type registerObserveRequest, type video } from '../interface/observe';
+import { type registerObserveRequest, type video, type RegisterObserveResponse, type videoInfo, type videoId } from '../interface/observe';
 import { readObserveOnTheMap, insertVideoStatus, findVideoId, createObserve, insertThumbnailUrl, findvideoInfo, findregisterObserveInfo, findObserveDetailInfo } from '../service/ObserveService';
 
 import AWS from 'aws-sdk';
@@ -26,7 +26,7 @@ export const uploadVideo = async (req: Request, res: Response, next: NextFunctio
 
     await insertVideoStatus(uploadedVideoOriginalName);
 
-    const videoId = await findVideoId(uploadedVideoOriginalName);
+    const videoId: videoId[] = await findVideoId(uploadedVideoOriginalName);
 
     if (videoId === undefined) {
       return res.status(500).json({
@@ -204,27 +204,40 @@ export const registerObserve = async (req: CustomRequest, res: Response): Promis
 
       await createObserve(registerObserveData);
 
-      const videoInfo: any = await findvideoInfo(registerObserveData.videoId);
-      const registerObserveInfo: any = await findregisterObserveInfo(registerObserveData.videoId);
+      const videoInfo: videoInfo[] = await findvideoInfo(registerObserveData.videoId);
+      const registerObserveInfo: RegisterObserveResponse[] = await findregisterObserveInfo(registerObserveData.videoId);
 
-      return res.status(200).json({
-        ok: true,
-        msg: 'Successfully registered',
-        data: {
-          observeId: registerObserveInfo[0].id,
+      if (registerObserveInfo.length > 0) {
+        const data: RegisterObserveResponse['data'] = {
+          observeId: registerObserveInfo[0].observeId,
           uid: registerObserveInfo[0].uid,
-          videoUrl: videoInfo[0].video_url,
-          thumbnailUrl: videoInfo[0].thumbnail_url,
-          contentTitle: registerObserveInfo[0].content_title,
-          contentDescription: registerObserveInfo[0].content_description,
-          observeStartTime: registerObserveInfo[0].observe_start_time,
-          observeEndTime: registerObserveInfo[0].observe_end_time,
-          observeLocation: registerObserveInfo[0].observe_location,
-          createdAt: registerObserveInfo[0].created_at
-        }
+          videoUrl: videoInfo[0].videoUrl,
+          thumbnailUrl: videoInfo[0].thumbnailUrl,
+          contentTitle: registerObserveInfo[0].contentTitle,
+          contentDescription: registerObserveInfo[0].contentDescription,
+          observeStartTime: registerObserveInfo[0].observeStartTime,
+          observeEndTime: registerObserveInfo[0].observeEndTime,
+          observeLocation: registerObserveInfo[0].observeLocation,
+          createdAt: registerObserveInfo[0].createdAt
+        };
 
-      });
+        const response = {
+          ok: true,
+          msg: 'Successfully registered',
+          data
+        };
+        return res.status(200).json(response);
+      } else {
+        return res.status(404).json({
+          ok: false,
+          msg: 'No data found'
+        });
+      }
     }
+    return res.status(400).json({
+      ok: false,
+      msg: 'Invalid UID'
+    });
   } catch (err) {
     console.log(err);
     // Handle errors or return an appropriate response for errors.

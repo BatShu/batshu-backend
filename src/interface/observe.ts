@@ -1,4 +1,5 @@
 import { type RowDataPacket } from 'mysql2';
+import { type LocationRow } from './both';
 
 export interface LocationObject {
   x: number
@@ -30,13 +31,23 @@ export interface registerObserveRequest {
   accidentLocation: LocationObject
   uid?: string
 }
-
-export interface reigsterObserveResponse {
-  ok: boolean
-  msg: string
+export interface RegisterObserveResponse extends RowDataPacket {
+  observeId: number
+  uid: string
+  videoUrl: string
   thumbnailUrl: string
+  contentTitle: string
+  contentDescription: string
+  observeStartTime: Date
+  observeEndTime: Date
+  observeLocation: LocationRow
   createdAt: Date
+}
 
+export interface videoInfo extends RowDataPacket {
+  id: number
+  videoUrl: string
+  thumbnailUrl: string
 }
 
 export interface observeInformationByObserveId extends RowDataPacket {
@@ -50,4 +61,8 @@ export interface observeInformationByObserveId extends RowDataPacket {
   car_model_name: string
   license_plate: string
   uid: string
+}
+
+export interface videoId extends RowDataPacket {
+  video_id: number
 }

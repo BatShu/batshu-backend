@@ -1,10 +1,10 @@
-import { type RowDataPacket, type OkPacket } from 'mysql2';
+import { type RowDataPacket, type FieldPacket } from 'mysql2';
 import pool from '../config/database';
 import { type LocationRow } from '../interface/both';
-import { type registerObserveRequest } from '../interface/observe';
+import { type videoInfo, type registerObserveRequest, type RegisterObserveResponse, type videoId } from '../interface/observe';
 import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow, insertMosaicedVideoUrlResult, updateVideoUrlToOutputFileNameResult, insertThumbnailUrlResult, selectVideoInfo, selectfindregisterObserveInfo, insertVideoName, selectObserveInfoByObserveId } from '../Repository/ObserveRepository';
 
-type TPacket = ResultSetHeader | RowDataPacket | OkPacket;
+type TPacket = ResultSetHeader | RowDataPacket | FieldPacket[] ;
 
 export const insertVideoStatus = async (uploadedVideoOriginalName: string): Promise<ResultSetHeader> => {
   const conneciton = await pool.getConnection();
@@ -14,7 +14,7 @@ export const insertVideoStatus = async (uploadedVideoOriginalName: string): Prom
   return updatedVideoStatus;
 };
 
-export const findVideoId = async (uploadedVideoOriginalName: string): Promise<TPacket> => {
+export const findVideoId = async (uploadedVideoOriginalName: string): Promise<videoId[]> => {
   const conneciton = await pool.getConnection();
   const uploadedVideoId = await findUploadedVideoId(conneciton, uploadedVideoOriginalName);
   conneciton.release();
@@ -78,7 +78,7 @@ export const insertThumbnailUrl = async (uploadedVideoOriginalName: string, vide
   return thumbnail;
 };
 
-export const findvideoInfo = async (videoId: number): Promise<RowDataPacket[]> => {
+export const findvideoInfo = async (videoId: number): Promise<videoInfo[]> => {
   const conneciton = await pool.getConnection();
   const videoInfo = await selectVideoInfo(conneciton, videoId);
   conneciton.release();
@@ -86,7 +86,7 @@ export const findvideoInfo = async (videoId: number): Promise<RowDataPacket[]> =
   return videoInfo;
 };
 
-export const findregisterObserveInfo = async (videoId: number): Promise<TPacket> => {
+export const findregisterObserveInfo = async (videoId: number): Promise<RegisterObserveResponse[]> => {
   const conneciton = await pool.getConnection();
   const createdAt = await selectfindregisterObserveInfo(conneciton, videoId);
   conneciton.release();

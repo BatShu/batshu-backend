@@ -164,7 +164,7 @@ export const postAccident = async (req: CustomRequest, res: Response) => {
 
 export const getAccident = async (req: Request, res: Response) => {
   try {
-    const resData: ApiResponse = await readAccident(req.params.accidentId);
+    const resData: ApiResponse = await readAccident(parseInt(req.params.accidentId));
 
     res.status(200).json(resData);
   } catch (error) {
