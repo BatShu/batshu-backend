@@ -9,9 +9,12 @@ import bodyParser from 'body-parser';
 import AccidentRouter from './routers/AccidentRouter';
 import ObserveRouter from './routers/ObserveRouter';
 import UserRouter from './routers/UserRouter';
-
+import cors from 'cors';
 const app = express();
-
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
