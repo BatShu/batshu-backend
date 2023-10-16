@@ -1,41 +1,37 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from 'express';
 
-const userService = require("../service/UserService");
+import admin from 'firebase-admin';
 
-const admin = require('firebase-admin');
+import { createUser } from '../service/UserService';
 
-export const postUser = async (req:Request,res:Response):Promise<void>=> {
-    try {
-      if (req.headers.authorization) {
-            
-        const token:string = req.headers.authorization.split('Bearer ')[1];
+export const postUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (req.headers.authorization) {
+      const token: string = req.headers.authorization.split('Bearer ')[1];
 
-        const decodedToken = await admin.auth().verifyIdToken(token);
-        const uid = decodedToken.uid;
-    
-        const userInfo = await admin.auth().getUser(uid);
+      const decodedToken = await admin.auth().verifyIdToken(token);
+      const uid = decodedToken.uid;
 
-        if (!userInfo) {
-            const resData: ApiResponse = {
-                ok: false,
-                msg: '등록되지 않은 유저입니다.'
-            }
-            res.status(400).json(resData);
-          }
-        
-        const resData: ApiResponse = await userService.createUser(userInfo.uid);
+      const userInfo = await admin.auth().getUser(uid);
 
-        res.status(200).json(resData);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      const resData: ApiResponse = {
+      if (!userInfo) {
+        const resData: ApiResponse = {
           ok: false,
-          msg: "INTERNAL SERVER ERROR"
+          msg: '등록되지 않은 유저입니다.'
+        };
+        res.status(400).json(resData);
       }
-      res.status(500).json(resData);
+
+      const resData: ApiResponse = await createUser(userInfo.uid);
+
+      res.status(200).json(resData);
     }
-}
-
-
-
+  } catch (error) {
+    console.error('Error:', error);
+    const resData: ApiResponse = {
+      ok: false,
+      msg: 'INTERNAL SERVER ERROR'
+    };
+    res.status(500).json(resData);
+  }
+};
