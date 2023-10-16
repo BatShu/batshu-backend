@@ -11,6 +11,12 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
-        '@typescript-eslint/semi': [2, "always"]
+        '@typescript-eslint/semi': [2, "always"],
+        '@typescript-eslint/no-misused-promises': [
+            "error",
+            {
+                "checksVoidReturn": false
+            }
+        ]
     }
 }

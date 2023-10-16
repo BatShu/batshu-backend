@@ -1,4 +1,4 @@
-import { type FieldPacket, type PoolConnection } from 'mysql2/promise';
+import type { FieldPacket, PoolConnection, RowDataPacket } from 'mysql2/promise';
 import { type registerObserveRequest } from '../interface/observe';
 import { type LocationRow } from '../interface/both';
 import pool from '../config/database';
@@ -6,7 +6,6 @@ import pool from '../config/database';
 export const selectObserveOnTheMapRow = async (locationObject: LocationObject) => {
   try {
     const connection = await pool.getConnection();
-
     const observeSelectQuery: string = `
     SELECT id, ST_X(observe_location) AS x, ST_Y(observe_location) AS y
     FROM observe
@@ -14,11 +13,9 @@ export const selectObserveOnTheMapRow = async (locationObject: LocationObject) =
       observe_location,
       ST_GeomFromText('POINT(${locationObject.x} ${locationObject.y})')
     ) <= ?;`;
-
     const [observeRows]: [LocationRow[], FieldPacket[]] = await connection.execute<LocationRow[]>(observeSelectQuery, [
       locationObject.radius
     ]);
-
     connection.release();
     return observeRows;
   } catch (error) {
@@ -27,73 +24,63 @@ export const selectObserveOnTheMapRow = async (locationObject: LocationObject) =
 };
 
 // 비디오 업로드.
-export const updateVideoStatus = async (connection: PoolConnection, uploadedVideoOriginalName: string) => {
+export const updateVideoStatus = async (connection: PoolConnection, uploadedVideoOriginalName: string): Promise<ResultSetHeader> => {
   const updateVideoStatusQuery = 'INSERT INTO video (status, video_url) VALUES (?, ?);';
-  const [updateVideoStatusRows] = await connection.query(updateVideoStatusQuery, ['uploaded', uploadedVideoOriginalName]);
-
+  const [updateVideoStatusRows]: any = await connection.query(updateVideoStatusQuery, ['uploaded', uploadedVideoOriginalName]);
   return updateVideoStatusRows;
 };
 
-export const insertVideoName = async (connection: PoolConnection, uploadedVideoOriginalName: string) => {
+export const insertVideoName = async (connection: PoolConnection, uploadedVideoOriginalName: string): Promise<ResultSetHeader> => {
   const insertVideoNameQuery = 'INSERT INTO video (video_url) VALUES (?);';
-  const [insertVideoNameRows] = await connection.query(insertVideoNameQuery, [uploadedVideoOriginalName]);
-
+  const [insertVideoNameRows]: any = await connection.query(insertVideoNameQuery, [uploadedVideoOriginalName]);
   return insertVideoNameRows;
 };
 
-export const findUploadedVideoId = async (connection: PoolConnection, uploadedVideoOriginalName: string) => {
+export const findUploadedVideoId = async (connection: PoolConnection, uploadedVideoOriginalName: string): Promise<ResultSetHeader> => {
   const findUploadedVideoIdQuery = 'SELECT id FROM video WHERE video_url = ?;';
-  const [findUploadedVideoIdRows] = await connection.query(findUploadedVideoIdQuery, [uploadedVideoOriginalName]);
-
+  const [findUploadedVideoIdRows]: any = await connection.query(findUploadedVideoIdQuery, [uploadedVideoOriginalName]);
   return findUploadedVideoIdRows;
 };
 
-export const updateVideoStatusWithBlurring = async (connection: PoolConnection, uploadedVideoOriginalName: string) => {
+export const updateVideoStatusWithBlurring = async (connection: PoolConnection, uploadedVideoOriginalName: string): Promise<ResultSetHeader> => {
   const updateVideoStatusWithBlurringStartQuery = 'UPDATE video SET status = ? WHERE video_url = ?;';
-  const [updateVideoStatusWithBlurringStartRows] = await connection.query(updateVideoStatusWithBlurringStartQuery, ['blurring', uploadedVideoOriginalName]);
-
+  const [updateVideoStatusWithBlurringStartRows]: any = await connection.query(updateVideoStatusWithBlurringStartQuery, ['blurring', uploadedVideoOriginalName]);
   return updateVideoStatusWithBlurringStartRows;
 };
 
-export const updateVideoStatusWithBlurringDone = async (connection: PoolConnection, uploadedVideoOriginalName: string) => {
+export const updateVideoStatusWithBlurringDone = async (connection: PoolConnection, uploadedVideoOriginalName: string): Promise<ResultSetHeader> => {
   const updateVideoStatusWithBlurringDoneQuery = 'UPDATE video SET status = ? WHERE video_url = ?;';
-  const [updateVideoStatusWithBlurringDoneRows] = await connection.query(updateVideoStatusWithBlurringDoneQuery, ['blurringDone', uploadedVideoOriginalName]);
-
+  const [updateVideoStatusWithBlurringDoneRows]: any = await connection.query(updateVideoStatusWithBlurringDoneQuery, ['blurringDone', uploadedVideoOriginalName]);
   return updateVideoStatusWithBlurringDoneRows;
 };
 
-export const insertMosaicedVideoUrlResult = async (connection: PoolConnection, videoOutputFileName: string, mosaicedVideoUrl: string) => {
+export const insertMosaicedVideoUrlResult = async (connection: PoolConnection, videoOutputFileName: string, mosaicedVideoUrl: string): Promise<ResultSetHeader> => {
   const insertMosaicedVideoUrlQuery = 'UPDATE video SET video_url = ? WHERE video_url = ?;';
-  const [insertMosaicedVideoUrlRows] = await connection.query(insertMosaicedVideoUrlQuery, [mosaicedVideoUrl, videoOutputFileName]);
-
+  const [insertMosaicedVideoUrlRows]: any = await connection.query(insertMosaicedVideoUrlQuery, [mosaicedVideoUrl, videoOutputFileName]);
   return insertMosaicedVideoUrlRows;
 };
 
-export const updateVideoUrlToOutputFileNameResult = async (connection: PoolConnection, uploadedVideoOriginalName: string, outputFileName: string) => {
+export const updateVideoUrlToOutputFileNameResult = async (connection: PoolConnection, uploadedVideoOriginalName: string, outputFileName: string): Promise<ResultSetHeader> => {
   const updateVideoUrlToOutputFileNameQuery = 'UPDATE video SET video_url = ? WHERE video_url = ?;';
-  const [updateVideoUrlToOutputFileNameRows] = await connection.query(updateVideoUrlToOutputFileNameQuery, [outputFileName, uploadedVideoOriginalName]);
-
+  const [updateVideoUrlToOutputFileNameRows]: any = await connection.query(updateVideoUrlToOutputFileNameQuery, [outputFileName, uploadedVideoOriginalName]);
   return updateVideoUrlToOutputFileNameRows;
 };
 
-export const insertThumbnailUrlResult = async (connection: PoolConnection, uploadedVideoOriginalName: string, videoLocationUrl: string, thumbnailLocationUrl: string) => {
+export const insertThumbnailUrlResult = async (connection: PoolConnection, uploadedVideoOriginalName: string, videoLocationUrl: string, thumbnailLocationUrl: string): Promise<ResultSetHeader> => {
   const updateThumbnailUrlQuery = 'UPDATE video SET video_url = ?, thumbnail_url = ? WHERE video_url = ?;';
-
-  const [insertThumbnailUrlRows] = await connection.query(updateThumbnailUrlQuery, [videoLocationUrl, thumbnailLocationUrl, uploadedVideoOriginalName]);
+  const [insertThumbnailUrlRows]: any = await connection.query(updateThumbnailUrlQuery, [videoLocationUrl, thumbnailLocationUrl, uploadedVideoOriginalName]);
   return insertThumbnailUrlRows;
 };
 
-export const selectVideoInfo = async (connection: PoolConnection, videoId: number) => {
+export const selectVideoInfo = async (connection: PoolConnection, videoId: number): Promise<RowDataPacket[]> => {
   const selectVideoInfoQuery = 'SELECT id, video_url, thumbnail_url FROM video WHERE id = ?;';
-  const [selectVideoInfoRows] = await connection.query(selectVideoInfoQuery, [videoId]);
-
+  const [selectVideoInfoRows]: any = await connection.query(selectVideoInfoQuery, [videoId]);
   return selectVideoInfoRows;
 };
 
-export const createObserveData = async (connection: PoolConnection, registerObserveData: registerObserveRequest) => {
-  const createObserveQuery = 'INSERT INTO observe (content_title, content_description, video_id, car_model_name, license_plate, place_name, observe_start_time, observe_end_time, observe_location, created_at, uid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, POINT(?, ?), NOW(), ?);';
-
-  const results = await connection.query(createObserveQuery, [
+export const createObserveData = async (connection: PoolConnection, registerObserveData: registerObserveRequest): Promise<ResultSetHeader> => {
+  const createObserveQuery = 'INSERT INTO observe (content_title, content_description, video_id, car_model_name, license_plate, place_name, observe_start_time, observe_end_time, observe_location, created_at, uid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, POINT(?, ?), NOW(), ?;';
+  const [results]: any = await connection.query(createObserveQuery, [
     registerObserveData.contentTitle,
     registerObserveData.contentDescription,
     registerObserveData.videoId,
@@ -109,16 +96,14 @@ export const createObserveData = async (connection: PoolConnection, registerObse
   return results;
 };
 
-export const selectfindregisterObserveInfo = async (connection: PoolConnection, videoId: number) => {
+export const selectfindregisterObserveInfo = async (connection: PoolConnection, videoId: number): Promise<ResultSetHeader> => {
   const selectCreatedAtQuery = 'SELECT * FROM observe WHERE video_id = ?;';
-  const [selectCreatedAtRows] = await connection.query(selectCreatedAtQuery, [videoId]);
-
+  const [selectCreatedAtRows]: any = await connection.query(selectCreatedAtQuery, [videoId]);
   return selectCreatedAtRows;
 };
 
-export const selectObserveInfoByObserveId = async (connection: PoolConnection, observeId: number) => {
+export const selectObserveInfoByObserveId = async (connection: PoolConnection, observeId: number): Promise<ResultSetHeader> => {
   const selectObserveInfoByObserveIdQuery = 'SELECT * FROM observe WHERE id = ?;';
-  const [selectObserveInfoByObserveIdRows] = await connection.query(selectObserveInfoByObserveIdQuery, [observeId]);
-
+  const [selectObserveInfoByObserveIdRows]: any = await connection.query(selectObserveInfoByObserveIdQuery, [observeId]);
   return selectObserveInfoByObserveIdRows;
 };

@@ -1,23 +1,25 @@
-import { type Request } from 'express';
-import multer from 'multer';
+import type { Request } from 'express';
+import multer, { type FileFilterCallback } from 'multer';
 import AWS from 'aws-sdk';
 import multerS3 from 'multer-s3';
 import path from 'path';
-import { S3Client } from '@aws-sdk/client-s3';
+import { S3 } from '@aws-sdk/client-s3';
 
-export const accessKey: string = process.env.ACCESS_KEY_JC!;
-export const secretAccessKey: string = process.env.SECRET_ACCESS_KEY_JC!;
-export const bucketRegion: string = process.env.BUCKET_REGION!;
+export type { FileFilterCallback };
+
+export const accessKey: string = process.env.ACCESS_KEY_JC ?? '';
+export const secretAccessKey: string = process.env.SECRET_ACCESS_KEY_JC ?? '';
+export const bucketRegion: string = process.env.BUCKET_REGION ?? '';
 
 const s3params = {
   credentials: {
     accessKeyId: accessKey,
-    secretAccessKey
+    secretAccessKey: secretAccessKey
   },
   region: bucketRegion
 };
 
-export const S3 = new S3Client(s3params);
+export const s3: S3 = new S3(s3params);
 
 AWS.config.update({
   accessKeyId: accessKey,
@@ -25,40 +27,38 @@ AWS.config.update({
   region: bucketRegion
 });
 
-//* AWS S3 multer 설정
 export const s3Upload = multer({
   storage: multerS3({
-    s3: new AWS.S3(),
+    s3: s3,
     bucket: 'batshu-observe-input',
     acl: 'private',
     contentType: multerS3.AUTO_CONTENT_TYPE,
-    key (req: Request, file: { originalname: any }, cb: (arg0: null, arg1: string) => void) {
-      cb(null, `${Date.now()}_${path.basename(file.originalname)}`);
+    key(req: Request, { originalname }: { originalname: any }, cb: (arg0: null, arg1: string) => void) {
+      cb(null, `${Date.now()}_${path.basename(originalname)}`);
     }
   })
 });
 
-// 확장자 필터 함수 정의
-export const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+export const fileFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  cb: FileFilterCallback
+): void => {
   const allowedExtensions = ['mp4', 'wmv', 'mov', 'avi', 'dat'];
-  const fileExtension = String(file.originalname.split('.').pop()); // 문자열로 형변환
+  const fileExtension = String(file.originalname.split('.').pop());
 
   if (allowedExtensions.includes(fileExtension)) {
-    // 허용된 확장자인 경우
-    cb(null, true); // 파일 허용
+    cb(null, true);
   } else {
-    // 허용되지 않은 확장자인 경우
-    cb(null, false); // 파일 거부
+    cb(null, false);
   }
 };
 
 export const localStorage = multer.diskStorage({
-  destination: function (req: Request, file: any, cb: (arg0: null, arg1: string) => void) {
-    // 파일이 저장될 디렉토리 경로를 지정합니다.
+  destination(req: Request, file: any, cb: (arg0: null, arg1: string) => void) {
     cb(null, 'DashcamCleaner');
   },
-  filename: function (req: Request, file: { originalname: any }, cb: (arg0: null, arg1: any) => void) {
-    // 파일의 이름을 지정합니다.
-    cb(null, file.originalname);
+  filename(req: Request, { originalname }: { originalname: any }, cb: (arg0: null, arg1: any) => void) {
+    cb(null, originalname);
   }
 });

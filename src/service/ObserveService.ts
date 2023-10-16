@@ -4,8 +4,9 @@ import { type LocationRow } from '../interface/both';
 import { type registerObserveRequest } from '../interface/observe';
 import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow, insertMosaicedVideoUrlResult, updateVideoUrlToOutputFileNameResult, insertThumbnailUrlResult, selectVideoInfo, selectfindregisterObserveInfo, insertVideoName, selectObserveInfoByObserveId } from '../Repository/ObserveRepository';
 
-type TPacket = RowDataPacket[] | RowDataPacket[][] | OkPacket | OkPacket[] | ResultSetHeader;
-export const insertVideoStatus = async (uploadedVideoOriginalName: string): Promise<TPacket> => {
+type TPacket = ResultSetHeader | RowDataPacket | OkPacket;
+
+export const insertVideoStatus = async (uploadedVideoOriginalName: string): Promise<ResultSetHeader> => {
   const conneciton = await pool.getConnection();
   const updatedVideoStatus = await updateVideoStatus(conneciton, uploadedVideoOriginalName);
   conneciton.release();
@@ -45,7 +46,7 @@ export const updateVideoStautsToBlurringDone = async (uploadedVideoOriginalName:
   return updateUploadedVideoStatus;
 };
 
-export const createObserve = async (registerObserveData: registerObserveRequest) => {
+export const createObserve = async (registerObserveData: registerObserveRequest): Promise<TPacket> => {
   const conneciton = await pool.getConnection();
   const observeData = await createObserveData(conneciton, registerObserveData);
   conneciton.release();
@@ -53,13 +54,15 @@ export const createObserve = async (registerObserveData: registerObserveRequest)
   return observeData;
 };
 
-export const insertMosaicedFinalVideoUrl = async (videoOutputFileName: string, mosaicedVideoUrl: string) => {
+export const insertMosaicedFinalVideoUrl = async (videoOutputFileName: string, mosaicedVideoUrl: string): Promise<TPacket> => {
   const conneciton = await pool.getConnection();
   const mosaicedVideo = await insertMosaicedVideoUrlResult(conneciton, videoOutputFileName, mosaicedVideoUrl);
   conneciton.release();
+
+  return mosaicedVideo;
 };
 
-export const updateVideoUrlToOutputFileName = async (uploadedVideoOriginalName: string, outputFileName: string) => {
+export const updateVideoUrlToOutputFileName = async (uploadedVideoOriginalName: string, outputFileName: string): Promise<TPacket> => {
   const conneciton = await pool.getConnection();
   const updateVideoUrl = await updateVideoUrlToOutputFileNameResult(conneciton, uploadedVideoOriginalName, outputFileName);
   conneciton.release();
@@ -67,13 +70,15 @@ export const updateVideoUrlToOutputFileName = async (uploadedVideoOriginalName: 
   return updateVideoUrl;
 };
 
-export const insertThumbnailUrl = async (uploadedVideoOriginalName: string, videoLocationUrl: string, thumbnailLocationUrl: string) => {
+export const insertThumbnailUrl = async (uploadedVideoOriginalName: string, videoLocationUrl: string, thumbnailLocationUrl: string): Promise<TPacket> => {
   const conneciton = await pool.getConnection();
   const thumbnail = await insertThumbnailUrlResult(conneciton, uploadedVideoOriginalName, videoLocationUrl, thumbnailLocationUrl);
   conneciton.release();
+
+  return thumbnail;
 };
 
-export const findvideoInfo = async (videoId: number) => {
+export const findvideoInfo = async (videoId: number): Promise<RowDataPacket[]> => {
   const conneciton = await pool.getConnection();
   const videoInfo = await selectVideoInfo(conneciton, videoId);
   conneciton.release();
@@ -81,7 +86,7 @@ export const findvideoInfo = async (videoId: number) => {
   return videoInfo;
 };
 
-export const findregisterObserveInfo = async (videoId: number) => {
+export const findregisterObserveInfo = async (videoId: number): Promise<TPacket> => {
   const conneciton = await pool.getConnection();
   const createdAt = await selectfindregisterObserveInfo(conneciton, videoId);
   conneciton.release();
@@ -97,7 +102,7 @@ export const findObserveDetailInfo = async (observeId: number): Promise<TPacket>
   return observeDetailInfo;
 };
 
-export const readObserveOnTheMap = async (locationObject: LocationObject) => {
+export const readObserveOnTheMap = async (locationObject: LocationObject): Promise<ApiResponse> => {
   try {
     const observeRows = await selectObserveOnTheMapRow(locationObject) as LocationRow[];
 
