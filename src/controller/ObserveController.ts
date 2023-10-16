@@ -1,7 +1,6 @@
 import { type NextFunction, type Request, type Response } from 'express';
-import * as path from 'path';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { S3, accessKey, secretAccessKey, bucketRegion } from '../utils/aws-s3';
+import { s3, accessKey, secretAccessKey, bucketRegion } from '../utils/aws-s3';
 import { type registerObserveRequest, type video } from '../interface/observe';
 import { readObserveOnTheMap, insertVideoStatus, findVideoId, createObserve, insertThumbnailUrl, findvideoInfo, findregisterObserveInfo, findObserveDetailInfo } from '../service/ObserveService';
 
@@ -19,19 +18,17 @@ AWS.config.update({
   region: bucketRegion
 });
 
-const s3 = new AWS.S3();
-
-export const uploadVideo = async (req: Request, res: Response, next: NextFunction) => {
+export const uploadVideo = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const uploadedVideo: video = req.file as Express.Multer.File;
 
     const uploadedVideoOriginalName: string = uploadedVideo.originalname;
 
-    const updateUploadedVideoStatus = await insertVideoStatus(uploadedVideoOriginalName);
+    await insertVideoStatus(uploadedVideoOriginalName);
 
     const videoId = await findVideoId(uploadedVideoOriginalName);
 
-    if (!videoId) {
+    if (videoId === undefined) {
       return res.status(500).json({
         ok: false,
         msg: '해당 비디오가 존재하지 않습니다.'
@@ -78,22 +75,18 @@ export const getObserveOnTheMap = async (req: CustomRequest, res: Response) => {
       ok: false,
       msg: 'INTERNAL SERVER ERROR'
     };
-    res.status(500).json(resData);
+    return res.status(500).json(resData);
   }
 };
 
-export const videoProcessing = async (req: Request, res: Response) => {
+export const videoProcessing = async (req: Request, res: Response): Promise<void> => {
   try {
     const uploadedVideo: video = req.file as Express.Multer.File;
-
     const uploadedVideoOriginalName: string = uploadedVideo.originalname;
-
-    const fileExtension = path.extname(uploadedVideoOriginalName);
-
+    // const fileExtension = path.extname(uploadedVideoOriginalName);
     // const videoOutputFileName = `${uploadedVideoOriginalName}_${Date.now()}${fileExtension}`;
 
     const scriptDirectory = 'DashcamCleaner';
-
     process.chdir(scriptDirectory);
 
     // const mosaicCommand = `python3 cli.py -i ${uploadedVideoOriginalName} -o ${videoOutputFileName} -w 360p_nano_v8.pt`
@@ -131,7 +124,7 @@ export const videoProcessing = async (req: Request, res: Response) => {
       console.log(currentWorkingDirectory);
       const thumbnailFileName = `thumbnail_${Date.now()}To${uploadedVideoOriginalName}.png`;
 
-      const thumbnailInfo: any = await new Promise((resolve, reject) => {
+      await new Promise((resolve, reject) => {
         ffmpeg(uploadedVideoOriginalName, {
         })
           .thumbnail({
@@ -159,10 +152,10 @@ export const videoProcessing = async (req: Request, res: Response) => {
       };
 
       const uploadThumbnailcommand = new PutObjectCommand(thumbnailUploadParams);
-      await S3.send(uploadThumbnailcommand);
+      await s3.send(uploadThumbnailcommand);
 
       const command = new PutObjectCommand(uploadParams);
-      await S3.send(command);
+      await s3.send(command);
 
       const videoLocationUrl = `https://batshu-observe-input.s3.amazonaws.com/${uploadedVideoOriginalName}`;
 
@@ -170,7 +163,7 @@ export const videoProcessing = async (req: Request, res: Response) => {
 
       // const mosaicedFinalVideoUrl = await insertMosaicedFinalVideoUrl//(videoOutputFileName, videoLocationUrl);
 
-      const thumbnail = await insertThumbnailUrl(uploadedVideoOriginalName, videoLocationUrl, thumbnailLocationUrl);
+      await insertThumbnailUrl(uploadedVideoOriginalName, videoLocationUrl, thumbnailLocationUrl);
     } catch (error) {
       console.log(error);
     }
@@ -190,7 +183,7 @@ export const videoProcessing = async (req: Request, res: Response) => {
   }
 };
 
-export const registerObserve = async (req: CustomRequest, res: Response) => {
+export const registerObserve = async (req: CustomRequest, res: Response): Promise<Response> => {
   try {
     if (typeof req.uid === 'string') {
       const uid: string = req.uid;
@@ -209,7 +202,7 @@ export const registerObserve = async (req: CustomRequest, res: Response) => {
 
       };
 
-      const registerObserveResult = await createObserve(registerObserveData);
+      await createObserve(registerObserveData);
 
       const videoInfo: any = await findvideoInfo(registerObserveData.videoId);
       const registerObserveInfo: any = await findregisterObserveInfo(registerObserveData.videoId);
@@ -234,12 +227,17 @@ export const registerObserve = async (req: CustomRequest, res: Response) => {
     }
   } catch (err) {
     console.log(err);
+    // Handle errors or return an appropriate response for errors.
+    return res.status(500).json({
+      ok: false,
+      msg: 'INTERNAL SERVER ERROR'
+    });
   }
 };
 
 // TODO: make function to get videoUrl by videoId
 
-export const getObserveInfoByObserveId = async (req: Request, res: Response) => {
+export const getObserveInfoByObserveId = async (req: Request, res: Response): Promise<Response> => {
   try {
     const observeId: number = parseInt(req.params.observeId);
 
@@ -256,6 +254,6 @@ export const getObserveInfoByObserveId = async (req: Request, res: Response) => 
       ok: false,
       msg: 'INTERNAL SERVER ERROR'
     };
-    res.status(500).json(resData);
+    return res.status(500).json(resData);
   }
 };

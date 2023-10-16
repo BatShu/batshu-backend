@@ -8,7 +8,6 @@ declare global {
       userEmail: string | undefined
     }
   }
-
   interface UserInfo {
     uid: string
     email: string
@@ -19,7 +18,7 @@ declare global {
   interface ApiResponse {
     ok: boolean
     msg: string
-    data?: UserInfo | Accident
+    data?: UserInfo | Accident | AccidentLocationObject[] | ObserveLocationObject[]
   }
 
   export interface CustomRequest extends Request {
@@ -27,21 +26,26 @@ declare global {
   }
 }
 
-export const tokenToUid = async (req: CustomRequest, res: Response, next: NextFunction) => {
+export const tokenToUid = async (req: CustomRequest, res: Response, next: NextFunction): Promise<void> => {
   if (req.headers.authorization) {
-    const token: string = req.headers.authorization.split('Bearer ')[1];
+    const token: string | undefined = req.headers.authorization.split('Bearer ')[1];
 
-    try {
-      const decodedToken = await admin.auth().verifyIdToken(token);
-      req.uid = decodedToken.uid;
-      next();
-    } catch (error) {
-      // Handle token verification error here
-      res.status(401).send('Unauthorized1');
+    if (token !== undefined) { // Handle nullish case explicitly
+      try {
+        const decodedToken = await admin.auth().verifyIdToken(token);
+        req.uid = decodedToken.uid;
+        next();
+      } catch (error) {
+        // Handle token verification error here
+        res.status(401).send('Unauthorized1');
+      }
+    } else {
+      // Handle case where the token is missing or empty string
+      res.status(401).send('Unauthorized2');
     }
   } else {
     // Handle case where authorization header is missing
-    res.status(401).send('Unauthorized2');
+    res.status(401).send('Unauthorized3');
   }
 };
 
@@ -49,7 +53,7 @@ export const tokenToUid = async (req: CustomRequest, res: Response, next: NextFu
 export const confirmAndFetchUserInfo = async (req: CustomRequest, res: Response) => {
   let uid: string;
 
-  if (req.headers.uid) {
+  if (req.headers.uid === undefined) {
     if (typeof req.headers.uid === 'string') {
       uid = req.headers.uid;
 
@@ -70,7 +74,7 @@ export const getUserInfo = async (req: CustomRequest, res: Response): Promise<vo
       // UID를 사용하여 사용자 정보 가져오기
       const userInfo = await admin.auth().getUser(req.uid);
 
-      if (!userInfo) {
+      if (userInfo === undefined) {
         const resData: ApiResponse = {
           ok: false,
           msg: '등록되지 않은 유저입니다.'
@@ -83,9 +87,9 @@ export const getUserInfo = async (req: CustomRequest, res: Response): Promise<vo
           msg: 'Successfully Get UserInfo',
           data: {
             uid: userInfo.uid,
-            email: userInfo.email || '',
-            displayName: userInfo.displayName || '',
-            googleProfilePhotoUrl: userInfo.photoURL || ''
+            email: userInfo.email ?? '', // Use nullish coalescing operator
+            displayName: userInfo.displayName ?? '', // Use nullish coalescing operator
+            googleProfilePhotoUrl: userInfo.photoURL ?? '' // Use nullish coalescing operator
           }
         };
         res.status(200).json(resData);
