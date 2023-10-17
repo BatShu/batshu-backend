@@ -16,12 +16,6 @@ declare global {
     googleProfilePhotoUrl: string
   }
 
-  interface ApiResponse {
-    ok: boolean
-    msg: string
-    data?: UserInfo | Accident | AccidentLocationObject[] | ObserveLocationObject[]
-  }
-
   export interface CustomRequest extends Request {
     uid?: string // 'uid' 프로퍼티를 추가합니다.
   }
