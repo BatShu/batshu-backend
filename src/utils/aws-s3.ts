@@ -3,7 +3,7 @@ import multer, { type FileFilterCallback } from 'multer';
 import AWS from 'aws-sdk';
 import multerS3 from 'multer-s3';
 import path from 'path';
-import { S3 } from '@aws-sdk/client-s3';
+import { S3, type S3ClientConfig } from '@aws-sdk/client-s3';
 
 export type { FileFilterCallback };
 
@@ -11,7 +11,7 @@ export const accessKey: string = process.env.ACCESS_KEY_JC ?? '';
 export const secretAccessKey: string = process.env.SECRET_ACCESS_KEY_JC ?? '';
 export const bucketRegion: string = process.env.BUCKET_REGION ?? '';
 
-const s3params = {
+const s3params: S3ClientConfig = {
   credentials: {
     accessKeyId: accessKey,
     secretAccessKey: secretAccessKey
@@ -33,7 +33,7 @@ export const s3Upload = multer({
     bucket: 'batshu-observe-input',
     acl: 'private',
     contentType: multerS3.AUTO_CONTENT_TYPE,
-    key(req: Request, { originalname }: { originalname: any }, cb: (arg0: null, arg1: string) => void) {
+    key (req: Request, { originalname }: { originalname: any }, cb: (arg0: null, arg1: string) => void) {
       cb(null, `${Date.now()}_${path.basename(originalname)}`);
     }
   })
@@ -55,10 +55,10 @@ export const fileFilter = (
 };
 
 export const localStorage = multer.diskStorage({
-  destination(req: Request, file: any, cb: (arg0: null, arg1: string) => void) {
+  destination (req: Request, file: any, cb: (arg0: null, arg1: string) => void) {
     cb(null, 'DashcamCleaner');
   },
-  filename(req: Request, { originalname }: { originalname: any }, cb: (arg0: null, arg1: any) => void) {
+  filename (req: Request, { originalname }: { originalname: any }, cb: (arg0: null, arg1: any) => void) {
     cb(null, originalname);
   }
 });

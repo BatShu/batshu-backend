@@ -1,6 +1,5 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { admin } from './firebase';
-import { LocationObject } from 'src/interface/observe';
 import { type ApiResponse } from 'src/domain/response';
 
 declare global {
