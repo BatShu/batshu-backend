@@ -3,6 +3,7 @@ import pool from '../config/database';
 import { type LocationRow } from '../interface/both';
 import { type videoInfo, type registerObserveRequest, type RegisterObserveResponse, type videoId } from '../interface/observe';
 import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow, insertMosaicedVideoUrlResult, updateVideoUrlToOutputFileNameResult, insertThumbnailUrlResult, selectVideoInfo, selectfindregisterObserveInfo, insertVideoName, selectObserveInfoByObserveId } from '../Repository/ObserveRepository';
+import { type ApiResponse } from 'src/domain/response';
 
 type TPacket = ResultSetHeader | RowDataPacket | FieldPacket[] ;
 

@@ -1,3 +1,4 @@
+import { type ApiResponse } from 'src/domain/response';
 import userRepository from '../Repository/UserRepository';
 
 export async function createUser (uid: string): Promise<ApiResponse> {
@@ -22,5 +23,9 @@ export async function createUser (uid: string): Promise<ApiResponse> {
     return resData;
   } catch (error) {
     console.error('에러 발생:', error);
+    return {
+      ok: false,
+      msg: 'INTERNAL SERVER ERROR'
+    };
   }
 };

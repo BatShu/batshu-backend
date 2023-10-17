@@ -1,6 +1,7 @@
+import { type ApiResponse } from 'src/domain/response';
 import AccidentRepository from '../Repository/AccidentRepository';
 
-export const createAccident = async (data: Accident) => {
+export const createAccident = async (data: Accident): Promise<ApiResponse> => {
   try {
     // 의미적 데이터 처리
 
@@ -29,11 +30,11 @@ export const createAccident = async (data: Accident) => {
   }
 };
 
-export const readAccident = async (accidentId: number) => {
+export const readAccident = async (accidentId: number): Promise<ApiResponse> => {
   try {
     const accidentRows = await AccidentRepository.selectAccidentRow(accidentId);
 
-    if (accidentRows.length == 0) {
+    if (accidentRows.length === 0) {
       const resData: ApiResponse = {
         ok: false,
         msg: '해당 사고 아이디가 존재하지 않습니다.'
@@ -87,7 +88,7 @@ export const readAccident = async (accidentId: number) => {
   }
 };
 
-export const readAccidentOnTheMap = async (locationObject: LocationObject) => {
+export const readAccidentOnTheMap = async (locationObject: LocationObject): Promise<ApiResponse> => {
   try {
     const accidentRows = await AccidentRepository.selectAccidentOnTheMapRow(locationObject);
 
