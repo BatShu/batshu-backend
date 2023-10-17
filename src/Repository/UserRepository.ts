@@ -5,9 +5,7 @@ import { type FieldPacket } from 'mysql2';
 export const createUser = async (uid: string) => {
   try {
     const connection = await pool.getConnection();
-
     await connection.execute('INSERT INTO user (uid) VALUES (?)', [uid]);
-
     connection.release();
   } catch (error) {
     throw error;
@@ -19,7 +17,6 @@ export const readUser = async (uid: string): Promise<UserRow[]> => {
     const connection = await pool.getConnection();
 
     const [user]: [UserRow[], FieldPacket[]] = await connection.execute('SELECT * FROM user WHERE uid = ?', [uid]);
-
     connection.release();
     return user;
   } catch (error) {

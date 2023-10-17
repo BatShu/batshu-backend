@@ -66,10 +66,10 @@ declare global {
 
 dotenv.config();
 
-const bucketName: string = process.env.BUCKET_NAME_HARAM!;
-const accessKey: string = process.env.ACCESS_KEY_HARAM!;
-const bucketRegion: string = process.env.BUCKET_REGION_HARAM!;
-const secretAccessKey: string = process.env.SECRET_ACCESS_KEY_HARAM!;
+const bucketName: string = process.env.BUCKET_NAME_HARAM ?? '';
+const accessKey: string = process.env.ACCESS_KEY_HARAM ?? '';
+const bucketRegion: string = process.env.BUCKET_REGION_HARAM ?? '';
+const secretAccessKey: string = process.env.SECRET_ACCESS_KEY_HARAM ?? '';
 
 AWS.config.update({
   accessKeyId: accessKey, // AWS Access Key ID를 여기에 입력

@@ -8,7 +8,7 @@ const { PROJECT_ID, CLIENT_EMAIL, PRIVATE_KEY } = {
   PRIVATE_KEY: process.env.PRIVATE_KEY?.replace(/\\n/g, '\n') // 개행 문자 처리
 };
 
-if (!PRIVATE_KEY) {
+if (PRIVATE_KEY === undefined) {
   throw new Error('PRIVATE_KEY is missing in the environment variables');
 }
 
