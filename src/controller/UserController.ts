@@ -3,19 +3,19 @@ import { type Request, type Response } from 'express';
 import admin from 'firebase-admin';
 
 import { createUser, removeUser } from '../service/UserService';
-
+import { type ApiResponse } from 'src/domain/response';
 
 export const postUser = async (req: Request, res: Response): Promise<void> => {
   try {
     if (req.headers.authorization) {
-      const token: string = req.headers.authorization.split('Bearer ')[1];
+      const token: string | null = req.headers.authorization.split('Bearer ')[1];
 
       const decodedToken = await admin.auth().verifyIdToken(token);
       const uid = decodedToken.uid;
 
       const userInfo = await admin.auth().getUser(uid);
 
-      if (!userInfo) {
+      if (!(userInfo === undefined)) {
         const resData: ApiResponse = {
           ok: false,
           msg: '등록되지 않은 유저입니다.'
@@ -40,7 +40,6 @@ export const postUser = async (req: Request, res: Response): Promise<void> => {
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
   try {
     if (req.headers.authorization) {
-
       const userInfo = await admin.auth().getUser(req.params.uid);
 
       if (!userInfo) {
@@ -63,4 +62,4 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
     };
     res.status(500).json(resData);
   }
-}
+};
