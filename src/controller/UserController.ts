@@ -4,6 +4,7 @@ import admin from 'firebase-admin';
 
 import { createUser, removeUser } from '../service/UserService';
 
+
 export const postUser = async (req: Request, res: Response): Promise<void> => {
   try {
     if (req.headers.authorization) {

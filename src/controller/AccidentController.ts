@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import { createAccident, readAccident, readAccidentOnTheMap } from '../service/AccidentService';
 import crypto from 'crypto';
 import AWS from 'aws-sdk';
+import { type ApiResponse } from 'src/domain/response';
 
 declare global {
   interface LocationObject {
@@ -86,7 +87,7 @@ const s3params = {
 
 const s3 = new S3Client(s3params);
 
-export const getAccidentOnTheMap = async (req: CustomRequest, res: Response) => {
+export const getAccidentOnTheMap = async (req: CustomRequest, res: Response): Promise<void> => {
   try {
     const { x, y, radius } = req.query;
 
@@ -95,7 +96,8 @@ export const getAccidentOnTheMap = async (req: CustomRequest, res: Response) => 
     const radiusValue: number = parseFloat(radius as string);
 
     if (isNaN(xCoord) || isNaN(yCoord) || isNaN(radiusValue)) {
-      return res.status(400).json({ ok: false, msg: 'Invalid values for x, y, or radius' });
+      res.status(400).json({ ok: false, msg: 'Invalid values for x, y, or radius' });
+      return;
     }
 
     const Obj: LocationObject = { x: xCoord, y: yCoord, radius: radiusValue };
@@ -113,7 +115,7 @@ export const getAccidentOnTheMap = async (req: CustomRequest, res: Response) => 
   }
 };
 
-export const postAccident = async (req: CustomRequest, res: Response) => {
+export const postAccident = async (req: CustomRequest, res: Response): Promise<void> => {
   try {
     if (typeof req.uid === 'string') {
       const images: imageData[] = req.files as Express.Multer.File[];

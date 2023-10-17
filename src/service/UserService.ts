@@ -1,3 +1,4 @@
+import { type ApiResponse } from 'src/domain/response';
 import userRepository from '../Repository/UserRepository';
 
 export async function createUser (uid: string): Promise<ApiResponse>{
