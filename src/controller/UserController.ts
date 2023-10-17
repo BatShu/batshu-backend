@@ -3,6 +3,7 @@ import { type Request, type Response } from 'express';
 import admin from 'firebase-admin';
 
 import { createUser } from '../service/UserService';
+import { type ApiResponse } from 'src/domain/response';
 
 export const postUser = async (req: Request, res: Response): Promise<void> => {
   try {
