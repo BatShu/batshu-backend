@@ -67,7 +67,8 @@ export const getUserInfo = async (req: CustomRequest, res: Response): Promise<vo
   try {
     if (typeof req.uid === 'string') {
       // UID를 사용하여 사용자 정보 가져오기
-      const userInfo = await admin.auth().getUser(req.uid);
+      const uid: string = req.params.uid;
+      const userInfo = await admin.auth().getUser(uid);
 
       if (userInfo === undefined) {
         const resData: ApiResponse = {
@@ -81,7 +82,7 @@ export const getUserInfo = async (req: CustomRequest, res: Response): Promise<vo
           ok: true,
           msg: 'Successfully Get UserInfo',
           data: {
-            uid: userInfo.uid,
+            uid: uid,
             email: userInfo.email ?? '', // Use nullish coalescing operator
             displayName: userInfo.displayName ?? '', // Use nullish coalescing operator
             googleProfilePhotoUrl: userInfo.photoURL ?? '' // Use nullish coalescing operator
