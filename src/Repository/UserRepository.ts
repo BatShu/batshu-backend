@@ -1,4 +1,6 @@
 import pool from '../config/database';
+import { UserRow } from 'src/interface/both';
+import { type FieldPacket } from 'mysql2';
 
 export const createUser = async (uid: string) => {
   try {
@@ -12,18 +14,35 @@ export const createUser = async (uid: string) => {
   }
 };
 
-export const readUser = async (uid: string) => {
+export const readUser = async (uid: string): Promise<UserRow[]> => {
   try {
     const connection = await pool.getConnection();
 
-    const [user] = await connection.execute('SELECT * FROM user WHERE uid = ?', [uid]);
+    const [user]: [UserRow[], FieldPacket[]] = await connection.execute('SELECT * FROM user WHERE uid = ?', [uid]);
 
-    const userRows = user as any[];
     connection.release();
-    return userRows;
+    return user;
   } catch (error) {
     throw error;
   }
 };
 
-export default { createUser, readUser };
+export const removeUser = async (uid: string): Promise<void> => {
+  try {
+    const connect = await pool.getConnection();
+
+    const userDeleteQuery: string = 
+    `
+    DELETE FROM user
+    WHERE uid = ?
+    `;
+
+    await connect.execute<UserRow[]>(userDeleteQuery, [
+      uid
+    ]);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export default { createUser, readUser, removeUser };

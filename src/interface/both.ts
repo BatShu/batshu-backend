@@ -5,3 +5,8 @@ export interface LocationRow extends RowDataPacket {
   x: number
   y: number
 }
+
+export interface UserRow extends RowDataPacket {
+  id: number
+  uid: string
+}
