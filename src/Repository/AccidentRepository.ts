@@ -44,7 +44,7 @@ export const selectAccidentPhotoRow = async (accidentId: number): Promise<Accide
   return accidentPhotoRows;
 };
 
-export const insertAccidentRow = async (data: Accident) => {
+export const insertAccidentRow = async (data: Accident): Promise<ResultSetHeader[]> => {
   const connection = await pool.getConnection();
   const accidentInsertQuery: string = `
       INSERT INTO accident (
@@ -62,7 +62,7 @@ export const insertAccidentRow = async (data: Accident) => {
       ) VALUES (?, ?, ?, ?, NOW(), POINT(?, ?), ?, ?, ?, ?, ?)
     `;
 
-  const accidentRows = await connection.execute(accidentInsertQuery, [
+  const [accidentRows]: any = await connection.execute(accidentInsertQuery, [
     data.contentTitle,
     data.contentDescription,
     data.accidentTime[0],

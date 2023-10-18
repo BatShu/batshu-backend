@@ -45,7 +45,7 @@ export const tokenToUid = async (req: CustomRequest, res: Response, next: NextFu
 };
 
 // 유저 uid 인식.
-export const confirmAndFetchUserInfo = async (req: CustomRequest, res: Response) => {
+export const confirmAndFetchUserInfo = async (req: CustomRequest, res: Response): Promise<void> => {
   let uid: string;
 
   if (req.headers.uid === undefined) {
@@ -55,7 +55,7 @@ export const confirmAndFetchUserInfo = async (req: CustomRequest, res: Response)
       req.currentUser = uid;
       req.userEmail = uid;
     } else {
-      return res.status(401).send({
+      res.status(401).send({
         ok: false,
         msg: 'UID값이 존재하지 않습니다.'
       });
