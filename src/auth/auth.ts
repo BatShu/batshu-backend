@@ -24,7 +24,6 @@ declare global {
 export const tokenToUid = async (req: CustomRequest, res: Response, next: NextFunction): Promise<void> => {
   if (req.headers.authorization !== null && req.headers.authorization !== undefined) {
     const token: string | undefined = req.headers.authorization.split('Bearer ')[1];
-
     if (token !== undefined) { // Handle nullish case explicitly
       try {
         const decodedToken = await admin.auth().verifyIdToken(token);
@@ -68,6 +67,7 @@ export const getUserInfo = async (req: CustomRequest, res: Response): Promise<vo
     if (typeof req.uid === 'string') {
       // UID를 사용하여 사용자 정보 가져오기
       const uid: string = req.params.uid;
+      console.log(uid);
       const userInfo = await admin.auth().getUser(uid);
 
       if (userInfo === undefined) {

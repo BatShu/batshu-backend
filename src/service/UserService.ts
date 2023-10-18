@@ -4,7 +4,6 @@ import userRepository from '../Repository/UserRepository';
 export async function createUser (uid: string): Promise<ApiResponse> {
   try {
     const existingUser = await userRepository.readUser(uid);
-
     if (existingUser.length > 0) {
       const resData: ApiResponse = {
         ok: false,
