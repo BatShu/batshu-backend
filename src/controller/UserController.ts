@@ -7,7 +7,7 @@ import { type ApiResponse } from 'src/domain/response';
 
 export const postUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    if (req.headers.authorization) {
+    if (req.headers.authorization !== null && req.headers.authorization !== undefined) {
       const token: string | null = req.headers.authorization.split('Bearer ')[1];
 
       const decodedToken = await admin.auth().verifyIdToken(token);
@@ -39,10 +39,10 @@ export const postUser = async (req: Request, res: Response): Promise<void> => {
 
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    if (req.headers.authorization) {
+    if (req.headers.authorization !== null && req.headers.authorization !== undefined) {
       const userInfo = await admin.auth().getUser(req.params.uid);
 
-      if (!userInfo) {
+      if (userInfo !== null && userInfo !== undefined) {
         const resData: ApiResponse = {
           ok: false,
           msg: '등록되지 않은 유저입니다.'

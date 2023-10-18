@@ -7,14 +7,14 @@ import { S3, type S3ClientConfig } from '@aws-sdk/client-s3';
 
 export type { FileFilterCallback };
 
-export const accessKey: string = process.env.ACCESS_KEY_JC ?? '';
+export const accessKeyId: string = process.env.ACCESS_KEY_JC ?? '';
 export const secretAccessKey: string = process.env.SECRET_ACCESS_KEY_JC ?? '';
 export const bucketRegion: string = process.env.BUCKET_REGION ?? '';
 
 const s3params: S3ClientConfig = {
   credentials: {
-    accessKeyId: accessKey,
-    secretAccessKey: secretAccessKey
+    accessKeyId,
+    secretAccessKey
   },
   region: bucketRegion
 };
@@ -22,14 +22,14 @@ const s3params: S3ClientConfig = {
 export const s3: S3 = new S3(s3params);
 
 AWS.config.update({
-  accessKeyId: accessKey,
+  accessKeyId,
   secretAccessKey,
   region: bucketRegion
 });
 
 export const s3Upload = multer({
   storage: multerS3({
-    s3: s3,
+    s3,
     bucket: 'batshu-observe-input',
     acl: 'private',
     contentType: multerS3.AUTO_CONTENT_TYPE,
