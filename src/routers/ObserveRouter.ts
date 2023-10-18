@@ -10,6 +10,6 @@ const observeVideoUpload = multer({ storage: localStorage, fileFilter });
 ObserverRouter.route('/video').post(tokenToUid, observeVideoUpload.single('video'), uploadVideo, videoProcessing);
 ObserverRouter.route('/register').post(tokenToUid, registerObserve);
 ObserverRouter.route('/').get(tokenToUid, getObserveOnTheMap);
-ObserverRouter.route('/:observeId').get(tokenToUid, getObserveInfoByObserveId);
+ObserverRouter.route('/:videoId').get(tokenToUid, getObserveInfoByObserveId);
 
 export default ObserverRouter;

@@ -38,6 +38,8 @@ export interface RegisterObserveResponse extends RowDataPacket {
   thumbnailUrl: string
   contentTitle: string
   contentDescription: string
+  carModelName: string
+  licensePlate: string
   observeStartTime: Date
   observeEndTime: Date
   observeLocation: LocationRow
@@ -50,7 +52,10 @@ export interface videoInfo extends RowDataPacket {
   thumbnailUrl: string
 }
 
-export interface observeInformationByObserveId extends RowDataPacket {
+export interface observeInformationByVideoIdReponse extends RowDataPacket {
+  observeId: number
+  vieoUrl: string
+  thumbnailUrl: string
   content_title: string
   content_description: string
   accident_start_time: Date

@@ -1,8 +1,8 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { s3, accessKeyId, secretAccessKey, bucketRegion } from '../utils/aws-s3';
-import { type registerObserveRequest, type video, type RegisterObserveResponse, type videoInfo, type videoId } from '../interface/observe';
-import { readObserveOnTheMap, insertVideoStatus, findVideoId, createObserve, insertThumbnailUrl, findvideoInfo, findregisterObserveInfo, findObserveDetailInfo } from '../service/ObserveService';
+import { type registerObserveRequest, type video, type RegisterObserveResponse, type videoInfo, type videoId, type observeInformationByVideoIdReponse } from '../interface/observe';
+import { readObserveOnTheMap, insertVideoStatus, findVideoId, createObserve, insertThumbnailUrl, findvideoInfo, findregisterObserveInfo, findObserveDetailInfo, findVideoDetailInfo } from '../service/ObserveService';
 
 import AWS from 'aws-sdk';
 import fs from 'fs';
@@ -209,17 +209,19 @@ export const registerObserve = async (req: CustomRequest, res: Response): Promis
       const registerObserveInfo: RegisterObserveResponse[] = await findregisterObserveInfo(registerObserveData.videoId);
 
       if (registerObserveInfo.length > 0) {
-        const data: RegisterObserveResponse['data'] = {
-          observeId: registerObserveInfo[0].observeId,
+        const data = {
+          observeId: registerObserveInfo[0].id,
           uid: registerObserveInfo[0].uid,
-          videoUrl: videoInfo[0].videoUrl,
-          thumbnailUrl: videoInfo[0].thumbnailUrl,
-          contentTitle: registerObserveInfo[0].contentTitle,
-          contentDescription: registerObserveInfo[0].contentDescription,
-          observeStartTime: registerObserveInfo[0].observeStartTime,
-          observeEndTime: registerObserveInfo[0].observeEndTime,
-          observeLocation: registerObserveInfo[0].observeLocation,
-          createdAt: registerObserveInfo[0].createdAt
+          videoUrl: videoInfo[0].video_url,
+          thumbnailUrl: videoInfo[0].thumbnail_url,
+          contentTitle: registerObserveInfo[0].content_title,
+          contentDescription: registerObserveInfo[0].content_description,
+          carModelName: registerObserveInfo[0].car_model_name,
+          licensePlate: registerObserveInfo[0].license_plate,
+          observeStartTime: registerObserveInfo[0].observe_start_time,
+          observeEndTime: registerObserveInfo[0].observe_end_time,
+          observeLocation: registerObserveInfo[0].observe_location,
+          createdAt: registerObserveInfo[0].created_at
         };
 
         const response = {
@@ -249,19 +251,39 @@ export const registerObserve = async (req: CustomRequest, res: Response): Promis
   }
 };
 
-// TODO: make function to get videoUrl by videoId
-
 export const getObserveInfoByObserveId = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const observeId: number = parseInt(req.params.observeId);
+    const videoId: number = parseInt(req.params.videoId, 10);
+    const videoInfo: videoInfo[] = await findVideoDetailInfo(videoId);
+    const observeDetailInfo: observeInformationByVideoIdReponse[] = await findObserveDetailInfo(videoId);
 
-    const oberseveInfo = await findObserveDetailInfo(observeId);
+    if (observeDetailInfo.length > 0) {
+      const data = {
+        videoId: videoInfo[0].id,
+        videoUrl: videoInfo[0].video_url,
+        thumbnailUrl: videoInfo[0].thumbnail_url,
+        contentTitle: observeDetailInfo[0].content_title,
+        contentDescription: observeDetailInfo[0].content_description,
+        carModelName: observeDetailInfo[0].car_model_name,
+        licensePlate: observeDetailInfo[0].license_plate,
+        observeStartTime: observeDetailInfo[0].observe_start_time,
+        observeEndTime: observeDetailInfo[0].observe_end_time,
+        observeLocation: observeDetailInfo[0].observe_location,
+        createdAt: observeDetailInfo[0].created_at
+      };
 
-    return res.status(200).json({
-      ok: true,
-      msg: 'Successfully Get',
-      data: oberseveInfo
-    });
+      const response = {
+        ok: true,
+        msg: 'Successfully Get',
+        data
+      };
+      return res.status(200).json(response);
+    } else {
+      return res.status(200).json({
+        ok: false,
+        msg: 'No data found'
+      });
+    }
   } catch (error) {
     console.error('Error:', error);
     const resData: ApiResponse = {
