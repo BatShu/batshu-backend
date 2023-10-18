@@ -3,7 +3,7 @@ import { type registerObserveRequest, type videoId, type RegisterObserveResponse
 import { type LocationRow } from '../interface/both';
 import pool from '../config/database';
 
-export const selectObserveOnTheMapRow = async (locationObject: LocationObject) => {
+export const selectObserveOnTheMapRow = async (locationObject: LocationObject): Promise<LocationRow[]> => {
   try {
     const connection = await pool.getConnection();
     const observeSelectQuery: string = `
@@ -20,6 +20,7 @@ export const selectObserveOnTheMapRow = async (locationObject: LocationObject) =
     return observeRows;
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };
 

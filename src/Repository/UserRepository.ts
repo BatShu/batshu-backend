@@ -2,7 +2,7 @@ import pool from '../config/database';
 import { type UserRow } from 'src/interface/both';
 import { type FieldPacket } from 'mysql2';
 
-export const createUser = async (uid: string) => {
+export const createUser = async (uid: string): Promise<void> => {
   const connection = await pool.getConnection();
   await connection.execute('INSERT INTO user (uid) VALUES (?)', [uid]);
   connection.release();

@@ -164,7 +164,7 @@ export const postAccident = async (req: CustomRequest, res: Response): Promise<v
   }
 };
 
-export const getAccident = async (req: Request, res: Response) => {
+export const getAccident = async (req: Request, res: Response): Promise<void> => {
   try {
     const accidentId: number = parseInt(req.params.accidentId, 10);
     const resData: ApiResponse = await readAccident(accidentId);
@@ -177,6 +177,7 @@ export const getAccident = async (req: Request, res: Response) => {
       msg: 'INTERNAL SERVER ERROR'
     };
     res.status(500).json(resData);
+    throw error;
   }
 };
 

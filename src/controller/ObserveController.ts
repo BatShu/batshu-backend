@@ -53,7 +53,7 @@ export const uploadVideo = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-export const getObserveOnTheMap = async (req: CustomRequest, res: Response) => {
+export const getObserveOnTheMap = async (req: CustomRequest, res: Response): Promise<void> => {
   try {
     const { x, y, radius } = req.query;
 
@@ -62,7 +62,7 @@ export const getObserveOnTheMap = async (req: CustomRequest, res: Response) => {
     const radiusValue: number = parseFloat(radius as string);
 
     if (isNaN(xCoord) || isNaN(yCoord) || isNaN(radiusValue)) {
-      return res.status(400).json({ ok: false, msg: 'Invalid values for x, y, or radius' });
+      res.status(400).json({ ok: false, msg: 'Invalid values for x, y, or radius' });
     }
 
     const Obj: LocationObject = { x: xCoord, y: yCoord, radius: radiusValue };
@@ -76,7 +76,7 @@ export const getObserveOnTheMap = async (req: CustomRequest, res: Response) => {
       ok: false,
       msg: 'INTERNAL SERVER ERROR'
     };
-    return res.status(500).json(resData);
+    res.status(500).json(resData);
   }
 };
 
