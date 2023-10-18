@@ -1,5 +1,5 @@
 import type { FieldPacket, PoolConnection } from 'mysql2/promise';
-import { type registerObserveRequest, type videoId, type RegisterObserveResponse, type videoInfo } from '../interface/observe';
+import { type registerObserveRequest, type videoId, type RegisterObserveResponse, type videoInfo, type observeInformationByVideoIdReponse } from '../interface/observe';
 import { type LocationRow } from '../interface/both';
 import pool from '../config/database';
 
@@ -80,7 +80,7 @@ export const selectVideoInfo = async (connection: PoolConnection, videoId: numbe
 };
 
 export const createObserveData = async (connection: PoolConnection, registerObserveData: registerObserveRequest): Promise<ResultSetHeader> => {
-  const createObserveQuery = 'INSERT INTO observe (content_title, content_description, video_id, car_model_name, license_plate, place_name, observe_start_time, observe_end_time, observe_location, created_at, uid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, POINT(?, ?), NOW(), ?;';
+  const createObserveQuery = 'INSERT INTO observe (content_title, content_description, video_id, car_model_name, license_plate, place_name, observe_start_time, observe_end_time, observe_location, created_at, uid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, POINT(?, ?), NOW(), ?);';
   const [results]: any = await connection.query(createObserveQuery, [
     registerObserveData.contentTitle,
     registerObserveData.contentDescription,
@@ -103,8 +103,16 @@ export const selectfindregisterObserveInfo = async (connection: PoolConnection, 
   return selectCreatedAtRows;
 };
 
-export const selectObserveInfoByObserveId = async (connection: PoolConnection, observeId: number): Promise<ResultSetHeader> => {
-  const selectObserveInfoByObserveIdQuery = 'SELECT * FROM observe WHERE id = ?;';
-  const [selectObserveInfoByObserveIdRows]: any = await connection.query(selectObserveInfoByObserveIdQuery, [observeId]);
+export const selectObserveInfoByVideoId = async (connection: PoolConnection, videoId: number): Promise<observeInformationByVideoIdReponse[]> => {
+  const selectObserveInfoByObserveIdQuery = 'SELECT * FROM observe WHERE video_id = ?;';
+  const [selectObserveInfoByObserveIdRows]: [observeInformationByVideoIdReponse[], FieldPacket[]] = await connection.query<observeInformationByVideoIdReponse[]>(selectObserveInfoByObserveIdQuery, [videoId]);
   return selectObserveInfoByObserveIdRows;
+};
+
+export const selectVideoInfoByVideoId = async (conneciton: PoolConnection, videoId: number): Promise<videoInfo[]> => {
+  const connection = await pool.getConnection();
+  const selectVideoInfoByVideoIdQuery = 'SELECT * FROM video WHERE id = ?;';
+  const [selectVideoInfoByVideoIdRows]: [videoInfo[], FieldPacket[]] = await conneciton.query<videoInfo[]>(selectVideoInfoByVideoIdQuery, [videoId]);
+  connection.release();
+  return selectVideoInfoByVideoIdRows;
 };

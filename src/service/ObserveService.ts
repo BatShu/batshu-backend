@@ -1,7 +1,7 @@
 import { type RowDataPacket, type FieldPacket } from 'mysql2';
 import pool from '../config/database';
-import { type videoInfo, type registerObserveRequest, type RegisterObserveResponse, type videoId } from '../interface/observe';
-import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow, insertMosaicedVideoUrlResult, updateVideoUrlToOutputFileNameResult, insertThumbnailUrlResult, selectVideoInfo, selectfindregisterObserveInfo, insertVideoName, selectObserveInfoByObserveId } from '../Repository/ObserveRepository';
+import { type videoInfo, type registerObserveRequest, type RegisterObserveResponse, type videoId, type observeInformationByVideoIdReponse } from '../interface/observe';
+import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow, insertMosaicedVideoUrlResult, updateVideoUrlToOutputFileNameResult, insertThumbnailUrlResult, selectVideoInfo, selectfindregisterObserveInfo, insertVideoName, selectObserveInfoByVideoId, selectVideoInfoByVideoId } from '../Repository/ObserveRepository';
 import { type ApiResponse } from 'src/domain/response';
 
 type TPacket = ResultSetHeader | RowDataPacket | FieldPacket[] ;
@@ -94,12 +94,20 @@ export const findregisterObserveInfo = async (videoId: number): Promise<Register
   return createdAt;
 };
 
-export const findObserveDetailInfo = async (observeId: number): Promise<TPacket> => {
+export const findObserveDetailInfo = async (videoId: number): Promise<observeInformationByVideoIdReponse[]> => {
   const conneciton = await pool.getConnection();
-  const observeDetailInfo = await selectObserveInfoByObserveId(conneciton, observeId);
+  const observeDetailInfo = await selectObserveInfoByVideoId(conneciton, videoId);
   conneciton.release();
 
   return observeDetailInfo;
+};
+
+export const findVideoDetailInfo = async (videoId: number): Promise<videoInfo[]> => {
+  const conneciton = await pool.getConnection();
+  const videoDetailInfo = await selectVideoInfoByVideoId(conneciton, videoId);
+  conneciton.release();
+
+  return videoDetailInfo;
 };
 
 export const readObserveOnTheMap = async (locationObject: LocationObject): Promise<ApiResponse> => {
