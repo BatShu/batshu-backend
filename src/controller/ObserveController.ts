@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { s3, accessKey, secretAccessKey, bucketRegion } from '../utils/aws-s3';
+import { s3, accessKeyId, secretAccessKey, bucketRegion } from '../utils/aws-s3';
 import { type registerObserveRequest, type video, type RegisterObserveResponse, type videoInfo, type videoId } from '../interface/observe';
 import { readObserveOnTheMap, insertVideoStatus, findVideoId, createObserve, insertThumbnailUrl, findvideoInfo, findregisterObserveInfo, findObserveDetailInfo } from '../service/ObserveService';
 
@@ -14,7 +14,7 @@ ffmpeg.setFfprobePath(ffprobePath);
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 AWS.config.update({
-  accessKeyId: accessKey,
+  accessKeyId,
   secretAccessKey,
   region: bucketRegion
 });

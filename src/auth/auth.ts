@@ -22,7 +22,7 @@ declare global {
 }
 
 export const tokenToUid = async (req: CustomRequest, res: Response, next: NextFunction): Promise<void> => {
-  if (req.headers.authorization) {
+  if (req.headers.authorization !== null && req.headers.authorization !== undefined) {
     const token: string | undefined = req.headers.authorization.split('Bearer ')[1];
 
     if (token !== undefined) { // Handle nullish case explicitly
@@ -82,7 +82,7 @@ export const getUserInfo = async (req: CustomRequest, res: Response): Promise<vo
           ok: true,
           msg: 'Successfully Get UserInfo',
           data: {
-            uid: uid,
+            uid: uid ?? '',
             email: userInfo.email ?? '', // Use nullish coalescing operator
             displayName: userInfo.displayName ?? '', // Use nullish coalescing operator
             googleProfilePhotoUrl: userInfo.photoURL ?? '' // Use nullish coalescing operator

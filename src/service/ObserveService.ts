@@ -1,6 +1,5 @@
 import { type RowDataPacket, type FieldPacket } from 'mysql2';
 import pool from '../config/database';
-import { type LocationRow } from '../interface/both';
 import { type videoInfo, type registerObserveRequest, type RegisterObserveResponse, type videoId } from '../interface/observe';
 import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow, insertMosaicedVideoUrlResult, updateVideoUrlToOutputFileNameResult, insertThumbnailUrlResult, selectVideoInfo, selectfindregisterObserveInfo, insertVideoName, selectObserveInfoByObserveId } from '../Repository/ObserveRepository';
 import { type ApiResponse } from 'src/domain/response';
@@ -105,7 +104,7 @@ export const findObserveDetailInfo = async (observeId: number): Promise<TPacket>
 
 export const readObserveOnTheMap = async (locationObject: LocationObject): Promise<ApiResponse> => {
   try {
-    const observeRows = await selectObserveOnTheMapRow(locationObject) as LocationRow[];
+    const observeRows = await selectObserveOnTheMapRow(locationObject);
 
     const data: ObserveLocationObject[] = [];
 
