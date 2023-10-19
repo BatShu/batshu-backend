@@ -10,7 +10,7 @@
     "dev": "NODE_ENV=development nodemon src/app.ts",
     "start": "NODE_ENV=production node dist/app.js",
     "preserve": "npm run build",
-    "serve": "concurrently \"npx tsc -w\"  \"nodemon dist/app.js\" "
+    "serve": "NODE_ENV=production concurrently \"npx tsc -w\"  \"nodemon dist/app.js\" "
   },
   "keywords": [],
   "author": "",

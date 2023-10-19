@@ -4,6 +4,7 @@ import path from 'path';
 require('dotenv').config({
   path: path.resolve(__dirname, process.env.NODE_ENV === 'production' ? '../.env.production' : '../.env.development')
 });
+
 import express, { type Request, type Response } from 'express';
 import bodyParser from 'body-parser';
 import AccidentRouter from './routers/AccidentRouter';

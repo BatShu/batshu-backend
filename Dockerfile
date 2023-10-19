@@ -34,7 +34,7 @@ EXPOSE 3000
 #RUN npm uninstall @ffmpeg-installer/ffmpeg --save
 #RUN npm uninstall @ffprobe-installer/ffprobe --save
 # 아래 패키지는 플랫폼 종속적이기에 자신의 플랫폼에 맞게 x64 혹은 arm64로 변경 필요
-#RUN npm install @ffmpeg-installer/linux-arm64 --save --force 
+#RUN npm install @ffmpeg-installer/linux-arm64 --save --force
 #RUN npm install @ffprobe-installer/linux-arm64 --save --force
 #RUN npm run build
 
