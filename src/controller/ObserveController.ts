@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { s3, accessKeyId, secretAccessKey, bucketRegion } from '../utils/aws-s3';
+import { s3, accessKeyId, secretAccessKey } from '../utils/aws-s3';
 import { type registerObserveRequest, type video, type RegisterObserveResponse, type videoInfo, type videoId, type observeInformationByVideoIdReponse } from '../interface/observe';
 import { readObserveOnTheMap, insertVideoStatus, findVideoId, createObserve, insertThumbnailUrl, findvideoInfo, findregisterObserveInfo, findObserveDetailInfo, findVideoDetailInfo } from '../service/ObserveService';
 
@@ -16,7 +16,7 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 AWS.config.update({
   accessKeyId,
   secretAccessKey,
-  region: bucketRegion
+  region: 'ap-northeast-2'
 });
 
 export const uploadVideo = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {

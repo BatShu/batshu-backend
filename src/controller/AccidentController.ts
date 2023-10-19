@@ -1,6 +1,6 @@
 import { type Request, type Response } from 'express';
 
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { PutObjectCommand, S3Client, type S3ClientConfig } from '@aws-sdk/client-s3';
 
 import dotenv from 'dotenv';
 
@@ -68,21 +68,20 @@ dotenv.config();
 
 const bucketName: string = process.env.BUCKET_NAME_HARAM ?? '';
 const accessKey: string = process.env.ACCESS_KEY_HARAM ?? '';
-const bucketRegion: string = process.env.BUCKET_REGION_HARAM ?? '';
 const secretAccessKey: string = process.env.SECRET_ACCESS_KEY_HARAM ?? '';
 
 AWS.config.update({
   accessKeyId: accessKey, // AWS Access Key ID를 여기에 입력
   secretAccessKey, // AWS Secret Access Key를 여기에 입력
-  region: bucketRegion // 사용하는 AWS 지역을 여기에 입력
+  region: 'ap-northeast-2' // 사용하는 AWS 지역을 여기에 입력
 });
 
-const s3params = {
+const s3params: S3ClientConfig = {
   credentials: {
     accessKeyId: accessKey,
     secretAccessKey
   },
-  region: bucketRegion
+  region: 'ap-northeast-2'
 };
 
 const s3 = new S3Client(s3params);

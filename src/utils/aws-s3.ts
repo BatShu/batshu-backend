@@ -9,14 +9,13 @@ export type { FileFilterCallback };
 
 export const accessKeyId: string = process.env.ACCESS_KEY_JC ?? '';
 export const secretAccessKey: string = process.env.SECRET_ACCESS_KEY_JC ?? '';
-export const bucketRegion: string = process.env.BUCKET_REGION ?? '';
 
 const s3params: S3ClientConfig = {
   credentials: {
     accessKeyId,
     secretAccessKey
   },
-  region: bucketRegion
+  region: 'ap-northeast-2'
 };
 
 export const s3: S3 = new S3(s3params);
@@ -24,7 +23,7 @@ export const s3: S3 = new S3(s3params);
 AWS.config.update({
   accessKeyId,
   secretAccessKey,
-  region: bucketRegion
+  region: 'ap-northeast-2'
 });
 
 export const s3Upload = multer({
