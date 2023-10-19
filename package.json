@@ -6,7 +6,7 @@
   "main": "app.js",
   "scripts": {
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "build": "npm run lint && tsc",
+    "build": "npm run lint -- --fix && tsc",
     "dev": "NODE_ENV=development nodemon src/app.ts",
     "start": "NODE_ENV=production node dist/app.js",
     "preserve": "npm run build",
