@@ -1,4 +1,4 @@
-FROM node:20-bullseye
+FROM node:16-alpine
 
 # 시스템 종속성 설치 및 정리
 #RUN apt-get update && apt-get install -y \
@@ -30,7 +30,7 @@ COPY . .
 RUN npm install
 #RUN npm install @ffmpeg-installer/linux-arm64 --save --force 
 #RUN npm install @ffprobe-installer/linux-arm64 --save --force
-RUN npm run build
+#RUN npm run build
 
 # 앱 실행 명령
 CMD ["npm", "run", "serve"]
