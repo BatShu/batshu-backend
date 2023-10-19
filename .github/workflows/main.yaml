@@ -76,6 +76,7 @@ jobs:
           echo "PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}" >> .env.production
           echo "ACCESS_KEY_JC=${{ secrets.ACCESS_KEY_JC }}" >> .env.production
           echo "BUCKET_REGION=${{ secrets.BUCKET_REGION }}" >> .env.production
+          echo "BUCKET_REGION_HARAM=${{ secrets.BUCKET_REGION_HARAM }}" >> .env.production
           echo "BUCKET_NAME_HARAM=${{ secrets.BUCKET_NAME_HARAM }}" >> .env.production
           echo "ACCESS_KEY_HARAM=${{ secrets.ACCESS_KEY_HARAM }}" >> .env.production
           echo "SECRET_ACCESS_KEY_HARAM=${{ secrets.SECRET_ACCESS_KEY_HARAM }}" >> .env.production
