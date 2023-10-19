@@ -1,4 +1,17 @@
-FROM node:16-alpine
+FROM node:16
+
+WORKDIR /src
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+CMD ["npm", "run", "serve"]
+
+EXPOSE 3000
+
 
 # 시스템 종속성 설치 및 정리
 #RUN apt-get update && apt-get install -y \
@@ -10,15 +23,6 @@ FROM node:16-alpine
 #    && apt-get clean \
 #    && rm -rf /var/lib/apt/lists/*
 
-# 작업 디렉터리를 /src로 설정
-WORKDIR /src
-
-COPY package*.json ./
-
-RUN npm install
-
-
-COPY . .
 
 # COPY src/DashcamCleaner /src/DashcamCleaner
 #RUN pip install --upgrade pip
@@ -27,7 +31,6 @@ COPY . .
 #RUN pip install -r requirements.txt
 #RUN apt-get install -y libgl1-mesa-glx
 
-#RUN npm install -g npm@10.2.0
 #RUN npm uninstall @ffmpeg-installer/ffmpeg --save
 #RUN npm uninstall @ffprobe-installer/ffprobe --save
 # 아래 패키지는 플랫폼 종속적이기에 자신의 플랫폼에 맞게 x64 혹은 arm64로 변경 필요
@@ -35,7 +38,3 @@ COPY . .
 #RUN npm install @ffprobe-installer/linux-arm64 --save --force
 #RUN npm run build
 
-# 앱 실행 명령
-CMD ["npm", "run", "serve"]
-# 포트 3000을 노출
-EXPOSE 3000
