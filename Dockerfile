@@ -13,7 +13,11 @@ FROM node:16-alpine
 # 작업 디렉터리를 /src로 설정
 WORKDIR /src
 
-# 현재 디렉터리의 모든 파일을 컨테이너 내 /src 디렉터리로 복사
+COPY package*.json ./
+
+RUN npm install
+
+
 COPY . .
 
 # COPY src/DashcamCleaner /src/DashcamCleaner
@@ -27,7 +31,6 @@ COPY . .
 #RUN npm uninstall @ffmpeg-installer/ffmpeg --save
 #RUN npm uninstall @ffprobe-installer/ffprobe --save
 # 아래 패키지는 플랫폼 종속적이기에 자신의 플랫폼에 맞게 x64 혹은 arm64로 변경 필요
-RUN npm install
 #RUN npm install @ffmpeg-installer/linux-arm64 --save --force 
 #RUN npm install @ffprobe-installer/linux-arm64 --save --force
 #RUN npm run build
