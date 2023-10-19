@@ -33,6 +33,6 @@ RUN npm install
 RUN npm run build
 
 # 앱 실행 명령
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "serve"]
 # 포트 3000을 노출
 EXPOSE 3000
