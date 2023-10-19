@@ -67,18 +67,18 @@ jobs:
       # 3000 -> 80 포트로 수행하도록 지정
       - name: Docker run
         run: |
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          echo "DB_PASS=${{ secrets.DB_PASS }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "PROJECT_ID=${{ secrets.PROJECT_ID }}" >> .env
-          echo "CLIENT_EMAIL=${{ secrets.CLIENT_EMAIL }}" >> .env
-          echo "PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}" >> .env
-          echo "ACCESS_KEY_JC=${{ secrets.ACCESS_KEY_JC }}" >> .env
-          echo "BUCKET_REGION=${{ secrets.BUCKET_REGION }}" >> .env
-          echo "BUCKET_NAME_HARAM=${{ secrets.BUCKET_NAME_HARAM }}" >> .env
-          echo "ACCESS_KEY_HARAM=${{ secrets.ACCESS_KEY_HARAM }}" >> .env
-          echo "SECRET_ACCESS_KEY_HARAM=${{ secrets.SECRET_ACCESS_KEY_HARAM }}" >> .env
-          cat .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env.production
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env.production
+          echo "DB_PASS=${{ secrets.DB_PASS }}" >> .env.production
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env.production
+          echo "PROJECT_ID=${{ secrets.PROJECT_ID }}" >> .env.production
+          echo "CLIENT_EMAIL=${{ secrets.CLIENT_EMAIL }}" >> .env.production
+          echo "PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}" >> .env.production
+          echo "ACCESS_KEY_JC=${{ secrets.ACCESS_KEY_JC }}" >> .env.production
+          echo "BUCKET_REGION=${{ secrets.BUCKET_REGION }}" >> .env.production
+          echo "BUCKET_NAME_HARAM=${{ secrets.BUCKET_NAME_HARAM }}" >> .env.production
+          echo "ACCESS_KEY_HARAM=${{ secrets.ACCESS_KEY_HARAM }}" >> .env.production
+          echo "SECRET_ACCESS_KEY_HARAM=${{ secrets.SECRET_ACCESS_KEY_HARAM }}" >> .env.production
+          cat .env.production
           docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
           docker run -d -p 80:3000 --name go_cicd --restart always ${{ env.DOCKER_IMAGE }}:latest
