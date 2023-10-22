@@ -5,13 +5,16 @@ require('dotenv').config({
   path: path.resolve(__dirname, process.env.NODE_ENV === 'production' ? '../.env.production' : '../.env.development')
 });
 
-import express, { type Request, type Response } from 'express';
+import express, { type Request, type Response, type Application } from 'express';
 import bodyParser from 'body-parser';
 import AccidentRouter from './routers/AccidentRouter';
 import ObserveRouter from './routers/ObserveRouter';
 import UserRouter from './routers/UserRouter';
+import { chatSocket } from './chat/chatSocket';
 import cors from 'cors';
-const app = express();
+import http from 'http';
+
+const app:Application = express();
 // for dev
 app.use(cors({
   origin: 'http://localhost:5173',
@@ -32,6 +35,8 @@ const PORT = process.env.PORT ?? 3000;
 
 const handleListening = (): void => { console.log(`✅Server listenting on http://localhost:${PORT} 🚀 `); };
 
-app.listen(PORT, handleListening);
+const webServer:http.Server = app.listen(PORT, handleListening);
+
+chatSocket(webServer);
 
 export default app;
