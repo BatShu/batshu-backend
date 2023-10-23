@@ -19,7 +19,16 @@ const app:Application = express();
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true
+  
 }));
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // 모든 도메인에 대한 액세스를 허용
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -36,7 +45,7 @@ const PORT = process.env.PORT ?? 3000;
 const handleListening = (): void => { console.log(`✅Server listenting on http://localhost:${PORT} 🚀 `); };
 
 const webServer:http.Server = app.listen(PORT, handleListening);
-
+console.log(webServer);
 chatSocket(webServer);
 
 export default app;

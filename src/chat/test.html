@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat App</title>
+</head>
+<body>
+    <h1>Chat App</h1>
+    <input type="text" id="message" placeholder="Type a message">
+    <button id="send">Send</button>
+    <ul id="chat"></ul>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io('http://localhost:3000', { transports: ['websocket'], withCredentials: true });
+
+        const messageInput = document.getElementById('message');
+        const sendButton = document.getElementById('send');
+        const chatList = document.getElementById('chat');
+
+        // 서버로 메시지를 보내는 함수
+        function sendMessage() {
+            const message = messageInput.value;
+            socket.emit('sendChat', message); // 'sendChat' 이벤트를 서버로 보냄
+            messageInput.value = '';
+        }
+
+        // 서버에서 메시지를 받아 화면에 추가하는 함수
+        function receiveMessage(message) {
+            const li = document.createElement('li');
+            li.textContent = message;
+            chatList.appendChild(li);
+        }
+
+        // 'send' 버튼 클릭 시 메시지 전송
+        sendButton.addEventListener('click', sendMessage);
+
+        // 'message' 입력창에서 Enter 키 누를 때도 메시지 전송
+        messageInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // 서버에서 'message' 이벤트를 받아 메시지를 화면에 추가
+        socket.on('message', receiveMessage);
+
+        // 서버에서 'connect' 이벤트를 받아 환영 메시지 출력
+        socket.on('connect', () => {
+            receiveMessage('Connected to the server');
+        });
+    </script>
+</body>
+</html>
