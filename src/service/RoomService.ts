@@ -1,14 +1,14 @@
 import { type ApiResponse } from 'src/domain/response'
 import { insertRoomRow, selectRoomRows } from '../Repository/RoomRepository'
 import pool from '../config/database';
-import { type insertRoomRowParams, type PostRoomRequest} from '../interface/chat'
+import { type InsertRoomRowParams, type PostRoomRequest} from '../interface/chat'
 import type { PoolConnection } from 'mysql2/promise';
 
 export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiResponse> => {
     try {
-        const connection = await pool.getConnection();
+        const connection: PoolConnection = await pool.getConnection();
         
-        const passedData: insertRoomRowParams = {
+        const passedData: InsertRoomRowParams = {
             uid: roomObject.uid,
             reportUid: roomObject.reportUid,
             accidentId: null,
@@ -52,6 +52,7 @@ export const readRoom = async (uid: string): Promise<ApiResponse> => {
             const answer: ApiResponse = {
                 ok: true,
                 msg: "successfully regist room"
+
             }
             return answer
         } else {
