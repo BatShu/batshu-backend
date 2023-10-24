@@ -1,4 +1,4 @@
-import { SendMessageRequest } from '../interface/chat'
+import { type SendMessageRequest } from '../interface/chat'
 import type { FieldPacket, PoolConnection } from 'mysql2/promise';
 
 export const insertMessageRow = async (connection: PoolConnection, messageObject: SendMessageRequest): Promise<boolean> => {
