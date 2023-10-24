@@ -50,3 +50,57 @@ export interface ReadChatData {
     id: number;
     chatList: Chat[];
 }
+
+export interface ReadRoom {
+    //userInfo
+    displayName: string
+    googleProfilePhotoUrl: string
+    //accidentOrObserveInfo
+    placeName: string
+    //message
+    lastChat: string
+    lastChatCreatedAt: Date
+}
+
+export interface ReadRoomData {
+    //room
+    roomId: number
+    //userInfo
+    displayName?: string
+    googleProfilePhotoUrl?: string
+    //accidentOrObserveInfo
+    placeName: string
+    //message
+    lastChat: string
+    lastChatCreatedAt: Date
+}
+
+export interface RoomUserInfo {
+    displayName?: string
+    googleProfilePhotoUrl?: string
+}
+
+export interface RoomEvent {
+    id: number
+    placeName: string
+}
+
+export interface RoomChat {
+    lastChat: string
+    lastChatCreatedAt: Date
+}
+
+export interface selectRoomListRow extends RowDataPacket {
+    id: number
+    uid: string
+    report_uid: string
+    observe_id: number
+    accident_id: number
+}
+
+export interface selectNecessaryRow {
+    roomId: number
+    uid: string
+    accidentId?: number
+    observeId?: number
+}

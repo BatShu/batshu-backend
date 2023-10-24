@@ -18,7 +18,8 @@ export const selectAccidentRow = async (accidentId: number): Promise<AccidentRow
     car_model_name, 
     license_plate, 
     bounty, 
-    uid 
+    uid,
+    place_name
     from accident
     WHERE id = ?`;
 

@@ -1,5 +1,5 @@
 import { type Request, type Response } from 'express';
-import { insertRoom, readRoom } from '../service/RoomService';
+import { insertRoom, selectRoom } from '../service/RoomService';
 import { type ApiResponse } from 'src/domain/response';
 import { PostRoomRequest } from '../interface/chat';
 
@@ -11,7 +11,7 @@ export const getRooms = async (req: Request, res: Response): Promise<void> => {
     // }
     try {
         const uid: string = req.params.uid;
-        const resData: ApiResponse = await readRoom(uid);
+        const resData: ApiResponse = await selectRoom(uid);
 
         res.status(200).send(resData);
     } catch (err){

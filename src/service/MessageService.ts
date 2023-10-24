@@ -52,7 +52,7 @@ export const selectMessage = async (roomId: number): Promise<ApiResponse> => {
 
         const answer: ApiResponse = {
             ok: true,
-            msg: "successfully regist chat",
+            msg: "successfully get chat",
             data: data
         }
         return answer

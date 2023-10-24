@@ -12,6 +12,7 @@ export interface AccidentRow extends RowDataPacket {
   license_plate: string
   bounty: number
   uid: string
+  placeName: string
 }
 
 export interface AccidentPhotoRow extends RowDataPacket {
