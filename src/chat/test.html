@@ -17,18 +17,18 @@
         const chatList = document.getElementById('chat');
 
         // 서버로 메시지를 보내는 함수
-        function sendMessage() {
-            const message = messageInput.value;
-            socket.emit('sendChat', message); // 'sendChat' 이벤트를 서버로 보냄
-            messageInput.value = '';
-        }
+        // function sendMessage() {
+        //     const message = messageInput.value;
+        //     socket.emit('sendChat', message); // 'sendChat' 이벤트를 서버로 보냄
+        //     messageInput.value = '';
+        // }
 
         // 서버에서 메시지를 받아 화면에 추가하는 함수
-        function receiveMessage(message) {
-            const li = document.createElement('li');
-            li.textContent = message;
-            chatList.appendChild(li);
-        }
+        // function receiveMessage(message) {
+        //     const li = document.createElement('li');
+        //     li.textContent = message;
+        //     chatList.appendChild(li);
+        // }
 
         // 'send' 버튼 클릭 시 메시지 전송
         sendButton.addEventListener('click', sendMessage);

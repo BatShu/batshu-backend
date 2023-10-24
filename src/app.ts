@@ -10,6 +10,8 @@ import bodyParser from 'body-parser';
 import AccidentRouter from './routers/AccidentRouter';
 import ObserveRouter from './routers/ObserveRouter';
 import UserRouter from './routers/UserRouter';
+import MessageRouter from './routers/MessageRouter';
+import RoomRouter from './routers/RoomRouter';
 import { chatSocket } from './chat/chatSocket';
 import cors from 'cors';
 import http from 'http';
@@ -35,6 +37,8 @@ app.use(bodyParser.json());
 app.use('/api/user', UserRouter);
 app.use('/api/accident', AccidentRouter);
 app.use('/api/observe', ObserveRouter);
+app.use('/api/message', MessageRouter);
+app.use('/api/room', RoomRouter);
 
 app.get('/hello', (req: Request, res: Response) => {
   res.send('Hello World!');
