@@ -42,13 +42,30 @@ CREATE TABLE `video` (
 	`id` int AUTO_INCREMENT PRIMARY KEY,
 	`status` varchar(255) NOT NULL,
 	`video_url`	varchar(255) NOT NULL,
-    `thumnail_url` varchar(255)
+    `thumbnail_url` varchar(255)
 );
 
 CREATE TABLE `accident_photo` (
 	`id` int AUTO_INCREMENT PRIMARY KEY,
 	`photo_url` varchar(255) NOT NULL,
 	`accident_id` int NOT NULL
+);
+
+
+CREATE TABLE `room` (
+	`id` int AUTO_INCREMENT PRIMARY KEY,
+	`report_uid` varchar(255) NOT NULL,
+	`uid` varchar(255) NOT NULL,
+    `accident_id` int,
+    `observe_id` int
+);
+
+CREATE TABLE `message` (
+	`id` int AUTO_INCREMENT PRIMARY KEY,
+	`uid` varchar(255) NOT NULL,
+	`room_id` int NOT NULL,
+	`message_text` varchar(255) NOT NULL,
+	`created_at` datetime NOT NULL
 );
 
 ALTER TABLE `user` ADD INDEX `idx_uid` (`uid`);
@@ -78,6 +95,34 @@ ALTER TABLE `accident_photo` ADD CONSTRAINT `FK_accident_TO_accident_photo_1` FO
 	`accident_id`
 )
 REFERENCES `accident` (
+	`id`
+);
+
+ALTER TABLE `room` ADD CONSTRAINT `FK_user_TO_room_1` FOREIGN KEY (
+	`report_uid`
+)
+REFERENCES `user` (
+	`uid`
+);
+
+ALTER TABLE `room` ADD CONSTRAINT `FK_user_TO_room_2` FOREIGN KEY (
+	`uid`
+)
+REFERENCES `user` (
+	`uid`
+);
+
+ALTER TABLE `message` ADD CONSTRAINT `FK_user_TO_message_1` FOREIGN KEY (
+	`uid`
+)
+REFERENCES `user` (
+	`uid`
+);
+
+ALTER TABLE `message` ADD CONSTRAINT `FK_room_TO_message_1` FOREIGN KEY (
+	`room_id`
+)
+REFERENCES `room` (
 	`id`
 );
 
