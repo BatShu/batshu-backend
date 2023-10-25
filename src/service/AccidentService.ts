@@ -4,7 +4,7 @@ import AccidentRepository from '../Repository/AccidentRepository';
 export const createAccident = async (data: Accident): Promise<ApiResponse> => {
   try {
     // 의미적 데이터 처리
-  
+
     const accidentRows = await AccidentRepository.insertAccidentRow(data);
     const insertId = (accidentRows as unknown as ResultSetHeader).insertId;
     for (const photo of data.photoUrls) {
@@ -13,7 +13,7 @@ export const createAccident = async (data: Accident): Promise<ApiResponse> => {
         accidentId: insertId
       });
     }
-    
+
     const resData: ApiResponse = {
       ok: true,
       msg: 'Successfully Post'
