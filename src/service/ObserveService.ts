@@ -1,8 +1,9 @@
 import { type RowDataPacket, type FieldPacket } from 'mysql2';
-import pool from '../config/database';
 import { type videoInfo, type registerObserveRequest, type RegisterObserveResponse, type videoId, type observeInformationByVideoIdReponse } from '../interface/observe';
-import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow, insertMosaicedVideoUrlResult, updateVideoUrlToOutputFileNameResult, insertThumbnailUrlResult, selectVideoInfo, selectfindregisterObserveInfo, insertVideoName, selectObserveInfoByVideoId, selectVideoInfoByVideoId } from '../Repository/ObserveRepository';
 import { type ApiResponse } from 'src/domain/response';
+import pool from '../config/database';
+import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow, insertMosaicedVideoUrlResult, updateVideoUrlToOutputFileNameResult, insertThumbnailUrlResult, selectVideoInfo, selectfindregisterObserveInfo, insertVideoName, selectObserveInfoByVideoId, selectVideoInfoByVideoId } from '../Repository/ObserveRepository';
+
 
 type TPacket = ResultSetHeader | RowDataPacket | FieldPacket[] ;
 

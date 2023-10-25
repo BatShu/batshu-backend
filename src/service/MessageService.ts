@@ -1,7 +1,7 @@
 import { type ApiResponse } from 'src/domain/response';
 import { type SelectRoomRow, type SelectMessageRow, type SendMessageRequest, type ReadChatData, type Chat } from '../interface/chat';
-import { insertMessageRow, selectMessageRow, selectRoomRow } from '../Repository/MessageRepository';
 import { type PoolConnection } from 'mysql2/promise';
+import { insertMessageRow, selectMessageRow, selectRoomRow } from '../Repository/MessageRepository';
 import pool from '../config/database';
 
 export const insertMessage = async (messageObject: SendMessageRequest): Promise<ApiResponse> => {

@@ -5,6 +5,7 @@ require('dotenv').config({
   path: path.resolve(__dirname, process.env.NODE_ENV === 'production' ? '../.env.production' : '../.env.development')
 });
 
+import type http from 'http';
 import express, { type Request, type Response, type Application } from 'express';
 import bodyParser from 'body-parser';
 import AccidentRouter from './routers/AccidentRouter';
@@ -14,7 +15,7 @@ import MessageRouter from './routers/MessageRouter';
 import RoomRouter from './routers/RoomRouter';
 import { chatSocket } from './chat/chatSocket';
 import cors from 'cors';
-import type http from 'http';
+
 
 const app: Application = express();
 // for dev

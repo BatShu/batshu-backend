@@ -7,12 +7,6 @@ export interface SendMessageRequest {
   message: string
 }
 
-export interface SendMessageResponse {
-  roodId: number
-  sendUserUid: string
-  message: string
-}
-
 export interface PostRoomRequest {
   uid: string
   reportUid: string
@@ -72,21 +66,6 @@ export interface ReadRoomData {
   // accidentOrObserveInfo
   placeName: string
   // message
-  lastChat: string
-  lastChatCreatedAt: Date
-}
-
-export interface RoomUserInfo {
-  displayName?: string
-  googleProfilePhotoUrl?: string
-}
-
-export interface RoomEvent {
-  id: number
-  placeName: string
-}
-
-export interface RoomChat {
   lastChat: string
   lastChatCreatedAt: Date
 }
