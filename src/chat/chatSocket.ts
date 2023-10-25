@@ -1,8 +1,8 @@
 import type http from 'http';
 import socketIO from 'socket.io';
 import { type SendMessageRequest } from '../interface/chat';
-import { insertMessage } from '../service/MessageService';
 import { type ApiResponse } from 'src/domain/response';
+import { insertMessage } from '../service/MessageService';
 
 export const chatSocket = (webserver: http.Server): void => {
   const io = new socketIO.Server(webserver);

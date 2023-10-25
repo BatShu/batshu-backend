@@ -1,7 +1,7 @@
 import { type Request, type Response } from 'express';
-import { insertRoom, selectRoom } from '../service/RoomService';
 import { type ApiResponse } from 'src/domain/response';
 import { type PostRoomRequest } from '../interface/chat';
+import { insertRoom, selectRoom } from '../service/RoomService';
 
 export const getRooms = async (req: Request, res: Response): Promise<void> => {
   // request params

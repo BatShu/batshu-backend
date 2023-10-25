@@ -1,6 +1,6 @@
 import { type Request, type Response } from 'express';
-import { selectMessage } from '../service/MessageService';
 import { type ApiResponse } from 'src/domain/response';
+import { selectMessage } from '../service/MessageService';
 
 export const getMessages = async (req: Request, res: Response): Promise<void> => {
   try {
