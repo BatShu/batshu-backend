@@ -4,7 +4,6 @@ import { type ApiResponse } from 'src/domain/response';
 import pool from '../config/database';
 import { updateVideoStatus, findUploadedVideoId, updateVideoStatusWithBlurring, updateVideoStatusWithBlurringDone, createObserveData, selectObserveOnTheMapRow, insertMosaicedVideoUrlResult, updateVideoUrlToOutputFileNameResult, insertThumbnailUrlResult, selectVideoInfo, selectfindregisterObserveInfo, insertVideoName, selectObserveInfoByVideoId, selectVideoInfoByVideoId } from '../Repository/ObserveRepository';
 
-
 type TPacket = ResultSetHeader | RowDataPacket | FieldPacket[] ;
 
 export const insertVideoStatus = async (uploadedVideoOriginalName: string): Promise<ResultSetHeader> => {

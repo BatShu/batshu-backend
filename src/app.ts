@@ -16,7 +16,6 @@ import RoomRouter from './routers/RoomRouter';
 import { chatSocket } from './chat/chatSocket';
 import cors from 'cors';
 
-
 const app: Application = express();
 // for dev
 app.use(cors({
