@@ -43,9 +43,9 @@ const sendChat = (socket: socketIO.Socket, io: socketIO.Server): void => {
 
             const messageResponse: ApiResponse = await insertMessage(messageObject);
 
-            io.to(messageObject.roodId).emit('message', messageResponse);
+            io.to(messageObject.socketId).emit('message', messageResponse);
         } catch (err){
-            io.to(messageObject.roodId).emit('err message', err);
+            io.to(messageObject.socketId).emit('err message', err);
         }
     });
 }

@@ -9,9 +9,10 @@
     <button id="send">Send</button>
     <ul id="chat"></ul>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
-    <script>
+    <script type="module">
         const socket = io('http://localhost:3000', { transports: ['websocket'], withCredentials: true });
-
+        import { insertMessage } from '../serice/MessageService.ts'; // TypeScript 파일의 경로
+      
         const messageInput = document.getElementById('message');
         const sendButton = document.getElementById('send');
         const chatList = document.getElementById('chat');

@@ -1,13 +1,14 @@
 import { type RowDataPacket } from 'mysql2';
 
 export interface SendMessageRequest {
-    roodId: string
+    socketId: string
+    roomId: number
     sendUserUid: string
     message: string
 }
 
 export interface SendMessageResponse {
-    roodId: string
+    roodId: number
     sendUserUid: string
     message: string
 }

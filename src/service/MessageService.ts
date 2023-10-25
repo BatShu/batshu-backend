@@ -30,22 +30,22 @@ export const insertMessage = async (messageObject: SendMessageRequest): Promise<
 export const selectMessage = async (roomId: number): Promise<ApiResponse> => {
     try {
         const connection: PoolConnection = await pool.getConnection();
-        
+        console.log(roomId)
         const roomRow: SelectRoomRow = await selectRoomRow(connection, roomId);
-        
+        console.log(roomRow)
         const MessageRows: SelectMessageRow[] = await selectMessageRow(connection, roomId);
-        
+        console.log(MessageRows);
         const data: ReadChatData = {
             accidentOrObserve: roomRow.accidentId !== null,
-            id: roomRow.accidentId || roomRow.observeId || 0,
+            id: roomRow.accident_id || roomRow.observe_id || 0,
             chatList: []
         }
 
         for (const messageRow of MessageRows){
             const chat: Chat = {
                 sendUserUid: messageRow.uid,
-                message: messageRow.message,
-                createdAt: messageRow.createdAt
+                message: messageRow.message_text,
+                createdAt: messageRow.created_at
             }
             data.chatList.push(chat);
         }

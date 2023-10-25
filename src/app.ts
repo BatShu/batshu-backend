@@ -15,6 +15,8 @@ import RoomRouter from './routers/RoomRouter';
 import { chatSocket } from './chat/chatSocket';
 import cors from 'cors';
 import http from 'http';
+import { SendMessageRequest } from './interface/chat';
+import { insertMessage } from './service/MessageService';
 
 const app:Application = express();
 // for dev
@@ -49,6 +51,14 @@ const PORT = process.env.PORT ?? 3000;
 const handleListening = (): void => { console.log(`✅Server listenting on http://localhost:${PORT} 🚀 `); };
 
 const webServer:http.Server = app.listen(PORT, handleListening);
+const object: SendMessageRequest = {
+  roomId: 1,
+  socketId: "BXglOesua8tP0ZwhAAAB",
+  sendUserUid: "A4K9d7KIH3O8QvszNLpgfCtCwl03",
+  message: "very good"
+}
+insertMessage(object)
+
 console.log(webServer);
 chatSocket(webServer);
 
