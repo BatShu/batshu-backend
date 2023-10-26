@@ -59,11 +59,11 @@ export const fileFilter = (
 
 export const localStorage = multer.diskStorage({
   destination(req: Request, file: any, cb: (arg0: null, arg1: string) => void) {
-    const uploadDirectory = "DashCamCleaner";
+    const uploadDirectory = "blackbox";
     if (!fs.existsSync(uploadDirectory)) {
       fs.mkdirSync(uploadDirectory, { recursive: true });
     }
-    cb(null, "DashcamCleaner");
+    cb(null, "blackbox");
   },
   filename(
     req: Request,
