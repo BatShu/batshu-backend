@@ -87,7 +87,7 @@ export const videoProcessing = async (req: Request, res: Response): Promise<void
     // const fileExtension = path.extname(uploadedVideoOriginalName);
     // const videoOutputFileName = `${uploadedVideoOriginalName}_${Date.now()}${fileExtension}`;
 
-    const scriptDirectory = 'DashcamCleaner';
+    const scriptDirectory = 'blackbox';
     process.chdir(scriptDirectory);
 
     // const mosaicCommand = `python3 cli.py -i ${uploadedVideoOriginalName} -o ${videoOutputFileName} -w 360p_nano_v8.pt`
