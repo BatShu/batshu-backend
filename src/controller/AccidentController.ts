@@ -28,6 +28,8 @@ declare global {
     licensePlate?: string
     uid?: string
     bounty: number
+    displayName?: string
+    googleProfilePhotoUrl?: string
   }
 
   interface AccidentPhoto {
