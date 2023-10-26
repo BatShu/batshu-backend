@@ -24,8 +24,8 @@ declare global {
     createdAt?: Date
     accidentLocation: LocationObject
     placeName: string
-    carModelName: string
-    licensePlate: string
+    carModelName?: string
+    licensePlate?: string
     uid?: string
     bounty: number
   }
@@ -97,6 +97,14 @@ export const getAccidentOnTheMap = async (req: CustomRequest, res: Response): Pr
     if (isNaN(xCoord) || isNaN(yCoord) || isNaN(radiusValue)) {
       res.status(400).json({ ok: false, msg: 'Invalid values for x, y, or radius' });
       return;
+    }
+
+    if (radiusValue >= 500){
+      const resData: ApiResponse = {
+        ok: false,
+        msg: 'max radius = 500m'
+      };
+      res.status(401).json(resData);
     }
 
     const Obj: LocationObject = { x: xCoord, y: yCoord, radius: radiusValue };

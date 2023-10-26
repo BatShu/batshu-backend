@@ -16,6 +16,12 @@ declare global {
     googleProfilePhotoUrl: string
   }
 
+  interface UidUserInfo {
+    email?: string
+    displayName?: string
+    photoURL?: string
+  }
+
   export interface CustomRequest extends Request {
     uid?: string // 'uid' 프로퍼티를 추가합니다.
   }
@@ -65,10 +71,19 @@ export const confirmAndFetchUserInfo = async (req: CustomRequest, res: Response)
 export const getUserInfo = async (req: CustomRequest, res: Response): Promise<void> => {
   try {
     if (typeof req.uid === 'string') {
-      // UID를 사용하여 사용자 정보 가져오기
       const uid: string = req.params.uid;
-      console.log(uid);
-      const userInfo = await admin.auth().getUser(uid);
+      let userInfo: UidUserInfo = {};
+      try {
+        userInfo = await admin.auth().getUser(uid);
+      } catch (err){
+        const resData: ApiResponse = {
+          ok: false,
+          msg: '파이어베이스에 등록되지 않은 유저입니다.'
+        };
+
+        res.status(401).json(resData);
+        return;
+      }
 
       if (userInfo === undefined) {
         const resData: ApiResponse = {
@@ -89,6 +104,7 @@ export const getUserInfo = async (req: CustomRequest, res: Response): Promise<vo
           }
         };
         res.status(200).json(resData);
+        return;
       }
     }
   } catch (error) {
