@@ -1,5 +1,6 @@
-import { type ApiResponse } from 'src/domain/response';
+import { type ApiResponse } from '../domain/response';
 import AccidentRepository from '../Repository/AccidentRepository';
+import { admin } from '../auth/firebase';
 
 export const createAccident = async (data: Accident): Promise<ApiResponse> => {
   try {
@@ -49,8 +50,9 @@ export const readAccident = async (accidentId: number): Promise<ApiResponse> => 
       y: accidentRow.y
     };
 
-    const data: Accident = {
+    const userInfo:UidUserInfo = await admin.auth().getUser(accidentRow.uid);
 
+    const data: Accident = {
       contentTitle: accidentRow.content_title,
       contentDescription: accidentRow.content_description,
       photoUrls: [],
@@ -64,7 +66,8 @@ export const readAccident = async (accidentId: number): Promise<ApiResponse> => 
       carModelName: accidentRow.car_model_name,
       licensePlate: accidentRow.license_plate,
       bounty: accidentRow.bounty,
-      uid: accidentRow.uid
+      displayName: userInfo.displayName,
+      googleProfilePhotoUrl: userInfo.photoURL
     };
 
     for (const accidentPhotoRow of accidentPhotoRows) {

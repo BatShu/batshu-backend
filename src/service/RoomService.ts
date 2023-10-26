@@ -7,6 +7,8 @@ import { selectAccidentRow } from '../Repository/AccidentRepository';
 import pool from '../config/database';
 import { admin } from '../auth/firebase';
 import { selectMessageRow } from '../Repository/MessageRepository';
+import { selectObserveRowForPlaceName } from '../Repository/ObserveRepository';
+import { ObservePlaceNameRow } from '../interface/observe';
 
 export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiResponse> => {
   try {
@@ -49,9 +51,7 @@ export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiRespon
 export const selectRoom = async (uid: string): Promise<ApiResponse> => {
   try {
     const connection: PoolConnection = await pool.getConnection();
-    console.log(uid);
     const roomRows: selectNecessaryRow[] = await selectRoomRows(connection, uid);
-    console.log(roomRows);
 
     const answer: ApiResponse = {
       ok: true,
@@ -60,24 +60,34 @@ export const selectRoom = async (uid: string): Promise<ApiResponse> => {
     };
 
     for (const roomRow of roomRows) {
-      const userInfo = await admin.auth().getUser(roomRow.uid);
-      const chat: SelectMessageRow[] = await selectMessageRow(connection, roomRow.roomId);
-      const inputData: ReadRoomData = {
-        roomId: roomRow.roomId,
-        displayName: userInfo.displayName,
-        googleProfilePhotoUrl: userInfo.photoURL,
-        placeName: '',
-        lastChat: chat[0].message_text,
-        lastChatCreatedAt: chat[0].created_at
-      };
-      if (roomRow.accidentId !== null && roomRow.accidentId !== undefined) {
-        const accident: AccidentRow[] = await selectAccidentRow(roomRow.accidentId);
-        inputData.placeName = accident[0].place_name;
-      } else {
-        // observe table 에서 placeName을 가져오기
-      }
-      answer.data.push(inputData);
-    }
+        const userInfo = await admin.auth().getUser(roomRow.uid);
+        const chat: SelectMessageRow[] = await selectMessageRow(connection, roomRow.roomId);
+
+        const inputData: ReadRoomData = {
+            roomId: roomRow.roomId,
+            displayName: userInfo.displayName,
+            googleProfilePhotoUrl: userInfo.photoURL,
+            placeName: '',
+            lastChat: '',
+            lastChatCreatedAt: ''
+        };
+
+        if (chat.length) {
+            inputData.lastChat = chat[0].message_text;
+            inputData.lastChatCreatedAt = chat[0].created_at;
+        };
+
+        if (roomRow.accidentId !== null && roomRow.accidentId !== undefined) {
+            const accident: AccidentRow[] = await selectAccidentRow(roomRow.accidentId);
+            inputData.placeName = accident[0].place_name;
+
+        } else if (roomRow.observeId !== null && roomRow.observeId !== undefined) {
+            const observe: ObservePlaceNameRow = await selectObserveRowForPlaceName(roomRow.observeId);
+            inputData.placeName = observe.place_name;
+        }
+
+        answer.data.push(inputData);
+        }
 
     return answer;
   } catch (err) {

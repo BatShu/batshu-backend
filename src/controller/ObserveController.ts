@@ -10,6 +10,7 @@ import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
 import { path as ffprobePath } from '@ffprobe-installer/ffprobe';
 import ffmpeg from 'fluent-ffmpeg';
 import { type ApiResponse } from 'src/domain/response';
+import { admin } from '../auth/firebase';
 ffmpeg.setFfprobePath(ffprobePath);
 ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -258,6 +259,8 @@ export const getObserveInfoByObserveId = async (req: Request, res: Response): Pr
     const observeDetailInfo: observeInformationByVideoIdReponse[] = await findObserveDetailInfo(videoId);
 
     if (observeDetailInfo.length > 0) {
+      const userInfo:UidUserInfo = await admin.auth().getUser(observeDetailInfo[0].uid);
+
       const data = {
         videoId: videoInfo[0].id,
         videoUrl: videoInfo[0].video_url,
@@ -269,7 +272,9 @@ export const getObserveInfoByObserveId = async (req: Request, res: Response): Pr
         observeStartTime: observeDetailInfo[0].observe_start_time,
         observeEndTime: observeDetailInfo[0].observe_end_time,
         observeLocation: observeDetailInfo[0].observe_location,
-        createdAt: observeDetailInfo[0].created_at
+        createdAt: observeDetailInfo[0].created_at,
+        displayName: userInfo.displayName,
+        googleProfilePhotoUrl: userInfo.photoURL
       };
 
       const response = {

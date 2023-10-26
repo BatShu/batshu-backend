@@ -4,10 +4,6 @@ import { type PostRoomRequest } from '../interface/chat';
 import { insertRoom, selectRoom } from '../service/RoomService';
 
 export const getRooms = async (req: Request, res: Response): Promise<void> => {
-  // request params
-  // {
-  //     uid: string;
-  // }
   try {
     const uid: string = req.params.uid;
     const resData: ApiResponse = await selectRoom(uid);
@@ -23,13 +19,6 @@ export const getRooms = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const postRoom = async (req: Request, res: Response): Promise<void> => {
-  // request body
-  // {
-  //     uidList: string[];
-  //     accidentOrObserve: bool;
-  //     id: number;
-  //     // true accident, false observe
-  // }
   try {
     const roomObject: PostRoomRequest = {
       uid: req.body.uid,

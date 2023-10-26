@@ -71,3 +71,7 @@ export interface observeInformationByVideoIdReponse extends RowDataPacket {
 export interface videoId extends RowDataPacket {
   video_id: number
 }
+
+export interface ObservePlaceNameRow extends RowDataPacket {
+  place_name: string
+}

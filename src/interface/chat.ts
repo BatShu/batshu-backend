@@ -67,7 +67,7 @@ export interface ReadRoomData {
   placeName: string
   // message
   lastChat: string
-  lastChatCreatedAt: Date
+  lastChatCreatedAt: string
 }
 
 export interface selectRoomListRow extends RowDataPacket {
