@@ -41,7 +41,9 @@ export const uploadVideo = async (req: Request, res: Response, next: NextFunctio
       return res.status(200).json({
         ok: true,
         msg: 'This is uploaded videoId',
-        videoId
+        data : {
+          id : videoId[0].id
+        }
       });
     }
   } catch (error) {
