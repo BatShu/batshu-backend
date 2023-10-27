@@ -18,7 +18,6 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.418.0",
     "@aws-sdk/credential-provider-cognito-identity": "^3.418.0",
-    "@ffprobe-installer/linux-arm64": "^5.2.0",
     "aws-sdk": "^2.1463.0",
     "body-parser": "^1.20.2",
     "concurrently": "^8.2.1",
