@@ -11,6 +11,7 @@ import fs from 'fs';
 import ffmpeg from 'fluent-ffmpeg';
 import { type ApiResponse } from 'src/domain/response';
 import path from 'path';
+import { admin } from '../auth/firebase';
 ffmpeg.setFfprobePath(ffprobePath);
 ffmpeg.setFfmpegPath(ffmpegPath);
 
