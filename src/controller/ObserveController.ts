@@ -5,11 +5,12 @@ import { type registerObserveRequest, type video, type RegisterObserveResponse, 
 import { readObserveOnTheMap, insertVideoStatus, findVideoId, createObserve, insertThumbnailUrl, findvideoInfo, findregisterObserveInfo, findObserveDetailInfo, findVideoDetailInfo } from '../service/ObserveService';
 
 import AWS from 'aws-sdk';
-import fs from 'fs';
 import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
 import { path as ffprobePath } from '@ffprobe-installer/ffprobe';
+import fs from 'fs';
 import ffmpeg from 'fluent-ffmpeg';
 import { type ApiResponse } from 'src/domain/response';
+import path from 'path';
 import { admin } from '../auth/firebase';
 ffmpeg.setFfprobePath(ffprobePath);
 ffmpeg.setFfmpegPath(ffmpegPath);
@@ -23,7 +24,6 @@ AWS.config.update({
 export const uploadVideo = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const uploadedVideo: video = req.file as Express.Multer.File;
-
     const uploadedVideoOriginalName: string = uploadedVideo.originalname;
 
     await insertVideoStatus(uploadedVideoOriginalName);
@@ -84,12 +84,10 @@ export const getObserveOnTheMap = async (req: CustomRequest, res: Response): Pro
 export const videoProcessing = async (req: Request, res: Response): Promise<void> => {
   try {
     const uploadedVideo: video = req.file as Express.Multer.File;
+    const uploadedVideoPath: string = uploadedVideo.path;
     const uploadedVideoOriginalName: string = uploadedVideo.originalname;
     // const fileExtension = path.extname(uploadedVideoOriginalName);
     // const videoOutputFileName = `${uploadedVideoOriginalName}_${Date.now()}${fileExtension}`;
-
-    const scriptDirectory = 'blackbox';
-    process.chdir(scriptDirectory);
 
     // const mosaicCommand = `python3 cli.py -i ${uploadedVideoOriginalName} -o ${videoOutputFileName} -w 360p_nano_v8.pt`
 
@@ -113,21 +111,20 @@ export const videoProcessing = async (req: Request, res: Response): Promise<void
 
     //     await updateVideoStautsToBlurringDone(uploadedVideoOriginalName);
     //     await updateVideoUrlToOutputFileName(uploadedVideoOriginalName, videoOutputFileName);
-
+    const videoName = `video_${Date.now()}`;
     const uploadParams = {
       Bucket: 'batshu-observe-input',
-      Key: uploadedVideoOriginalName,
-      Body: fs.createReadStream(uploadedVideoOriginalName)
+      Key: videoName,
+      Body: fs.createReadStream(uploadedVideoPath),
+      ContentType: 'video/mp4'
     };
-
     // generate Thumbnail
     try {
+      const thumbnailFileName = `thumbnail_${Date.now()}.png`;
       const currentWorkingDirectory = process.cwd();
-      console.log(currentWorkingDirectory);
-      const thumbnailFileName = `thumbnail_${Date.now()}To${uploadedVideoOriginalName}.png`;
 
       await new Promise((resolve, reject) => {
-        ffmpeg(uploadedVideoOriginalName, {
+        ffmpeg(uploadedVideoPath, {
         })
           .thumbnail({
             timestamps: ['50%'],
@@ -145,12 +142,13 @@ export const videoProcessing = async (req: Request, res: Response): Promise<void
           });
       });
 
-      const thumbnailFilePath = `${currentWorkingDirectory}/${thumbnailFileName}`;
+      const thumbnailFilePath = path.join(currentWorkingDirectory, thumbnailFileName);
 
       const thumbnailUploadParams = {
         Bucket: 'batshu-observe-input',
         Key: thumbnailFileName,
-        Body: fs.createReadStream(thumbnailFilePath)
+        Body: fs.createReadStream(thumbnailFilePath),
+        ContentType: 'image/png'
       };
 
       const uploadThumbnailcommand = new PutObjectCommand(thumbnailUploadParams);
@@ -159,9 +157,8 @@ export const videoProcessing = async (req: Request, res: Response): Promise<void
       const command = new PutObjectCommand(uploadParams);
       await s3.send(command);
 
-      const videoLocationUrl = `https://batshu-observe-input.s3.amazonaws.com/${uploadedVideoOriginalName}`;
-
-      const thumbnailLocationUrl = `https://batshu-observe-input.s3.amazonaws.com/${thumbnailFileName}`;
+      const videoLocationUrl = `https://batshu-observe-input.s3.ap-northeast-2.amazonaws.com/${videoName}`;
+      const thumbnailLocationUrl = `https://batshu-observe-input.s3.ap-northeast-2.amazonaws.com/${thumbnailFileName}`;
 
       // const mosaicedFinalVideoUrl = await insertMosaicedFinalVideoUrl//(videoOutputFileName, videoLocationUrl);
 
