@@ -4,6 +4,7 @@ import admin from 'firebase-admin';
 
 import { createUser, removeUser } from '../service/UserService';
 import { type ApiResponse } from 'src/domain/response';
+import { readUser } from '../Repository/UserRepository';
 
 export const postUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -21,6 +22,45 @@ export const postUser = async (req: Request, res: Response): Promise<void> => {
       const resData: ApiResponse = await createUser(userInfo.uid);
 
       res.status(200).json(resData);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    const resData: ApiResponse = {
+      ok: false,
+      msg: 'INTERNAL SERVER ERROR'
+    };
+    res.status(500).json(resData);
+  }
+};
+
+export const getUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (req.headers.authorization !== null && req.headers.authorization !== undefined) {
+      const userInfo = await admin.auth().getUser(req.params.uid);
+      if (userInfo === undefined) {
+        const resData: ApiResponse = {
+          ok: false,
+          msg: '등록되지 않은 유저입니다.'
+        };
+        res.status(400).json(resData);
+        return;
+      }
+
+      const appUserInfo = await readUser(userInfo.uid);
+
+      if (appUserInfo.length === 0) {
+        const resData: ApiResponse = {
+          ok: false,
+          msg: '등록되지 않은 유저입니다.'
+        };
+        res.status(400).json(resData);
+        return;
+      }
+      res.status(200).json({
+        ok: true,
+        msg: 'Successfully Get',
+        data: appUserInfo
+      });
     }
   } catch (error) {
     console.error('Error:', error);
