@@ -101,7 +101,7 @@ export const getAccidentOnTheMap = async (req: CustomRequest, res: Response): Pr
       return;
     }
 
-    if (radiusValue >= 500){
+    if (radiusValue >= 500) {
       const resData: ApiResponse = {
         ok: false,
         msg: 'max radius = 500m'

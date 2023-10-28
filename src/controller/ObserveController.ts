@@ -259,7 +259,7 @@ export const getObserveInfoByObserveId = async (req: Request, res: Response): Pr
     const observeDetailInfo: observeInformationByVideoIdReponse[] = await findObserveDetailInfo(videoId);
 
     if (observeDetailInfo.length > 0) {
-      const userInfo:UidUserInfo = await admin.auth().getUser(observeDetailInfo[0].uid);
+      const userInfo: UidUserInfo = await admin.auth().getUser(observeDetailInfo[0].uid);
 
       const data = {
         videoId: videoInfo[0].id,

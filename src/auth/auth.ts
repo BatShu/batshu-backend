@@ -75,7 +75,7 @@ export const getUserInfo = async (req: CustomRequest, res: Response): Promise<vo
       let userInfo: UidUserInfo = {};
       try {
         userInfo = await admin.auth().getUser(uid);
-      } catch (err){
+      } catch (err) {
         const resData: ApiResponse = {
           ok: false,
           msg: '파이어베이스에 등록되지 않은 유저입니다.'
@@ -104,7 +104,6 @@ export const getUserInfo = async (req: CustomRequest, res: Response): Promise<vo
           }
         };
         res.status(200).json(resData);
-        return;
       }
     }
   } catch (error) {

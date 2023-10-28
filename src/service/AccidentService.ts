@@ -50,7 +50,7 @@ export const readAccident = async (accidentId: number): Promise<ApiResponse> => 
       y: accidentRow.y
     };
 
-    const userInfo:UidUserInfo = await admin.auth().getUser(accidentRow.uid);
+    const userInfo: UidUserInfo = await admin.auth().getUser(accidentRow.uid);
 
     const data: Accident = {
       contentTitle: accidentRow.content_title,

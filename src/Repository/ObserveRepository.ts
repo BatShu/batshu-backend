@@ -120,9 +120,9 @@ export const selectVideoInfoByVideoId = async (conneciton: PoolConnection, video
 export const selectObserveRowForPlaceName = async (observeId: number): Promise<ObservePlaceNameRow> => {
   const connection = await pool.getConnection();
   const selectQuery = 'SELECT place_name FROM observe WHERE id = ?;';
-  const [observePlaceNameRow]: [ObservePlaceNameRow[], FieldPacket[]] = await connection.execute<ObservePlaceNameRow[]>(selectQuery,[
+  const [observePlaceNameRow]: [ObservePlaceNameRow[], FieldPacket[]] = await connection.execute<ObservePlaceNameRow[]>(selectQuery, [
     observeId
   ]);
   connection.release();
   return observePlaceNameRow[0];
-}
+};
