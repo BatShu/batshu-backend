@@ -41,8 +41,8 @@ export const uploadVideo = async (req: Request, res: Response, next: NextFunctio
       return res.status(200).json({
         ok: true,
         msg: 'This is uploaded videoId',
-        data : {
-          id : videoId[0].id
+        data: {
+          id: videoId[0].id
         }
       });
     }
@@ -198,7 +198,7 @@ export const registerObserve = async (req: CustomRequest, res: Response): Promis
         licensePlate: req.body.licensePlate,
         placeName: req.body.placeName,
         observeTime: req.body.observeTime,
-        accidentLocation: req.body.observeLocation,
+        observeLocation: req.body.observeLocation,
         uid
 
       };
@@ -258,7 +258,7 @@ export const getObserveInfoByObserveId = async (req: Request, res: Response): Pr
     const observeDetailInfo: observeInformationByVideoIdReponse[] = await findObserveDetailInfo(videoId);
 
     if (observeDetailInfo.length > 0) {
-      const userInfo:UidUserInfo = await admin.auth().getUser(observeDetailInfo[0].uid);
+      const userInfo: UidUserInfo = await admin.auth().getUser(observeDetailInfo[0].uid);
 
       const data = {
         videoId: videoInfo[0].id,
