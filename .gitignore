@@ -5,3 +5,5 @@ node_modules
 serviceAccountKey.json
 .idea
 dist
+thumbnail_*.*
+blackbox/*
