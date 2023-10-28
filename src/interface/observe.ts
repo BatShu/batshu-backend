@@ -28,7 +28,7 @@ export interface registerObserveRequest {
   placeName: string
   observeTime: Date[]
   createdAt?: Date
-  accidentLocation: LocationObject
+  observeLocation: LocationObject
   uid?: string
 }
 export interface RegisterObserveResponse extends RowDataPacket {
