@@ -8,7 +8,6 @@ import { createAccident, readAccident, readAccidentOnTheMap } from '../service/A
 import crypto from 'crypto';
 import AWS from 'aws-sdk';
 import { type ApiResponse } from 'src/domain/response';
-
 declare global {
   interface LocationObject {
     x: number
@@ -124,7 +123,6 @@ export const getAccidentOnTheMap = async (req: CustomRequest, res: Response): Pr
     res.status(500).json(resData);
   }
 };
-
 export const postAccident = async (req: CustomRequest, res: Response): Promise<void> => {
   try {
     if (typeof req.uid === 'string') {
