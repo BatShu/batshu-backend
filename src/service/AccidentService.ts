@@ -3,30 +3,22 @@ import AccidentRepository from '../Repository/AccidentRepository';
 import { admin } from '../auth/firebase';
 
 export const createAccident = async (data: Accident): Promise<ApiResponse> => {
-  try {
-    // 의미적 데이터 처리
+  // 의미적 데이터 처리
 
-    const accidentRows = await AccidentRepository.insertAccidentRow(data);
-    const insertId = (accidentRows as unknown as ResultSetHeader).insertId;
-    for (const photo of data.photoUrls) {
-      await AccidentRepository.insertAccidentPhotoRow({
-        photoUrl: photo,
-        accidentId: insertId
-      });
-    }
-
-    const resData: ApiResponse = {
-      ok: true,
-      msg: 'Successfully Post'
-    };
-    return resData;
-  } catch (error) {
-    const resData: ApiResponse = {
-      ok: false,
-      msg: 'INTERNAL SERVER ERROR'
-    };
-    return resData;
+  const accidentRows = await AccidentRepository.insertAccidentRow(data);
+  const insertId = (accidentRows as unknown as ResultSetHeader).insertId;
+  for (const photo of data.photoUrls) {
+    await AccidentRepository.insertAccidentPhotoRow({
+      photoUrl: photo,
+      accidentId: insertId
+    });
   }
+
+  const resData: ApiResponse = {
+    ok: true,
+    msg: 'Successfully Post'
+  };
+  return resData;
 };
 
 export const readAccident = async (accidentId: number): Promise<ApiResponse> => {
@@ -50,7 +42,7 @@ export const readAccident = async (accidentId: number): Promise<ApiResponse> => 
       y: accidentRow.y
     };
 
-    const userInfo:UidUserInfo = await admin.auth().getUser(accidentRow.uid);
+    const userInfo: UidUserInfo = await admin.auth().getUser(accidentRow.uid);
 
     const data: Accident = {
       contentTitle: accidentRow.content_title,
