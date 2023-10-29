@@ -98,13 +98,13 @@ export const createObserveData = async (connection: PoolConnection, registerObse
 };
 
 export const selectfindregisterObserveInfo = async (connection: PoolConnection, videoId: number): Promise<RegisterObserveResponse[]> => {
-  const selectCreatedAtQuery = 'SELECT * FROM observe WHERE video_id = ?;';
+  const selectCreatedAtQuery = 'SELECT * FROM observe WHERE id = ?;';
   const [selectCreatedAtRows]: [RegisterObserveResponse[], FieldPacket[]] = await connection.query<RegisterObserveResponse[]>(selectCreatedAtQuery, [videoId]);
   return selectCreatedAtRows;
 };
 
 export const selectObserveInfoByVideoId = async (connection: PoolConnection, videoId: number): Promise<observeInformationByVideoIdReponse[]> => {
-  const selectObserveInfoByObserveIdQuery = 'SELECT * FROM observe WHERE video_id = ?;';
+  const selectObserveInfoByObserveIdQuery = 'SELECT * FROM observe WHERE id = ?;';
   const [selectObserveInfoByObserveIdRows]: [observeInformationByVideoIdReponse[], FieldPacket[]] = await connection.query<observeInformationByVideoIdReponse[]>(selectObserveInfoByObserveIdQuery, [videoId]);
   return selectObserveInfoByObserveIdRows;
 };
