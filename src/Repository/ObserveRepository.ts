@@ -11,7 +11,7 @@ export const selectObserveOnTheMapRow = async (locationObject: LocationObject): 
     FROM observe
     WHERE ST_Distance_Sphere(
       observe_location,
-      ST_GeomFromText('POINT(${locationObject.x} ${locationObject.y})')
+      POINT(${locationObject.x}, ${locationObject.y})
     ) <= ?;`;
     const [observeRows]: [LocationRow[], FieldPacket[]] = await connection.execute<LocationRow[]>(observeSelectQuery, [
       locationObject.radius
