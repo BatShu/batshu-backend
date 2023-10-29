@@ -68,10 +68,10 @@ export const getObserveOnTheMap = async (req: CustomRequest, res: Response): Pro
       res.status(400).json({ ok: false, msg: 'Invalid values for x, y, or radius' });
     }
 
-    if (radiusValue > 2000) {
+    if (radiusValue > 8000) {
       const resData: ApiResponse = {
         ok: false,
-        msg: 'max radius = 2000m'
+        msg: 'max radius = 8000m'
       };
       res.status(401).json(resData);
       return;
