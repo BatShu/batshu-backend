@@ -101,12 +101,13 @@ export const getAccidentOnTheMap = async (req: CustomRequest, res: Response): Pr
       return;
     }
 
-    if (radiusValue >= 500){
+    if (radiusValue >= 500) {
       const resData: ApiResponse = {
         ok: false,
         msg: 'max radius = 500m'
       };
       res.status(401).json(resData);
+      return;
     }
 
     const Obj: LocationObject = { x: xCoord, y: yCoord, radius: radiusValue };
