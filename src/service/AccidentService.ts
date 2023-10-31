@@ -2,7 +2,7 @@ import { type ApiResponse } from '../domain/response';
 import AccidentRepository from '../Repository/AccidentRepository';
 import { admin } from '../auth/firebase';
 
-export const createAccident = async (data: Accident): Promise<ApiResponse> => {
+export const createAccident = async (data: AccidentDto): Promise<ApiResponse> => {
   // 의미적 데이터 처리
 
   const accidentRows = await AccidentRepository.insertAccidentRow(data);
@@ -59,7 +59,9 @@ export const readAccident = async (accidentId: number): Promise<ApiResponse> => 
       licensePlate: accidentRow.license_plate,
       bounty: accidentRow.bounty,
       displayName: userInfo.displayName,
-      googleProfilePhotoUrl: userInfo.photoURL
+      googleProfilePhotoUrl: userInfo.photoURL,
+      uid: accidentRow.uid,
+      id: accidentId
     };
 
     for (const accidentPhotoRow of accidentPhotoRows) {

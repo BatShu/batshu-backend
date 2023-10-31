@@ -25,11 +25,13 @@ declare global {
     placeName: string
     carModelName?: string
     licensePlate?: string
-    uid?: string
+    uid: string
+    id: number
     bounty: number
     displayName?: string
     googleProfilePhotoUrl?: string
   }
+  type AccidentDto = Omit<Accident, 'id' >;
 
   interface AccidentPhoto {
     photoUrl: string
@@ -99,7 +101,6 @@ export const getAccidentOnTheMap = async (req: CustomRequest, res: Response): Pr
       res.status(400).json({ ok: false, msg: 'Invalid values for x, y, or radius' });
       return;
     }
-
 
     if (radiusValue > 8000) {
       const resData: ApiResponse = {

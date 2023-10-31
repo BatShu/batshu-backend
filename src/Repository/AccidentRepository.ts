@@ -45,7 +45,7 @@ export const selectAccidentPhotoRow = async (accidentId: number): Promise<Accide
   return accidentPhotoRows;
 };
 
-export const insertAccidentRow = async (data: Accident): Promise<ResultSetHeader[]> => {
+export const insertAccidentRow = async (data: AccidentDto): Promise<ResultSetHeader[]> => {
   const connection = await pool.getConnection();
   const accidentInsertQuery: string = `
       INSERT INTO accident (
