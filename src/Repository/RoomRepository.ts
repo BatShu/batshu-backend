@@ -42,3 +42,23 @@ export const selectRoomRows = async (connection: PoolConnection, uid: string): P
     throw err;
   }
 };
+
+export const selectRoomRow = async (connection: PoolConnection, roomId: number): Promise<selectNecessaryRow> => {
+  try {
+    const selectQuery = 'SELECT * FROM room where id = ?';
+    const [roomRows]: [selectRoomListRow[], FieldPacket[]] = await connection.execute<selectRoomListRow[]>(selectQuery, [
+      roomId
+    ]);
+    const roomRow = roomRows[0];
+    const roomData: selectNecessaryRow = {
+      roomId: roomRow.id,
+      uid: roomRow.uid,
+      accidentId: roomRow.accident_id,
+      observeId: roomRow.observe_id
+    };
+    return roomData;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};

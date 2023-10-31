@@ -2,7 +2,7 @@ import { type ApiResponse } from 'src/domain/response';
 import { type AccidentRow } from '../interface/accident';
 import { type PoolConnection } from 'mysql2/promise';
 import { type InsertRoomRowParams, type PostRoomRequest, type selectNecessaryRow, type ReadRoomData, type SelectMessageRow } from '../interface/chat';
-import { insertRoomRow, selectRoomRows } from '../Repository/RoomRepository';
+import { insertRoomRow, selectRoomRows, selectRoomRow } from '../Repository/RoomRepository';
 import { selectAccidentRow } from '../Repository/AccidentRepository';
 import pool from '../config/database';
 import { admin } from '../auth/firebase';
@@ -49,7 +49,7 @@ export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiRespon
   }
 };
 
-export const selectRoom = async (uid: string): Promise<ApiResponse> => {
+export const selectRoomsByUid = async (uid: string): Promise<ApiResponse> => {
   try {
     const connection: PoolConnection = await pool.getConnection();
     const roomRows: selectNecessaryRow[] = await selectRoomRows(connection, uid);
@@ -98,4 +98,36 @@ export const selectRoom = async (uid: string): Promise<ApiResponse> => {
     };
     return answer;
   }
+};
+
+export const selectRoom = async (roomId: number): Promise<ReadRoomData> => {
+  const connection: PoolConnection = await pool.getConnection();
+  const roomRow: selectNecessaryRow = await selectRoomRow(connection, roomId);
+
+  const userInfo = await admin.auth().getUser(roomRow.uid);
+  const chat: SelectMessageRow[] = await selectMessageRow(connection, roomRow.roomId);
+
+  const inputData: ReadRoomData = {
+    roomId: roomRow.roomId,
+    displayName: userInfo.displayName,
+    googleProfilePhotoUrl: userInfo.photoURL,
+    placeName: '',
+    lastChat: '',
+    lastChatCreatedAt: ''
+  };
+
+  if (chat.length > 0) {
+    inputData.lastChat = chat[0].message_text;
+    inputData.lastChatCreatedAt = chat[0].created_at;
+  };
+
+  if (roomRow.accidentId !== null && roomRow.accidentId !== undefined) {
+    const accident: AccidentRow[] = await selectAccidentRow(roomRow.accidentId);
+    inputData.placeName = accident[0].place_name;
+  } else if (roomRow.observeId !== null && roomRow.observeId !== undefined) {
+    const observe: ObservePlaceNameRow = await selectObserveRowForPlaceName(roomRow.observeId);
+    inputData.placeName = observe.place_name;
+  }
+
+  return inputData;
 };
