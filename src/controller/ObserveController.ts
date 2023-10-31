@@ -282,7 +282,8 @@ export const getObserveInfoByObserveId = async (req: Request, res: Response): Pr
         observeLocation: observeDetailInfo[0].observe_location,
         createdAt: observeDetailInfo[0].created_at,
         displayName: userInfo.displayName,
-        googleProfilePhotoUrl: userInfo.photoURL
+        googleProfilePhotoUrl: userInfo.photoURL,
+        uid: observeDetailInfo[0].uid
       };
 
       const response = {
