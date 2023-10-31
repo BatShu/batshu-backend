@@ -27,12 +27,13 @@ export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiRespon
       passedData.observeId = roomObject.id;
     }
     console.log(passedData);
-    const success: boolean = await insertRoomRow(connection, passedData);
+    const roomId = await insertRoomRow(connection, passedData);
 
-    if (success) {
+    if (roomId != null) {
       const answer: ApiResponse = {
         ok: true,
-        msg: 'successfully regist room'
+        msg: 'successfully regist room',
+        data: roomId
       };
       return answer;
     } else {
