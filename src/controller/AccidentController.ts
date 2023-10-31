@@ -148,7 +148,7 @@ export const postAccident = async (req: CustomRequest, res: Response): Promise<v
         await s3.send(command);
       }
 
-      const passedData: Accident = {
+      const passedData: AccidentDto = {
         contentTitle: req.body.contentTitle,
         contentDescription: req.body.contentDescription,
         photoUrls,
