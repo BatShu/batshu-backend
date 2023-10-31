@@ -100,6 +100,7 @@ export const getAccidentOnTheMap = async (req: CustomRequest, res: Response): Pr
       return;
     }
 
+
     if (radiusValue > 8000) {
       const resData: ApiResponse = {
         ok: false,
