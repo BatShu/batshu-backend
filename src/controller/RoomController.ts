@@ -3,9 +3,12 @@ import { type ApiResponse } from 'src/domain/response';
 import { type PostRoomRequest } from '../interface/chat';
 import { insertRoom, selectRoom, selectRoomsByUid } from '../service/RoomService';
 
-export const getRooms = async (req: Request, res: Response): Promise<void> => {
+export const getRooms = async (req: CustomRequest, res: Response): Promise<void> => {
   try {
-    const uid: string = req.body.uid;
+    const uid = req.uid;
+    if (uid == null) {
+      throw new Error('uid is null');
+    }
     const resData: ApiResponse = await selectRoomsByUid(uid);
 
     res.status(200).send(resData);
