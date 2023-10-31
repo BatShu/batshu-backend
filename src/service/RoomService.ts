@@ -21,7 +21,7 @@ export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiRespon
       observeId: null
     };
 
-    if (roomObject.accidentOrObserve) {
+    if (roomObject.isAccident) {
       passedData.accidentId = roomObject.id;
     } else {
       passedData.observeId = roomObject.id;

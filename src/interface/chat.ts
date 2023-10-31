@@ -10,7 +10,7 @@ export interface SendMessageRequest {
 export interface PostRoomRequest {
   uid: string
   reportUid: string
-  accidentOrObserve: boolean
+  isAccident: boolean
   id: number
 }
 
@@ -41,7 +41,7 @@ export interface SelectRoomRow extends RowDataPacket {
 }
 
 export interface ReadChatData {
-  accidentOrObserve: boolean
+  isAccident: boolean
   id: number
   chatList: Chat[]
 }

@@ -36,7 +36,7 @@ export const selectMessage = async (roomId: number): Promise<ApiResponse> => {
     const MessageRows: SelectMessageRow[] = await selectMessageRow(connection, roomId);
     console.log(MessageRows);
     const data: ReadChatData = {
-      accidentOrObserve: roomRow.accidentId !== null,
+      isAccident: roomRow.accidentId !== null,
       id: roomRow.accident_id ?? roomRow.observe_id,
       chatList: []
     };
