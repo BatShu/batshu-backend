@@ -9,7 +9,7 @@ on:
 env:
   DOCKER_IMAGE: ghcr.io/bik1111/batshu-backend
   VERSION: ${{ github.sha }}
-  NAME: go_cicd
+  NAME: batshu_backend
 
 jobs:
   # 빌드 Job

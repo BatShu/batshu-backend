@@ -10,7 +10,7 @@ const upload = multer({ storage });
 const AccidentRouter = express.Router();
 
 AccidentRouter.route('/').get(tokenToUid, getAccidentOnTheMap);
-AccidentRouter.route('/').post(tokenToUid, upload.array('photos'), postAccident);
+AccidentRouter.route('/').post(tokenToUid, upload.array('photos[]'), postAccident);
 AccidentRouter.route('/:accidentId').get(tokenToUid, getAccident);
 
 export default AccidentRouter;

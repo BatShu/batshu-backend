@@ -103,7 +103,7 @@ export const selectAccidentOnTheMapRow = async (locationObject: LocationObject):
       FROM accident
       WHERE ST_Distance_Sphere(
         accident_location,
-        ST_GeomFromText('POINT(${locationObject.x} ${locationObject.y})')
+        POINT(${locationObject.x}, ${locationObject.y})
       ) <= ?;`;
 
   const [accidentRows]: [LocationRow[], FieldPacket[]] = await connection.execute<LocationRow[]>(accidentSelectQuery, [

@@ -3,8 +3,8 @@ import multer, { type FileFilterCallback } from 'multer';
 import AWS from 'aws-sdk';
 import multerS3 from 'multer-s3';
 import path from 'path';
-import { S3, type S3ClientConfig } from '@aws-sdk/client-s3';
 import fs from 'fs';
+import { S3, type S3ClientConfig } from '@aws-sdk/client-s3';
 export type { FileFilterCallback };
 
 export const accessKeyId: string = process.env.ACCESS_KEY_JC ?? '';
@@ -61,15 +61,11 @@ export const localStorage = multer.diskStorage({
   destination (req: Request, file: any, cb: (arg0: null, arg1: string) => void) {
     const uploadDirectory = 'blackbox';
     if (!fs.existsSync(uploadDirectory)) {
-      fs.mkdirSync(uploadDirectory, { recursive: true });
+      fs.mkdirSync(uploadDirectory, { recursive: false });
     }
-    cb(null, 'blackbox');
+    cb(null, uploadDirectory);
   },
-  filename (
-    req: Request,
-    { originalname }: { originalname: any },
-    cb: (arg0: null, arg1: any) => void
-  ) {
+  filename (req: Request, { originalname }: { originalname: any }, cb: (arg0: null, arg1: any) => void) {
     cb(null, originalname);
   }
 });

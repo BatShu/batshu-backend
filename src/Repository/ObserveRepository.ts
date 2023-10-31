@@ -11,7 +11,7 @@ export const selectObserveOnTheMapRow = async (locationObject: LocationObject): 
     FROM observe
     WHERE ST_Distance_Sphere(
       observe_location,
-      ST_GeomFromText('POINT(${locationObject.x} ${locationObject.y})')
+      POINT(${locationObject.x}, ${locationObject.y})
     ) <= ?;`;
     const [observeRows]: [LocationRow[], FieldPacket[]] = await connection.execute<LocationRow[]>(observeSelectQuery, [
       locationObject.radius
@@ -90,21 +90,21 @@ export const createObserveData = async (connection: PoolConnection, registerObse
     registerObserveData.placeName,
     registerObserveData.observeTime[0],
     registerObserveData.observeTime[1],
-    registerObserveData.accidentLocation.x,
-    registerObserveData.accidentLocation.y,
+    registerObserveData.observeLocation.x,
+    registerObserveData.observeLocation.y,
     registerObserveData.uid
   ]);
   return results;
 };
 
 export const selectfindregisterObserveInfo = async (connection: PoolConnection, videoId: number): Promise<RegisterObserveResponse[]> => {
-  const selectCreatedAtQuery = 'SELECT * FROM observe WHERE video_id = ?;';
+  const selectCreatedAtQuery = 'SELECT * FROM observe WHERE id = ?;';
   const [selectCreatedAtRows]: [RegisterObserveResponse[], FieldPacket[]] = await connection.query<RegisterObserveResponse[]>(selectCreatedAtQuery, [videoId]);
   return selectCreatedAtRows;
 };
 
 export const selectObserveInfoByVideoId = async (connection: PoolConnection, videoId: number): Promise<observeInformationByVideoIdReponse[]> => {
-  const selectObserveInfoByObserveIdQuery = 'SELECT * FROM observe WHERE video_id = ?;';
+  const selectObserveInfoByObserveIdQuery = 'SELECT * FROM observe WHERE id = ?;';
   const [selectObserveInfoByObserveIdRows]: [observeInformationByVideoIdReponse[], FieldPacket[]] = await connection.query<observeInformationByVideoIdReponse[]>(selectObserveInfoByObserveIdQuery, [videoId]);
   return selectObserveInfoByObserveIdRows;
 };

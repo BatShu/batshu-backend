@@ -8,7 +8,6 @@ import { createAccident, readAccident, readAccidentOnTheMap } from '../service/A
 import crypto from 'crypto';
 import AWS from 'aws-sdk';
 import { type ApiResponse } from 'src/domain/response';
-
 declare global {
   interface LocationObject {
     x: number
@@ -101,12 +100,14 @@ export const getAccidentOnTheMap = async (req: CustomRequest, res: Response): Pr
       return;
     }
 
-    if (radiusValue >= 500) {
+
+    if (radiusValue > 8000) {
       const resData: ApiResponse = {
         ok: false,
-        msg: 'max radius = 500m'
+        msg: 'max radius = 8000m'
       };
       res.status(401).json(resData);
+      return;
     }
 
     const Obj: LocationObject = { x: xCoord, y: yCoord, radius: radiusValue };
@@ -123,7 +124,6 @@ export const getAccidentOnTheMap = async (req: CustomRequest, res: Response): Pr
     res.status(500).json(resData);
   }
 };
-
 export const postAccident = async (req: CustomRequest, res: Response): Promise<void> => {
   try {
     if (typeof req.uid === 'string') {
