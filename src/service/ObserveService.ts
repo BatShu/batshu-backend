@@ -113,7 +113,6 @@ export const findVideoDetailInfo = async (videoId: number): Promise<videoInfo[]>
 export const readObserveOnTheMap = async (locationObject: LocationObject): Promise<ApiResponse> => {
   try {
     const observeRows = await selectObserveOnTheMapRow(locationObject);
-
     const data: ObserveLocationObject[] = [];
 
     for (const observeRow of observeRows) {
@@ -123,7 +122,9 @@ export const readObserveOnTheMap = async (locationObject: LocationObject): Promi
       };
       const observeLocationObject: ObserveLocationObject = {
         observeId: observeRow.id,
-        observeLocation: location
+        observeLocation: location,
+        licensePlate: observeRow.license_plate,
+        observeTime: [observeRow.observe_start_time, observeRow.observe_end_time]
       };
       data.push(observeLocationObject);
     }

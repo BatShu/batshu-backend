@@ -7,7 +7,7 @@ export const selectObserveOnTheMapRow = async (locationObject: LocationObject): 
   try {
     const connection = await pool.getConnection();
     const observeSelectQuery: string = `
-    SELECT id, ST_X(observe_location) AS x, ST_Y(observe_location) AS y
+    SELECT id, license_plate, observe_start_time, observe_end_time, ST_X(observe_location) AS x, ST_Y(observe_location) AS y
     FROM observe
     WHERE ST_Distance_Sphere(
       observe_location,
@@ -98,20 +98,20 @@ export const createObserveData = async (connection: PoolConnection, registerObse
 };
 
 export const selectfindregisterObserveInfo = async (connection: PoolConnection, videoId: number): Promise<RegisterObserveResponse[]> => {
-  const selectCreatedAtQuery = 'SELECT * FROM observe WHERE id = ?;';
+  const selectCreatedAtQuery = 'SELECT * FROM observe WHERE video_id = ?;';
   const [selectCreatedAtRows]: [RegisterObserveResponse[], FieldPacket[]] = await connection.query<RegisterObserveResponse[]>(selectCreatedAtQuery, [videoId]);
   return selectCreatedAtRows;
 };
 
 export const selectObserveInfoByVideoId = async (connection: PoolConnection, videoId: number): Promise<observeInformationByVideoIdReponse[]> => {
-  const selectObserveInfoByObserveIdQuery = 'SELECT * FROM observe WHERE id = ?;';
+  const selectObserveInfoByObserveIdQuery = 'SELECT * FROM observe WHERE video_id = ?;';
   const [selectObserveInfoByObserveIdRows]: [observeInformationByVideoIdReponse[], FieldPacket[]] = await connection.query<observeInformationByVideoIdReponse[]>(selectObserveInfoByObserveIdQuery, [videoId]);
   return selectObserveInfoByObserveIdRows;
 };
 
 export const selectVideoInfoByVideoId = async (conneciton: PoolConnection, videoId: number): Promise<videoInfo[]> => {
   const connection = await pool.getConnection();
-  const selectVideoInfoByVideoIdQuery = 'SELECT * FROM video WHERE id = ?;';
+  const selectVideoInfoByVideoIdQuery = 'SELECT * FROM video WHERE video_id = ?;';
   const [selectVideoInfoByVideoIdRows]: [videoInfo[], FieldPacket[]] = await conneciton.query<videoInfo[]>(selectVideoInfoByVideoIdQuery, [videoId]);
   connection.release();
   return selectVideoInfoByVideoIdRows;
