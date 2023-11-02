@@ -8,7 +8,6 @@ export interface SendMessageRequest {
 }
 
 export interface PostRoomRequest {
-  uid: string
   reportUid: string
   isAccident: boolean
   id: number

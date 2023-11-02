@@ -72,6 +72,7 @@ export interface videoId extends RowDataPacket {
   video_id: number
 }
 
-export interface ObservePlaceNameRow extends RowDataPacket {
+export interface ObserveUidPlaceNameRow extends RowDataPacket {
+  uid: string
   place_name: string
 }

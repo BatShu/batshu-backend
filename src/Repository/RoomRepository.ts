@@ -3,11 +3,12 @@ import type { FieldPacket, PoolConnection } from 'mysql2/promise';
 
 export const insertRoomRow = async (connection: PoolConnection, roomObject: InsertRoomRowParams): Promise<number | null> => {
   try {
-    console.log(roomObject);
     const insertQuery = 'INSERT INTO room (uid, report_uid, accident_id, observe_id) VALUES (?, ?, ?, ?)';
+
     await connection.execute(insertQuery, [roomObject.uid, roomObject.reportUid, roomObject.accidentId, roomObject.observeId]);
     // Get the last inserted id
     const [rows]: any = await connection.execute('SELECT LAST_INSERT_ID() as id');
+    
     const id = Array.isArray(rows) && rows.length > 0 ? rows[0].id : null;
     return id;
   } catch (err) {

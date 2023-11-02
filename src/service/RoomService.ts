@@ -8,32 +8,37 @@ import pool from '../config/database';
 import { admin } from '../auth/firebase';
 import { selectMessageRow } from '../Repository/MessageRepository';
 import { selectObserveRowForPlaceName } from '../Repository/ObserveRepository';
-import { type ObservePlaceNameRow } from '../interface/observe';
+import { type ObserveUidPlaceNameRow } from '../interface/observe';
 
 export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiResponse> => {
   try {
     const connection: PoolConnection = await pool.getConnection();
 
     const passedData: InsertRoomRowParams = {
-      uid: roomObject.uid,
+      uid: ' ',
       reportUid: roomObject.reportUid,
       accidentId: null,
       observeId: null
     };
-
+    
     if (roomObject.isAccident) {
       passedData.accidentId = roomObject.id;
+      const accidentRow: AccidentRow[] = await selectAccidentRow(passedData.accidentId);
+      passedData.uid = accidentRow[0].uid;
     } else {
       passedData.observeId = roomObject.id;
+      const observeRow: ObserveUidPlaceNameRow = await selectObserveRowForPlaceName(passedData.observeId);
+      passedData.uid = observeRow.uid;
     }
-    console.log(passedData);
     const roomId = await insertRoomRow(connection, passedData);
 
     if (roomId != null) {
       const answer: ApiResponse = {
         ok: true,
         msg: 'successfully regist room',
-        data: roomId
+        data: {
+            roomId: roomId
+        }
       };
       return answer;
     } else {
@@ -82,7 +87,7 @@ export const selectRoomsByUid = async (uid: string): Promise<ApiResponse> => {
         const accident: AccidentRow[] = await selectAccidentRow(roomRow.accidentId);
         inputData.placeName = accident[0].place_name;
       } else if (roomRow.observeId !== null && roomRow.observeId !== undefined) {
-        const observe: ObservePlaceNameRow = await selectObserveRowForPlaceName(roomRow.observeId);
+        const observe: ObserveUidPlaceNameRow = await selectObserveRowForPlaceName(roomRow.observeId);
         inputData.placeName = observe.place_name;
       }
 
@@ -125,7 +130,7 @@ export const selectRoom = async (roomId: number): Promise<ReadRoomData> => {
     const accident: AccidentRow[] = await selectAccidentRow(roomRow.accidentId);
     inputData.placeName = accident[0].place_name;
   } else if (roomRow.observeId !== null && roomRow.observeId !== undefined) {
-    const observe: ObservePlaceNameRow = await selectObserveRowForPlaceName(roomRow.observeId);
+    const observe: ObserveUidPlaceNameRow = await selectObserveRowForPlaceName(roomRow.observeId);
     inputData.placeName = observe.place_name;
   }
 
