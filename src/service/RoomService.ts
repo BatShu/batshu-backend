@@ -25,6 +25,7 @@ export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiRespon
       passedData.accidentId = roomObject.id;
       const accidentRow: AccidentRow[] = await selectAccidentRow(passedData.accidentId);
       passedData.uid = accidentRow[0].uid;
+      
     } else {
       passedData.observeId = roomObject.id;
       const observeRow: ObserveUidPlaceNameRow = await selectObserveRowForPlaceName(passedData.observeId);
