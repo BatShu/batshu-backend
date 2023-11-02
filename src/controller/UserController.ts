@@ -37,6 +37,13 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
   try {
     if (req.headers.authorization !== null && req.headers.authorization !== undefined) {
       const userInfo = await admin.auth().getUser(req.params.uid);
+      const response = {
+        uid: userInfo.uid,
+        email: userInfo.email,
+        displayName: userInfo.displayName,
+        googleProfilephotoURL: userInfo.photoURL
+      };
+
       if (userInfo === undefined) {
         const resData: ApiResponse = {
           ok: false,
@@ -59,7 +66,7 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
       res.status(200).json({
         ok: true,
         msg: 'Successfully Get',
-        data: userInfo
+        data: response
       });
     }
   } catch (error) {
