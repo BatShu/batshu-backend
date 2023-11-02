@@ -111,7 +111,7 @@ export const selectObserveInfoByVideoId = async (connection: PoolConnection, vid
 
 export const selectVideoInfoByVideoId = async (conneciton: PoolConnection, videoId: number): Promise<videoInfo[]> => {
   const connection = await pool.getConnection();
-  const selectVideoInfoByVideoIdQuery = 'SELECT * FROM video WHERE video_id = ?;';
+  const selectVideoInfoByVideoIdQuery = 'SELECT * FROM video WHERE id = ?;';
   const [selectVideoInfoByVideoIdRows]: [videoInfo[], FieldPacket[]] = await conneciton.query<videoInfo[]>(selectVideoInfoByVideoIdQuery, [videoId]);
   connection.release();
   return selectVideoInfoByVideoIdRows;

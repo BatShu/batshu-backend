@@ -95,33 +95,10 @@ export const getObserveOnTheMap = async (req: CustomRequest, res: Response): Pro
 export const videoProcessing = async (req: Request, res: Response): Promise<void> => {
   try {
     const uploadedVideo: video = req.file as Express.Multer.File;
+    console.log(uploadedVideo);
     const uploadedVideoPath: string = uploadedVideo.path;
     const uploadedVideoOriginalName: string = uploadedVideo.originalname;
-    // const fileExtension = path.extname(uploadedVideoOriginalName);
-    // const videoOutputFileName = `${uploadedVideoOriginalName}_${Date.now()}${fileExtension}`;
 
-    // const mosaicCommand = `python3 cli.py -i ${uploadedVideoOriginalName} -o ${videoOutputFileName} -w 360p_nano_v8.pt`
-
-    // await updateVideoStautsToBlurringStart(uploadedVideoOriginalName);
-
-    // // execute child_process to do processig of mosaic
-    // const blurringDoneVideo = exec(mosaicCommand, async (error, stdout, stderr) => {
-
-    //   if (error) {
-    //     console.log(`error: ${error.message}`);
-    //   }
-    //   else if (stderr) {
-    //     console.log(`stderr: ${stderr}`);
-    //   }
-    //   else {
-
-    //     console.log('stdout:', stdout);
-    //   }
-
-    //   if (blurringDoneVideo) {
-
-    //     await updateVideoStautsToBlurringDone(uploadedVideoOriginalName);
-    //     await updateVideoUrlToOutputFileName(uploadedVideoOriginalName, videoOutputFileName);
     const videoName = `video_${Date.now()}`;
     const uploadParams = {
       Bucket: 'batshu-observe-input',
@@ -171,18 +148,10 @@ export const videoProcessing = async (req: Request, res: Response): Promise<void
       const videoLocationUrl = `https://batshu-observe-input.s3.ap-northeast-2.amazonaws.com/${videoName}`;
       const thumbnailLocationUrl = `https://batshu-observe-input.s3.ap-northeast-2.amazonaws.com/${thumbnailFileName}`;
 
-      // const mosaicedFinalVideoUrl = await insertMosaicedFinalVideoUrl//(videoOutputFileName, videoLocationUrl);
-
       await insertThumbnailUrl(uploadedVideoOriginalName, videoLocationUrl, thumbnailLocationUrl);
     } catch (error) {
       console.log(error);
     }
-
-    // } else {
-    //   console.log("blurringDoneVideo is not defined");
-    //  }
-
-    //  })
   } catch (error) {
     console.error('Error:', error);
     const resData: ApiResponse = {
