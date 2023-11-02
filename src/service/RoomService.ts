@@ -1,7 +1,7 @@
 import { type ApiResponse } from 'src/domain/response';
 import { type AccidentRow } from '../interface/accident';
 import { type PoolConnection } from 'mysql2/promise';
-import { type InsertRoomRowParams, type PostRoomRequest, type selectNecessaryRow, type ReadRoomData, type SelectMessageRow } from '../interface/chat';
+import { type InsertRoomRowParams, type PostRoomRequest, type selectNecessaryRow, type ReadRoomData, type SelectMessageRow, ReadRoomDataForList } from '../interface/chat';
 import { insertRoomRow, selectRoomRows, selectRoomRow } from '../Repository/RoomRepository';
 import { selectAccidentRow } from '../Repository/AccidentRepository';
 import pool from '../config/database';
@@ -67,14 +67,13 @@ export const selectRoomsByUid = async (uid: string): Promise<ApiResponse> => {
     };
 
     for (const roomRow of roomRows) {
-      const userInfo = await admin.auth().getUser(roomRow.uid);
       const chat: SelectMessageRow[] = await selectMessageRow(connection, roomRow.roomId);
 
-      const inputData: ReadRoomData = {
+      const inputData: ReadRoomDataForList = {
         roomId: roomRow.roomId,
-        displayName: userInfo.displayName,
-        googleProfilePhotoUrl: userInfo.photoURL,
-        placeName: '',
+        uid: roomRow.uid,
+        isAccident: roomRow.accidentId !== null,
+        id: roomRow.accidentId ?? roomRow.observeId,
         lastChat: '',
         lastChatCreatedAt: ''
       };
@@ -83,14 +82,6 @@ export const selectRoomsByUid = async (uid: string): Promise<ApiResponse> => {
         inputData.lastChat = chat[0].message_text;
         inputData.lastChatCreatedAt = chat[0].created_at;
       };
-
-      if (roomRow.accidentId !== null && roomRow.accidentId !== undefined) {
-        const accident: AccidentRow[] = await selectAccidentRow(roomRow.accidentId);
-        inputData.placeName = accident[0].place_name;
-      } else if (roomRow.observeId !== null && roomRow.observeId !== undefined) {
-        const observe: ObserveUidPlaceNameRow = await selectObserveRowForPlaceName(roomRow.observeId);
-        inputData.placeName = observe.place_name;
-      }
 
       answer.data.push(inputData);
     }

@@ -69,6 +69,15 @@ export interface ReadRoomData {
   lastChatCreatedAt: string
 }
 
+export interface ReadRoomDataForList {
+  roomId: number
+  uid: string
+  isAccident?: boolean
+  id?: number
+  lastChat: string
+  lastChatCreatedAt: string
+}
+
 export interface selectRoomListRow extends RowDataPacket {
   id: number
   uid: string
