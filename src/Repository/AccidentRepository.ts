@@ -7,17 +7,17 @@ export const selectAccidentRow = async (accidentId: number): Promise<AccidentRow
   const connection = await pool.getConnection();
 
   const accidentSelectQuery: string =
-    `select 
-    content_title, 
-    content_description, 
-    accident_start_time, 
-    accident_end_time, 
-    created_at, 
-    ST_X(accident_location) AS x, 
-    ST_Y(accident_location) AS y, 
-    car_model_name, 
-    license_plate, 
-    bounty, 
+    `select
+    content_title,
+    content_description,
+    accident_start_time,
+    accident_end_time,
+    created_at,
+    ST_X(accident_location) AS x,
+    ST_Y(accident_location) AS y,
+    car_model_name,
+    license_plate,
+    bounty,
     uid,
     place_name
     from accident
@@ -99,7 +99,7 @@ export const selectAccidentOnTheMapRow = async (locationObject: LocationObject):
   const connection = await pool.getConnection();
 
   const accidentSelectQuery: string = `
-      SELECT id, ST_X(accident_location) AS x, ST_Y(accident_location) AS y
+      SELECT id, license_plate, accident_start_time, accident_end_time, ST_X(accident_location) AS x, ST_Y(accident_location) AS y
       FROM accident
       WHERE ST_Distance_Sphere(
         accident_location,
@@ -109,7 +109,6 @@ export const selectAccidentOnTheMapRow = async (locationObject: LocationObject):
   const [accidentRows]: [LocationRow[], FieldPacket[]] = await connection.execute<LocationRow[]>(accidentSelectQuery, [
     locationObject.radius
   ]);
-
   connection.release();
   return accidentRows;
 };

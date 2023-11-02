@@ -96,11 +96,12 @@ export const readAccidentOnTheMap = async (locationObject: LocationObject): Prom
       };
       const accidentLocationObject: AccidentLocationObject = {
         accidentId: accidentRow.id,
-        accidentLocation: location
+        accidentLocation: location,
+        licensePlate: accidentRow.license_plate,
+        accidentTime: [accidentRow.accident_start_time, accidentRow.accident_end_time]
       };
       data.push(accidentLocationObject);
     }
-
     const resData = {
       ok: true,
       msg: 'Successfully Get',
@@ -108,6 +109,7 @@ export const readAccidentOnTheMap = async (locationObject: LocationObject): Prom
     };
     return resData;
   } catch (error) {
+    console.log(error);
     const resData: ApiResponse = {
       ok: false,
       msg: 'INTERNAL SERVER ERROR'

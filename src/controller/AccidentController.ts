@@ -41,11 +41,16 @@ declare global {
   interface AccidentLocationObject {
     accidentId: number
     accidentLocation: LocationObject
+    licensePlate?: string
+    accidentTime?: Date[]
   }
 
   interface ObserveLocationObject {
     observeId: number
     observeLocation: LocationObject
+    licensePlate?: string
+    observeTime?: Date[]
+
   }
 
   interface imageData {
