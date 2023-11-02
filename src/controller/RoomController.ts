@@ -40,11 +40,11 @@ export const getRoom = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const postRoom = async (req: Request, res: Response): Promise<void> => {
+export const postRoom = async (req: CustomRequest, res: Response): Promise<void> => {
   try {
+    const reportUid = req.uid || '';
     const roomObject: PostRoomRequest = {
-      uid: req.body.uid,
-      reportUid: req.body.reportUid,
+      reportUid: reportUid,
       isAccident: req.body.isAccident,
       id: req.body.id
     };

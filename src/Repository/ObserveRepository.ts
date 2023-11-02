@@ -1,5 +1,5 @@
 import type { FieldPacket, PoolConnection } from 'mysql2/promise';
-import { type registerObserveRequest, type videoId, type RegisterObserveResponse, type videoInfo, type observeInformationByVideoIdReponse, type ObservePlaceNameRow } from '../interface/observe';
+import { type registerObserveRequest, type videoId, type RegisterObserveResponse, type videoInfo, type observeInformationByVideoIdReponse, type ObserveUidPlaceNameRow } from '../interface/observe';
 import { type LocationRow } from '../interface/both';
 import pool from '../config/database';
 
@@ -117,10 +117,10 @@ export const selectVideoInfoByVideoId = async (conneciton: PoolConnection, video
   return selectVideoInfoByVideoIdRows;
 };
 
-export const selectObserveRowForPlaceName = async (observeId: number): Promise<ObservePlaceNameRow> => {
+export const selectObserveRowForPlaceName = async (observeId: number): Promise<ObserveUidPlaceNameRow> => {
   const connection = await pool.getConnection();
-  const selectQuery = 'SELECT place_name FROM observe WHERE id = ?;';
-  const [observePlaceNameRow]: [ObservePlaceNameRow[], FieldPacket[]] = await connection.execute<ObservePlaceNameRow[]>(selectQuery, [
+  const selectQuery = 'SELECT place_name, uid FROM observe WHERE id = ?;';
+  const [observePlaceNameRow]: [ObserveUidPlaceNameRow[], FieldPacket[]] = await connection.execute<ObserveUidPlaceNameRow[]>(selectQuery, [
     observeId
   ]);
   connection.release();

@@ -1,39 +1,45 @@
 import { type ApiResponse } from 'src/domain/response';
 import { type AccidentRow } from '../interface/accident';
 import { type PoolConnection } from 'mysql2/promise';
-import { type InsertRoomRowParams, type PostRoomRequest, type selectNecessaryRow, type ReadRoomData, type SelectMessageRow } from '../interface/chat';
+import { type InsertRoomRowParams, type PostRoomRequest, type selectNecessaryRow, type ReadRoomData, type SelectMessageRow, ReadRoomDataForList } from '../interface/chat';
 import { insertRoomRow, selectRoomRows, selectRoomRow } from '../Repository/RoomRepository';
 import { selectAccidentRow } from '../Repository/AccidentRepository';
 import pool from '../config/database';
 import { admin } from '../auth/firebase';
 import { selectMessageRow } from '../Repository/MessageRepository';
 import { selectObserveRowForPlaceName } from '../Repository/ObserveRepository';
-import { type ObservePlaceNameRow } from '../interface/observe';
+import { type ObserveUidPlaceNameRow } from '../interface/observe';
 
 export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiResponse> => {
   try {
     const connection: PoolConnection = await pool.getConnection();
 
     const passedData: InsertRoomRowParams = {
-      uid: roomObject.uid,
+      uid: ' ',
       reportUid: roomObject.reportUid,
       accidentId: null,
       observeId: null
     };
-
+    
     if (roomObject.isAccident) {
       passedData.accidentId = roomObject.id;
+      const accidentRow: AccidentRow[] = await selectAccidentRow(passedData.accidentId);
+      passedData.uid = accidentRow[0].uid;
+      
     } else {
       passedData.observeId = roomObject.id;
+      const observeRow: ObserveUidPlaceNameRow = await selectObserveRowForPlaceName(passedData.observeId);
+      passedData.uid = observeRow.uid;
     }
-    console.log(passedData);
     const roomId = await insertRoomRow(connection, passedData);
 
     if (roomId != null) {
       const answer: ApiResponse = {
         ok: true,
         msg: 'successfully regist room',
-        data: roomId
+        data: {
+            roomId: roomId
+        }
       };
       return answer;
     } else {
@@ -61,14 +67,13 @@ export const selectRoomsByUid = async (uid: string): Promise<ApiResponse> => {
     };
 
     for (const roomRow of roomRows) {
-      const userInfo = await admin.auth().getUser(roomRow.uid);
       const chat: SelectMessageRow[] = await selectMessageRow(connection, roomRow.roomId);
 
-      const inputData: ReadRoomData = {
+      const inputData: ReadRoomDataForList = {
         roomId: roomRow.roomId,
-        displayName: userInfo.displayName,
-        googleProfilePhotoUrl: userInfo.photoURL,
-        placeName: '',
+        uid: roomRow.uid,
+        isAccident: roomRow.accidentId !== null,
+        id: roomRow.accidentId ?? roomRow.observeId,
         lastChat: '',
         lastChatCreatedAt: ''
       };
@@ -77,14 +82,6 @@ export const selectRoomsByUid = async (uid: string): Promise<ApiResponse> => {
         inputData.lastChat = chat[0].message_text;
         inputData.lastChatCreatedAt = chat[0].created_at;
       };
-
-      if (roomRow.accidentId !== null && roomRow.accidentId !== undefined) {
-        const accident: AccidentRow[] = await selectAccidentRow(roomRow.accidentId);
-        inputData.placeName = accident[0].place_name;
-      } else if (roomRow.observeId !== null && roomRow.observeId !== undefined) {
-        const observe: ObservePlaceNameRow = await selectObserveRowForPlaceName(roomRow.observeId);
-        inputData.placeName = observe.place_name;
-      }
 
       answer.data.push(inputData);
     }
@@ -125,7 +122,7 @@ export const selectRoom = async (roomId: number): Promise<ReadRoomData> => {
     const accident: AccidentRow[] = await selectAccidentRow(roomRow.accidentId);
     inputData.placeName = accident[0].place_name;
   } else if (roomRow.observeId !== null && roomRow.observeId !== undefined) {
-    const observe: ObservePlaceNameRow = await selectObserveRowForPlaceName(roomRow.observeId);
+    const observe: ObserveUidPlaceNameRow = await selectObserveRowForPlaceName(roomRow.observeId);
     inputData.placeName = observe.place_name;
   }
 

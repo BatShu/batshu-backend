@@ -8,7 +8,6 @@ export interface SendMessageRequest {
 }
 
 export interface PostRoomRequest {
-  uid: string
   reportUid: string
   isAccident: boolean
   id: number
@@ -66,6 +65,15 @@ export interface ReadRoomData {
   // accidentOrObserveInfo
   placeName: string
   // message
+  lastChat: string
+  lastChatCreatedAt: string
+}
+
+export interface ReadRoomDataForList {
+  roomId: number
+  uid: string
+  isAccident?: boolean
+  id?: number
   lastChat: string
   lastChatCreatedAt: string
 }
