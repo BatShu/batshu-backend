@@ -1,7 +1,7 @@
 import { type ApiResponse } from 'src/domain/response';
 import { type AccidentRow } from '../interface/accident';
 import { type PoolConnection } from 'mysql2/promise';
-import { type InsertRoomRowParams, type PostRoomRequest, type selectNecessaryRow, type ReadRoomData, type SelectMessageRow, ReadRoomDataForList } from '../interface/chat';
+import { type InsertRoomRowParams, type PostRoomRequest, type selectNecessaryRow, type ReadRoomData, type SelectMessageRow, type ReadRoomDataForList } from '../interface/chat';
 import { insertRoomRow, selectRoomRows, selectRoomRow } from '../Repository/RoomRepository';
 import { selectAccidentRow } from '../Repository/AccidentRepository';
 import pool from '../config/database';
@@ -20,12 +20,11 @@ export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiRespon
       accidentId: null,
       observeId: null
     };
-    
+
     if (roomObject.isAccident) {
       passedData.accidentId = roomObject.id;
       const accidentRow: AccidentRow[] = await selectAccidentRow(passedData.accidentId);
       passedData.uid = accidentRow[0].uid;
-      
     } else {
       passedData.observeId = roomObject.id;
       const observeRow: ObserveUidPlaceNameRow = await selectObserveRowForPlaceName(passedData.observeId);
@@ -38,7 +37,7 @@ export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiRespon
         ok: true,
         msg: 'successfully regist room',
         data: {
-            roomId: roomId
+          roomId
         }
       };
       return answer;
@@ -106,9 +105,9 @@ export const selectRoom = async (roomId: number): Promise<ReadRoomData> => {
 
   const inputData: ReadRoomData = {
     roomId: roomRow.roomId,
-    displayName: userInfo.displayName,
-    googleProfilePhotoUrl: userInfo.photoURL,
-    placeName: '',
+    uid: userInfo.uid,
+    isAccident: roomRow.accidentId !== null,
+    id: roomRow.accidentId ?? roomRow.observeId ?? 0,
     lastChat: '',
     lastChatCreatedAt: ''
   };
@@ -117,14 +116,6 @@ export const selectRoom = async (roomId: number): Promise<ReadRoomData> => {
     inputData.lastChat = chat[0].message_text;
     inputData.lastChatCreatedAt = chat[0].created_at;
   };
-
-  if (roomRow.accidentId !== null && roomRow.accidentId !== undefined) {
-    const accident: AccidentRow[] = await selectAccidentRow(roomRow.accidentId);
-    inputData.placeName = accident[0].place_name;
-  } else if (roomRow.observeId !== null && roomRow.observeId !== undefined) {
-    const observe: ObserveUidPlaceNameRow = await selectObserveRowForPlaceName(roomRow.observeId);
-    inputData.placeName = observe.place_name;
-  }
 
   return inputData;
 };

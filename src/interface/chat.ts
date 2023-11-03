@@ -60,10 +60,10 @@ export interface ReadRoomData {
   // room
   roomId: number
   // userInfo
-  displayName?: string
-  googleProfilePhotoUrl?: string
+  uid: string
   // accidentOrObserveInfo
-  placeName: string
+  isAccident: boolean
+  id: number
   // message
   lastChat: string
   lastChatCreatedAt: string

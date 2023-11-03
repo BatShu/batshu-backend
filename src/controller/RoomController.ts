@@ -44,7 +44,7 @@ export const postRoom = async (req: CustomRequest, res: Response): Promise<void>
   try {
     const reportUid = req.uid || '';
     const roomObject: PostRoomRequest = {
-      reportUid: reportUid,
+      reportUid,
       isAccident: req.body.isAccident,
       id: req.body.id
     };
