@@ -7,7 +7,7 @@ export const selectObserveOnTheMapRow = async (locationObject: LocationObject): 
   try {
     const connection = await pool.getConnection();
     const observeSelectQuery: string = `
-    SELECT id, license_plate, observe_start_time, observe_end_time, ST_X(observe_location) AS x, ST_Y(observe_location) AS y
+    SELECT video_id, license_plate, observe_start_time, observe_end_time, ST_X(observe_location) AS x, ST_Y(observe_location) AS y
     FROM observe
     WHERE ST_Distance_Sphere(
       observe_location,

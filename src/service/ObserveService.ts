@@ -121,7 +121,7 @@ export const readObserveOnTheMap = async (locationObject: LocationObject): Promi
         y: observeRow.y
       };
       const observeLocationObject: ObserveLocationObject = {
-        observeId: observeRow.id,
+        observeId: observeRow.video_id,
         observeLocation: location,
         licensePlate: observeRow.license_plate,
         observeTime: [observeRow.observe_start_time, observeRow.observe_end_time]
