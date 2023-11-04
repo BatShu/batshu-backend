@@ -2,7 +2,10 @@
 import path from 'path';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config({
-  path: path.resolve(__dirname, process.env.NODE_ENV === 'production' ? '../.env.production' : '../.env.development')
+  path: path.resolve(
+    __dirname,
+    process.env.NODE_ENV === 'production' ? '../.env.production' : '../.env.development'
+  )
 });
 
 import type http from 'http';
@@ -15,13 +18,11 @@ import MessageRouter from './routers/MessageRouter';
 import RoomRouter from './routers/RoomRouter';
 import { chatSocket } from './chat/chatSocket';
 import cors from 'cors';
+import { corsOption } from './config/network';
 
 const app: Application = express();
 // for dev
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
-}));
+app.use(cors(corsOption));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -38,7 +39,9 @@ app.get('/hello', (req: Request, res: Response) => {
 
 const PORT = process.env.PORT ?? 3000;
 
-const handleListening = (): void => { console.log(`✅Server listenting on http://localhost:${PORT} 🚀 `); };
+const handleListening = (): void => {
+  console.log(`✅Server listenting on http://localhost:${PORT} 🚀 `);
+};
 
 const webServer: http.Server = app.listen(PORT, handleListening);
 
