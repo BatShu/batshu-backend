@@ -31,6 +31,14 @@ export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiRespon
       passedData.uid = observeRow.uid;
     }
 
+    if (passedData.reportUid == passedData.uid){
+        const answer = {
+          ok: false,
+          msg: 'UID and reportUID must be different.'
+        };
+        return answer;
+    }
+
     const alreadyRoom: AlreadyHasRoomResult[] = await selectAlreadyHasRoomResultRows(connection, passedData.reportUid, passedData.uid);
     if (alreadyRoom.length > 0) {
       const answer = {
