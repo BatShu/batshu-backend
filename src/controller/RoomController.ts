@@ -42,15 +42,13 @@ export const getRoom = async (req: Request, res: Response): Promise<void> => {
 
 export const postRoom = async (req: CustomRequest, res: Response): Promise<void> => {
   try {
-    const reportUid = req.uid || '';
+    const reportUid = req.uid ?? '';
     const roomObject: PostRoomRequest = {
       reportUid,
       isAccident: req.body.isAccident,
       id: req.body.id
     };
-
     const resData: ApiResponse = await insertRoom(roomObject);
-
     res.status(200).send(resData);
   } catch (err) {
     const resData: ApiResponse = {

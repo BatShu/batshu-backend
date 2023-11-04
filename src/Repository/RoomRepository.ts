@@ -1,4 +1,4 @@
-import { type selectNecessaryRow, type InsertRoomRowParams, type selectRoomListRow } from '../interface/chat';
+import { type selectNecessaryRow, type InsertRoomRowParams, type selectRoomListRow, type AlreadyHasRoomResult } from '../interface/chat';
 import type { FieldPacket, PoolConnection } from 'mysql2/promise';
 
 export const insertRoomRow = async (connection: PoolConnection, roomObject: InsertRoomRowParams): Promise<number | null> => {
@@ -8,7 +8,7 @@ export const insertRoomRow = async (connection: PoolConnection, roomObject: Inse
     await connection.execute(insertQuery, [roomObject.uid, roomObject.reportUid, roomObject.accidentId, roomObject.observeId]);
     // Get the last inserted id
     const [rows]: any = await connection.execute('SELECT LAST_INSERT_ID() as id');
-    
+
     const id = Array.isArray(rows) && rows.length > 0 ? rows[0].id : null;
     return id;
   } catch (err) {
@@ -62,4 +62,10 @@ export const selectRoomRow = async (connection: PoolConnection, roomId: number):
     console.log(err);
     throw err;
   }
+};
+
+export const selectAlreadyHasRoomResultRows = async (connection: PoolConnection, reportUid: string, uid: string): Promise<AlreadyHasRoomResult[]> => {
+  const selectQuery = 'SELECT id, uid FROM room where report_uid = ? AND uid = ?';
+  const [roomRows]: [AlreadyHasRoomResult[], FieldPacket[]] = await connection.execute<AlreadyHasRoomResult[]>(selectQuery, [reportUid, uid]);
+  return roomRows;
 };
