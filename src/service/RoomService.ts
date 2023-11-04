@@ -1,13 +1,13 @@
 import { type ApiResponse } from 'src/domain/response';
 import { type AccidentRow } from '../interface/accident';
 import { type PoolConnection } from 'mysql2/promise';
-import { type InsertRoomRowParams, type PostRoomRequest, type selectNecessaryRow, type ReadRoomData, type SelectMessageRow, type ReadRoomDataForList } from '../interface/chat';
-import { insertRoomRow, selectRoomRows, selectRoomRow } from '../Repository/RoomRepository';
+import { type InsertRoomRowParams, type PostRoomRequest, type selectNecessaryRow, type ReadRoomData, type SelectMessageRow, type ReadRoomDataForList, type AlreadyHasRoomResult } from '../interface/chat';
+import { insertRoomRow, selectRoomRows, selectRoomRow, selectAlreadyHasRoomResultRows } from '../Repository/RoomRepository';
 import { selectAccidentRow } from '../Repository/AccidentRepository';
 import pool from '../config/database';
 import { admin } from '../auth/firebase';
 import { selectMessageRow } from '../Repository/MessageRepository';
-import { selectObserveRowForPlaceName } from '../Repository/ObserveRepository';
+import { selectObserveRow } from '../Repository/ObserveRepository';
 import { type ObserveUidPlaceNameRow } from '../interface/observe';
 
 export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiResponse> => {
@@ -27,11 +27,20 @@ export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiRespon
       passedData.uid = accidentRow[0].uid;
     } else {
       passedData.observeId = roomObject.id;
-      const observeRow: ObserveUidPlaceNameRow = await selectObserveRowForPlaceName(passedData.observeId);
+      const observeRow: ObserveUidPlaceNameRow = await selectObserveRow(passedData.observeId);
       passedData.uid = observeRow.uid;
     }
-    const roomId = await insertRoomRow(connection, passedData);
 
+    const alreadyRoom: AlreadyHasRoomResult[] = await selectAlreadyHasRoomResultRows(connection, passedData.reportUid, passedData.uid);
+    if (alreadyRoom.length > 0) {
+      const answer = {
+        ok: false,
+        msg: 'you alreday has a chat room',
+        data: alreadyRoom
+      };
+      return answer;
+    }
+    const roomId = await insertRoomRow(connection, passedData);
     if (roomId != null) {
       const answer: ApiResponse = {
         ok: true,

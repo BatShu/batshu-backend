@@ -12,6 +12,10 @@ export interface PostRoomRequest {
   isAccident: boolean
   id: number
 }
+export interface AlreadyHasRoomResult extends RowDataPacket {
+  roomId: number
+  uid: string
+}
 
 export interface InsertRoomRowParams {
   uid: string
