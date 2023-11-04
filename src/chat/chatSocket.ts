@@ -3,9 +3,10 @@ import socketIO from 'socket.io';
 import { type SendMessageRequest } from '../interface/chat';
 import { type ApiResponse } from 'src/domain/response';
 import { insertMessage } from '../service/MessageService';
+import { corsOption } from '../config/network';
 
 export const chatSocket = (webserver: http.Server): void => {
-  const io = new socketIO.Server(webserver);
+  const io = new socketIO.Server(webserver, { cors: corsOption });
 
   io.sockets.on('connection', (socket: socketIO.Socket) => {
     socket.emit('message', { msg: 'Welcome' + socket.id });
