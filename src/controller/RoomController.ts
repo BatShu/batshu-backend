@@ -49,10 +49,9 @@ export const postRoom = async (req: CustomRequest, res: Response): Promise<void>
       id: req.body.id
     };
     const resData: ApiResponse = await insertRoom(roomObject);
-    if (resData.ok){
+    if (resData.ok) {
       res.status(200).send(resData);
-    }
-    else {
+    } else {
       res.status(500).send(resData);
     }
   } catch (err) {
