@@ -1,7 +1,6 @@
 import type http from 'http';
 import socketIO from 'socket.io';
 import { type SendMessageRequest } from '../interface/chat';
-import { type ApiResponse } from 'src/domain/response';
 import { insertMessage } from '../service/MessageService';
 import { corsOption } from '../config/network';
 
@@ -22,13 +21,14 @@ export const chatSocket = (webserver: http.Server): void => {
 const disconnect = (socket: socketIO.Socket): void => {
   socket.on('disconnect', () => {
     console.log('소켓 연결 해제');
+    socket.removeAllListeners();
   });
 };
 
 const joinRoom = (socket: socketIO.Socket): void => {
-  socket.on('join', async (roomId: string) => {
+  socket.on('join', async (roomId: number) => {
     console.log(`${roomId}에 들어감`);
-    await socket.join(roomId);
+    await socket.join(`${roomId}`);
   });
 };
 
@@ -41,11 +41,10 @@ const sendChat = (socket: socketIO.Socket, io: socketIO.Server): void => {
 
       // 2. Room table update -> 채팅방 생성 api 먼저. v
 
-      const messageResponse: ApiResponse = await insertMessage(messageObject);
-
-      io.to(messageObject.socketId).emit('message', messageResponse);
+      await insertMessage(messageObject);
+      io.to(`${messageObject.roomId}`).emit('message', messageObject);
     } catch (err) {
-      io.to(messageObject.socketId).emit('err message', err);
+      io.to(`${messageObject.roomId}`).emit('err message', err);
     }
   });
 };
