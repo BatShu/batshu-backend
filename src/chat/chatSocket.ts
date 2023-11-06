@@ -1,7 +1,7 @@
 import type http from 'http';
 import socketIO from 'socket.io';
-import { type SendMessageRequest } from '../interface/chat';
-import { insertMessage } from '../service/MessageService';
+import { type SendMessageRequest, type SendFileRequest } from '../interface/chat';
+import { insertMessage, insertFile } from '../service/MessageService';
 import { corsOption } from '../config/network';
 
 export const chatSocket = (webserver: http.Server): void => {
@@ -14,6 +14,7 @@ export const chatSocket = (webserver: http.Server): void => {
     disconnect(socket); // 소켓 서버 연결해제
     joinRoom(socket); // 채팅방 입장
     sendChat(socket, io); // 유저가 채팅 보냄.
+    sendFile(socket, io);
     // readChat(socket, io); // 유저가 채팅 읽음.
   });
 };
@@ -37,10 +38,6 @@ const sendChat = (socket: socketIO.Socket, io: socketIO.Server): void => {
     try {
       console.log(messageObject);
 
-      // 1. Chat table insert v
-
-      // 2. Room table update -> 채팅방 생성 api 먼저. v
-
       await insertMessage(messageObject);
       io.to(`${messageObject.roomId}`).emit('message', messageObject);
     } catch (err) {
@@ -49,6 +46,18 @@ const sendChat = (socket: socketIO.Socket, io: socketIO.Server): void => {
   });
 };
 
+const sendFile = (socket: socketIO.Socket, io: socketIO.Server): void => {
+  socket.on('sendFile', async (fileObject: SendFileRequest) => {
+    try {
+      console.log(fileObject);
+
+      await insertFile(fileObject);
+      io.to(`${fileObject.roomId}`).emit('message', fileObject);
+    } catch (err) {
+      io.to(`${fileObject.roomId}`).emit('err message', err);
+    }
+  });
+};
 // const readChat = (socket: socketIO.Socket, io: socketIO.Server): void => {
 //     socket.on('readChat', () => {});
 // }
