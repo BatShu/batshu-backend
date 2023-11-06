@@ -1,6 +1,6 @@
 import type http from 'http';
 import socketIO from 'socket.io';
-import { type SendMessageRequest, type SendFileRequest, type SendAccountRequest } from '../interface/chat';
+import { type SendMessageRequest, type SendFileRequest, type SendAccountRequest, type SocketEmitObject } from '../interface/chat';
 import { insertMessage, insertFile, insertAccountMessage } from '../service/MessageService';
 import { corsOption } from '../config/network';
 import { ApiResponse } from '../domain/response'
@@ -39,8 +39,8 @@ const sendChat = (socket: socketIO.Socket, io: socketIO.Server): void => {
     try {
       console.log(messageObject);
 
-      const result: ApiResponse = await insertMessage(messageObject);
-      io.to(`${messageObject.roomId}`).emit('message', result.msg);
+      const result: SocketEmitObject = await insertMessage(messageObject);
+      io.to(`${messageObject.roomId}`).emit('message', result);
     } catch (err) {
       io.to(`${messageObject.roomId}`).emit('err message', err);
     }
@@ -52,8 +52,8 @@ const sendFile = (socket: socketIO.Socket, io: socketIO.Server): void => {
     try {
       console.log(fileObject);
 
-      const result: ApiResponse = await insertFile(fileObject);
-      io.to(`${fileObject.roomId}`).emit('message', result.msg);
+      const result: SocketEmitObject = await insertFile(fileObject);
+      io.to(`${fileObject.roomId}`).emit('message', result);
     } catch (err) {
       io.to(`${fileObject.roomId}`).emit('err message', err);
     }
@@ -65,15 +65,11 @@ const sendAccount = (socket: socketIO.Socket, io: socketIO.Server): void => {
     try {
       console.log(accountObject);
 
-      const result: ApiResponse = await insertAccountMessage(accountObject)
-      // account 업데이트 했는지 확인 / 아니면 입력하라고 해주기
-      // 했으면 그냥 message 에 추가.
+      const result: SocketEmitObject = await insertAccountMessage(accountObject);
+      io.to(`${accountObject.roomId}`).emit('message', result)
 
     } catch (err) {
       io.to(`${accountObject.roomId}`).emit('err message', err);
     }
   });
 };
-// const readChat = (socket: socketIO.Socket, io: socketIO.Server): void => {
-//     socket.on('readChat', () => {});
-// }
