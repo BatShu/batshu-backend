@@ -1,6 +1,6 @@
 import pool from '../config/database';
-import { type UserRow } from 'src/interface/both';
-import { type FieldPacket } from 'mysql2';
+import { UserAccountUpdate, type UserRow } from '../interface/both';
+import { type FieldPacket, type PoolConnection } from 'mysql2/promise';
 
 export const createUser = async (uid: string): Promise<void> => {
   const connection = await pool.getConnection();
@@ -21,5 +21,11 @@ export const removeUser = async (uid: string): Promise<void> => {
 
   await connect.execute<UserRow[]>(userDeleteQuery, [uid]);
 };
+
+export const updateUserAccount = async (connection: PoolConnection, passedData: UserAccountUpdate): Promise<void> => {
+  const userUpdateQuery: string = 'UPDATE user SET real_name = ? ,back_name = ? ,account_number = ? WHERE uid = ?;'
+
+  await connection.execute<UserRow[]>(userUpdateQuery, [passedData.realName, passedData.backName, passedData.accountNumber, passedData.uid]);
+}
 
 export default { createUser, readUser, removeUser };

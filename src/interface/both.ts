@@ -10,3 +10,10 @@ export interface UserRow extends RowDataPacket {
   id: number
   uid: string
 }
+
+export interface UserAccountUpdate {
+  uid: string
+  backName: string
+  accountNumber: string
+  realName: string
+}
