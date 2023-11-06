@@ -11,6 +11,7 @@ export const createUser = async (uid: string): Promise<void> => {
 export const readUser = async (uid: string): Promise<UserRow[]> => {
   const connection = await pool.getConnection();
   const [user]: [UserRow[], FieldPacket[]] = await connection.execute('SELECT * FROM user WHERE uid = ?', [uid]);
+  console.log(user)
   connection.release();
   return user;
 };

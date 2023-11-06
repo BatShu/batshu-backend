@@ -1,11 +1,11 @@
 import { type Request, type Response } from 'express';
 
-import admin from 'firebase-admin';
+import admin, { app } from 'firebase-admin';
 
 import { createUser, removeUser, userInfoAddAccount } from '../service/UserService';
 import { type ApiResponse } from 'src/domain/response';
 import { readUser } from '../Repository/UserRepository';
-import { UserAccountUpdate } from '../interface/both';
+import { UserAccountUpdate, UserInfoReadType } from '../interface/both';
 
 export const postUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -38,11 +38,14 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
   try {
     if (req.headers.authorization !== null && req.headers.authorization !== undefined) {
       const userInfo = await admin.auth().getUser(req.params.uid);
-      const response = {
+      const response: UserInfoReadType = {
         uid: userInfo.uid,
         email: userInfo.email,
         displayName: userInfo.displayName,
-        googleProfilephotoURL: userInfo.photoURL
+        googleProfilephotoURL: userInfo.photoURL,
+        backName: null,
+        accountNumber: null,
+        realName: null
       };
 
       if (userInfo === undefined) {
@@ -64,6 +67,13 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
         res.status(400).json(resData);
         return;
       }
+
+      if (appUserInfo[0].real_name !== null && appUserInfo[0].bank_name !== null && appUserInfo[0].account_number !== null){
+        response.realName = appUserInfo[0].real_name;
+        response.backName = appUserInfo[0].bank_name;
+        response.accountNumber = appUserInfo[0].account_number;
+      }
+
       res.status(200).json({
         ok: true,
         msg: 'Successfully Get',
