@@ -122,7 +122,7 @@ export const updateAccountInfo = async (req: CustomRequest, res: Response): Prom
       if (req.uid != undefined){
         const passedData: UserAccountUpdate = {
           uid: req.uid,
-          backName: req.body.backName,
+          bankName: req.body.backName,
           accountNumber: req.body.accountNumber,
           realName: req.body.realName
         }

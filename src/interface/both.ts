@@ -16,7 +16,7 @@ export interface UserRow extends RowDataPacket {
 
 export interface UserAccountUpdate {
   uid: string
-  backName: string
+  bankName: string
   accountNumber: string
   realName: string
 }

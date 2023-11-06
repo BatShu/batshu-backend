@@ -25,7 +25,7 @@ export const removeUser = async (uid: string): Promise<void> => {
 export const updateUserAccount = async (connection: PoolConnection, passedData: UserAccountUpdate): Promise<void> => {
   const userUpdateQuery: string = 'UPDATE user SET real_name = ? ,bank_name = ? ,account_number = ? WHERE uid = ?;'
 
-  await connection.execute<UserRow[]>(userUpdateQuery, [passedData.realName, passedData.backName, passedData.accountNumber, passedData.uid]);
+  await connection.execute<UserRow[]>(userUpdateQuery, [passedData.realName, passedData.bankName, passedData.accountNumber, passedData.uid]);
 }
 
 export default { createUser, readUser, removeUser };
