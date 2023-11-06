@@ -3,8 +3,8 @@ import type { FieldPacket, PoolConnection } from 'mysql2/promise';
 
 export const insertMessageRow = async (connection: PoolConnection, messageObject: SendMessageRequest): Promise<boolean> => {
   try {
-    const insertQuery = 'INSERT INTO message (uid, room_id, message_text, created_at) VALUES (?, ?, ?, NOW())';
-    await connection.execute(insertQuery, [messageObject.sendUserUid, messageObject.roomId, messageObject.message]);
+    const insertQuery = 'INSERT INTO message (uid, room_id, message_text, created_at, message_type) VALUES (?, ?, ?, NOW(), ?)';
+    await connection.execute(insertQuery, [messageObject.sendUserUid, messageObject.roomId, messageObject.message, messageObject.messageType]);
     return true;
   } catch (err) {
     return false;

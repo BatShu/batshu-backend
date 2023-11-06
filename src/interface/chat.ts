@@ -4,6 +4,7 @@ export interface SendMessageRequest {
   roomId: number
   sendUserUid: string
   message: string
+  messageType: MessageType
 }
 export interface FileObjectType {
   fileData: ArrayBuffer
@@ -14,6 +15,18 @@ export interface SendFileRequest {
   sendUserUid: string
   file: FileObjectType
 }
+
+export interface AccountObjectType {
+  realName: string
+  backName: string
+  accountNumber: string
+}
+
+export interface SendAccountRequest {
+  roomId: number
+  sendUserUid: string
+}
+
 export interface PostRoomRequest {
   reportUid: string
   isAccident: boolean

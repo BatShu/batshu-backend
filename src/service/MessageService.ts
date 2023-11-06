@@ -1,5 +1,5 @@
 import { type ApiResponse } from 'src/domain/response';
-import { type SelectRoomRow, type SelectMessageRow, type SendMessageRequest, type ReadChatData, type Chat, type SendFileRequest } from '../interface/chat';
+import { type SelectRoomRow, type SelectMessageRow, type SendMessageRequest, type ReadChatData, type Chat, type SendFileRequest, type SendAccountRequest } from '../interface/chat';
 import { type PoolConnection } from 'mysql2/promise';
 import { insertMessageRow, selectMessageRow, selectRoomRow } from '../Repository/MessageRepository';
 import pool from '../config/database';
@@ -30,6 +30,7 @@ const s3 = new S3Client(s3params);
 export const insertMessage = async (messageObject: SendMessageRequest): Promise<ApiResponse> => {
   try {
     const connection: PoolConnection = await pool.getConnection();
+    messageObject.messageType = "message"
     const success: boolean = await insertMessageRow(connection, messageObject);
     connection.release();
     if (success) {
@@ -71,7 +72,8 @@ export const insertFile = async (fileObject: SendFileRequest): Promise<ApiRespon
     const passedData: SendMessageRequest = {
       roomId: fileObject.roomId,
       sendUserUid: fileObject.sendUserUid,
-      message: fileUrl
+      message: fileUrl,
+      messageType: "file"
     };
 
     const connection: PoolConnection = await pool.getConnection();
@@ -96,6 +98,31 @@ export const insertFile = async (fileObject: SendFileRequest): Promise<ApiRespon
     return answer;
   }
 };
+
+export const insertAccountMessage = async (accountObject: SendAccountRequest) => {
+  try {
+    const connection: PoolConnection = await pool.getConnection();
+    const messageObject: SendMessageRequest = { ...accountObject, message: " ", messageType: "account" };
+    const success: boolean = await insertMessageRow(connection, messageObject);
+    connection.release();
+    if (success) {
+      const answer: ApiResponse = {
+        ok: true,
+        msg: 'successfully regist chat'
+      };
+      return answer;
+    } else {
+      throw new Error('Insertion failed'); // Throw an error if insertMessageRow returns false
+    }
+  } catch (err) {
+    console.log(err);
+    const answer: ApiResponse = {
+      ok: false,
+      msg: 'regist fail'
+    };
+    return answer;
+  }
+}
 
 export const selectMessage = async (roomId: number): Promise<ApiResponse> => {
   try {
