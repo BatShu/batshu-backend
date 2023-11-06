@@ -7,6 +7,12 @@ export interface SendMessageRequest {
   messageType: MessageType
 }
 
+export interface SendChatRequest {
+  roomId: number
+  sendUserUid: string
+  message: string
+}
+
 export interface SocketEmitObject {
   roomId: number
   sendUserUid: string
@@ -75,6 +81,7 @@ export interface Chat {
   message: string
   createdAt: Date
   messageType: MessageType
+  account: AccountObjectType | null
 }
 
 export interface SelectRoomRow extends RowDataPacket {

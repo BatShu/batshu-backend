@@ -1,13 +1,13 @@
 import { type ApiResponse } from 'src/domain/response';
-import { type SelectRoomRow, type SelectMessageRow, type SendMessageRequest, type ReadChatData, type Chat, type SendFileRequest, type SendAccountRequest, CreatedAtMessageRow, SocketEmitObject } from '../interface/chat';
+import { type SelectRoomRow, type SelectMessageRow, type SendMessageRequest, type ReadChatData, type Chat, type SendFileRequest, type SendAccountRequest, CreatedAtMessageRow, SocketEmitObject, SendChatRequest } from '../interface/chat';
 import { type PoolConnection } from 'mysql2/promise';
 import { insertMessageRow, selectMessageRow, selectRoomRow } from '../Repository/MessageRepository';
 import pool from '../config/database';
 import crypto from 'crypto';
 import AWS from 'aws-sdk';
 import { PutObjectCommand, S3Client, type S3ClientConfig } from '@aws-sdk/client-s3';
-import { readUser } from 'src/Repository/UserRepository';
-import { UserRow } from 'src/interface/both';
+import { readUser } from '../Repository/UserRepository';
+import { UserRow } from '../interface/both';
 
 const bucketName: string = process.env.BUCKET_NAME_HARAM ?? '';
 const accessKey: string = process.env.ACCESS_KEY_HARAM ?? '';
@@ -128,11 +128,9 @@ export const insertAccountMessage = async (accountObject: SendAccountRequest): P
 export const selectMessage = async (roomId: number): Promise<ApiResponse> => {
   try {
     const connection: PoolConnection = await pool.getConnection();
-    console.log(roomId);
     const roomRow: SelectRoomRow = await selectRoomRow(connection, roomId);
-    console.log(roomRow);
     const MessageRows: SelectMessageRow[] = await selectMessageRow(connection, roomId);
-    console.log(MessageRows);
+    console.log(MessageRows)
     const data: ReadChatData = {
       isAccident: roomRow.accidentId !== null,
       id: roomRow.accident_id ?? roomRow.observe_id,
@@ -144,8 +142,22 @@ export const selectMessage = async (roomId: number): Promise<ApiResponse> => {
         sendUserUid: messageRow.uid,
         message: messageRow.message_text,
         createdAt: messageRow.created_at,
-        messageType: messageRow.messageType
+        messageType: messageRow.message_type,
+        account: null
       };
+      console.log(chat)
+      if (messageRow.message_type === "account"){
+        console.log("!")
+        const user: UserRow[] = await readUser(messageRow.uid);
+        if (user[0]?.real_name !== null && user[0]?.bank_name !== null && user[0]?.account_number !== null) {
+          chat.account = {
+            realName: user[0]?.real_name,
+            backName: user[0]?.bank_name,
+            accountNumber: user[0]?.account_number
+          }
+        }
+      }
+
       data.chatList.push(chat);
     }
 
