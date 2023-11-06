@@ -3,6 +3,7 @@ import socketIO from 'socket.io';
 import { type SendMessageRequest, type SendFileRequest } from '../interface/chat';
 import { insertMessage, insertFile } from '../service/MessageService';
 import { corsOption } from '../config/network';
+import { ApiResponse } from '../domain/response'
 
 export const chatSocket = (webserver: http.Server): void => {
   const io = new socketIO.Server(webserver, { cors: corsOption });
@@ -38,8 +39,8 @@ const sendChat = (socket: socketIO.Socket, io: socketIO.Server): void => {
     try {
       console.log(messageObject);
 
-      await insertMessage(messageObject);
-      io.to(`${messageObject.roomId}`).emit('message', messageObject);
+      const result: ApiResponse = await insertMessage(messageObject);
+      io.to(`${messageObject.roomId}`).emit('message', result.msg);
     } catch (err) {
       io.to(`${messageObject.roomId}`).emit('err message', err);
     }
@@ -51,8 +52,8 @@ const sendFile = (socket: socketIO.Socket, io: socketIO.Server): void => {
     try {
       console.log(fileObject);
 
-      await insertFile(fileObject);
-      io.to(`${fileObject.roomId}`).emit('message', fileObject);
+      const result: ApiResponse = await insertFile(fileObject);
+      io.to(`${fileObject.roomId}`).emit('message', result.msg);
     } catch (err) {
       io.to(`${fileObject.roomId}`).emit('err message', err);
     }
