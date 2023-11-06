@@ -37,10 +37,13 @@ export interface SelectMessageRow extends RowDataPacket {
   createdAt: Date
 }
 
+export type MessageType = "message" | "file" | "account";
+
 export interface Chat {
   sendUserUid: string
   message: string
   createdAt: Date
+  messageType?: MessageType
 }
 
 export interface SelectRoomRow extends RowDataPacket {
