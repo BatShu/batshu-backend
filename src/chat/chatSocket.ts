@@ -1,9 +1,8 @@
 import type http from 'http';
 import socketIO from 'socket.io';
-import { type SendMessageRequest, type SendFileRequest } from '../interface/chat';
-import { insertMessage, insertFile } from '../service/MessageService';
+import {type SendFileRequest, type SendAccountRequest, type SocketEmitObject, type SendChatRequest, type SendMessageRequest } from '../interface/chat';
+import { insertMessage, insertFile, insertAccountMessage } from '../service/MessageService';
 import { corsOption } from '../config/network';
-import { ApiResponse } from '../domain/response'
 
 export const chatSocket = (webserver: http.Server): void => {
   const io = new socketIO.Server(webserver, { cors: corsOption });
@@ -12,11 +11,11 @@ export const chatSocket = (webserver: http.Server): void => {
     socket.emit('message', { msg: 'Welcome' + socket.id });
     console.log('connect success');
     console.log('msg: Welcome + socketId:', socket.id);
-    disconnect(socket); // 소켓 서버 연결해제
-    joinRoom(socket); // 채팅방 입장
-    sendChat(socket, io); // 유저가 채팅 보냄.
-    sendFile(socket, io);
-    // readChat(socket, io); // 유저가 채팅 읽음.
+    disconnect(socket); // 소켓 서버 연결해제.
+    joinRoom(socket); // 채팅방 입장.
+    sendChat(socket, io); // 유저가 평문 채팅 보냄.
+    sendFile(socket, io); // 유저가 파일을 보냄.
+    sendAccount(socket, io); // 유저가 계좌 정보를 보냄.
   });
 };
 
@@ -35,12 +34,12 @@ const joinRoom = (socket: socketIO.Socket): void => {
 };
 
 const sendChat = (socket: socketIO.Socket, io: socketIO.Server): void => {
-  socket.on('sendChat', async (messageObject: SendMessageRequest) => {
+  socket.on('sendChat', async (messageObject: SendChatRequest) => {
     try {
-      console.log(messageObject);
+      const passedObject: SendMessageRequest = {...messageObject, messageType: "message"}
 
-      const result: ApiResponse = await insertMessage(messageObject);
-      io.to(`${messageObject.roomId}`).emit('message', result.msg);
+      const result: SocketEmitObject = await insertMessage(passedObject);
+      io.to(`${messageObject.roomId}`).emit('message', result);
     } catch (err) {
       io.to(`${messageObject.roomId}`).emit('err message', err);
     }
@@ -50,15 +49,23 @@ const sendChat = (socket: socketIO.Socket, io: socketIO.Server): void => {
 const sendFile = (socket: socketIO.Socket, io: socketIO.Server): void => {
   socket.on('sendFile', async (fileObject: SendFileRequest) => {
     try {
-      console.log(fileObject);
-
-      const result: ApiResponse = await insertFile(fileObject);
-      io.to(`${fileObject.roomId}`).emit('message', result.msg);
+      const result: SocketEmitObject = await insertFile(fileObject);
+      io.to(`${fileObject.roomId}`).emit('message', result);
     } catch (err) {
       io.to(`${fileObject.roomId}`).emit('err message', err);
     }
   });
 };
-// const readChat = (socket: socketIO.Socket, io: socketIO.Server): void => {
-//     socket.on('readChat', () => {});
-// }
+
+const sendAccount = (socket: socketIO.Socket, io: socketIO.Server): void => {
+  socket.on('sendAccount', async (accountObject: SendAccountRequest) => {
+    try {
+
+      const result: SocketEmitObject = await insertAccountMessage(accountObject);
+      io.to(`${accountObject.roomId}`).emit('message', result)
+
+    } catch (err) {
+      io.to(`${accountObject.roomId}`).emit('err message', err);
+    }
+  });
+};

@@ -20,20 +20,29 @@
     uploadButton.addEventListener('click', () => {
       const file = fileInput.files[0];
       if (file) {
+        
         const reader = new FileReader();
 
         reader.onload = (e) => {
+          console.log(e)
           const fileData = e.target.result; // 파일 데이터를 ArrayBuffer 또는 Blob으로 얻을 수 있습니다.
           const filename = file.name;
 
           // 파일 데이터와 파일 이름을 서버로 전송
-        socket.emit('sendFile', { 
-            roomId: 12, sendUserUid: "IF9fpHKXIYUg6uRngI5MVZqonUL2",
-            file: {
-                fileData: fileData,
-                filename: filename
-            }
-        });
+          // socket.emit('sendFile', { 
+          //     roomId: 12, sendUserUid: "IF9fpHKXIYUg6uRngI5MVZqonUL2",
+          //     file: {
+          //         fileData: fileData,
+          //         filename: filename
+          //     }
+          // });
+          // socket.emit('sendChat', { 
+          //     roomId: 12, sendUserUid: "IF9fpHKXIYUg6uRngI5MVZqonUL2",
+          //     message: "hihihi"
+          // });
+          socket.emit('sendAccount', { 
+              roomId: 12, sendUserUid: "IF9fpHKXIYUg6uRngI5MVZqonUL2"
+          });
         };
 
         reader.readAsArrayBuffer(file);

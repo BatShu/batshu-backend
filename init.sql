@@ -4,7 +4,10 @@ use batshu_db;
 
 CREATE TABLE `user` (
 	`id` int AUTO_INCREMENT PRIMARY KEY,
-    `uid` varchar(255) NOT NULL
+    `uid` varchar(255) NOT NULL,
+	`real_name` varchar(255) NULL,
+    `bank_name` varchar(255) NULL,
+    `account_number` varchar(255) NULL
 );
 
 
@@ -65,7 +68,8 @@ CREATE TABLE `message` (
 	`uid` varchar(255) NOT NULL,
 	`room_id` int NOT NULL,
 	`message_text` varchar(255) NOT NULL,
-	`created_at` datetime NOT NULL
+	`created_at` datetime NOT NULL,
+	`message_type` varchar(255) NOT NULL
 );
 
 ALTER TABLE `user` ADD INDEX `idx_uid` (`uid`);

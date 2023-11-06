@@ -4,16 +4,52 @@ export interface SendMessageRequest {
   roomId: number
   sendUserUid: string
   message: string
+  messageType: MessageType
 }
+
+export interface SendChatRequest {
+  roomId: number
+  sendUserUid: string
+  message: string
+}
+
+export interface SocketEmitObject {
+  roomId: number
+  sendUserUid: string
+  messageType: MessageType
+  message: string
+  createdAt: string
+  realName: string | null
+  backName: string | null
+  accountNumber: string | null
+}
+
+export interface CreatedAtMessageRow extends RowDataPacket {
+  craeted_at: string
+}
+
 export interface FileObjectType {
   fileData: ArrayBuffer
   filename: string
 }
+
 export interface SendFileRequest {
   roomId: number
   sendUserUid: string
   file: FileObjectType
 }
+
+export interface AccountObjectType {
+  realName: string
+  backName: string
+  accountNumber: string
+}
+
+export interface SendAccountRequest {
+  roomId: number
+  sendUserUid: string
+}
+
 export interface PostRoomRequest {
   reportUid: string
   isAccident: boolean
@@ -35,12 +71,17 @@ export interface SelectMessageRow extends RowDataPacket {
   uid: string
   message: string
   createdAt: Date
+  messageType: MessageType
 }
+
+export type MessageType = "message" | "file" | "account";
 
 export interface Chat {
   sendUserUid: string
   message: string
   createdAt: Date
+  messageType: MessageType
+  account: AccountObjectType | null
 }
 
 export interface SelectRoomRow extends RowDataPacket {
