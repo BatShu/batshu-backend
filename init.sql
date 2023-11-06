@@ -69,7 +69,7 @@ CREATE TABLE `message` (
 	`room_id` int NOT NULL,
 	`message_text` varchar(255) NOT NULL,
 	`created_at` datetime NOT NULL,
-	`message_type` varchar(255) NULL
+	`message_type` varchar(255) NOT NULL
 );
 
 ALTER TABLE `user` ADD INDEX `idx_uid` (`uid`);
