@@ -1,11 +1,11 @@
 import { type Request, type Response } from 'express';
 
-import admin, { app } from 'firebase-admin';
+import admin from 'firebase-admin';
 
 import { createUser, removeUser, userInfoAddAccount } from '../service/UserService';
 import { type ApiResponse } from 'src/domain/response';
 import { readUser } from '../Repository/UserRepository';
-import { UserAccountUpdate, UserInfoReadType } from '../interface/both';
+import { type UserAccountUpdate, type UserInfoReadType } from '../interface/both';
 
 export const postUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -68,7 +68,7 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
         return;
       }
 
-      if (appUserInfo[0].real_name !== null && appUserInfo[0].bank_name !== null && appUserInfo[0].account_number !== null){
+      if (appUserInfo[0].real_name !== null && appUserInfo[0].bank_name !== null && appUserInfo[0].account_number !== null) {
         response.realName = appUserInfo[0].real_name;
         response.backName = appUserInfo[0].bank_name;
         response.accountNumber = appUserInfo[0].account_number;
@@ -79,7 +79,12 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
         msg: 'Successfully Get',
         data: response
       });
+      return;
     }
+    res.status(400).json({
+      ok: false,
+      msg: '잘못된 요청입니다.'
+    });
   } catch (error) {
     console.error('Error:', error);
     const resData: ApiResponse = {
@@ -119,19 +124,18 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
 export const updateAccountInfo = async (req: CustomRequest, res: Response): Promise<void> => {
   try {
     if (req.headers.authorization !== null && req.headers.authorization !== undefined) {
-      if (req.uid != undefined){
+      if (req.uid != undefined) {
         const passedData: UserAccountUpdate = {
           uid: req.uid,
           bankName: req.body.backName,
           accountNumber: req.body.accountNumber,
           realName: req.body.realName
-        }
-  
+        };
+
         const resData: ApiResponse = await userInfoAddAccount(passedData);
-        
+
         res.status(200).json(resData);
-      }
-      else {
+      } else {
         throw new Error('uid not valid');
       }
     }
@@ -143,4 +147,4 @@ export const updateAccountInfo = async (req: CustomRequest, res: Response): Prom
     };
     res.status(500).json(resData);
   }
-}
+};
