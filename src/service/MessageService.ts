@@ -40,10 +40,7 @@ export const insertMessage = async (messageObject: SendMessageRequest): Promise<
 
     const result: SocketEmitObject = {
       ...messageObject, 
-      createdAt: createdAt[0].craeted_at,
-      realName: null,
-      backName: null,
-      accountNumber: null
+      createdAt: createdAt[0].craeted_at
     };
     
     return result;
@@ -83,10 +80,7 @@ export const insertFile = async (fileObject: SendFileRequest): Promise<SocketEmi
 
     const result: SocketEmitObject = {
       ...passedData, 
-      createdAt: createdAt[0].craeted_at,
-      realName: null,
-      backName: null,
-      accountNumber: null
+      createdAt: createdAt[0].created_at
     };
     
     return result;
@@ -106,16 +100,13 @@ export const insertAccountMessage = async (accountObject: SendAccountRequest): P
       throw new Error('계좌 정보를 추가해주세요.');
     }
 
-    const messageObject: SendMessageRequest = { ...accountObject, message: " ", messageType: "account" };
+    const messageObject: SendMessageRequest = { ...accountObject, message: user[0].real_name+" "+user[0].bank_name+" "+user[0].account_number, messageType: "account" };
     const createdAt: CreatedAtMessageRow[] = await insertMessageRow(connection, messageObject);
     connection.release();
 
     const result: SocketEmitObject = {
       ...messageObject, 
-      createdAt: createdAt[0].craeted_at,
-      realName: user[0].real_name,
-      backName: user[0].bank_name,
-      accountNumber: user[0].account_number
+      createdAt: createdAt[0].craeted_at
     };
     
     return result;
@@ -142,21 +133,9 @@ export const selectMessage = async (roomId: number): Promise<ApiResponse> => {
         sendUserUid: messageRow.uid,
         message: messageRow.message_text,
         createdAt: messageRow.created_at,
-        messageType: messageRow.message_type,
-        account: null
+        messageType: messageRow.message_type
       };
       console.log(chat)
-      if (messageRow.message_type === "account"){
-        console.log("!")
-        const user: UserRow[] = await readUser(messageRow.uid);
-        if (user[0]?.real_name !== null && user[0]?.bank_name !== null && user[0]?.account_number !== null) {
-          chat.account = {
-            realName: user[0]?.real_name,
-            backName: user[0]?.bank_name,
-            accountNumber: user[0]?.account_number
-          }
-        }
-      }
 
       data.chatList.push(chat);
     }
