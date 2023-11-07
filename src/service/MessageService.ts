@@ -1,5 +1,5 @@
 import { type ApiResponse } from 'src/domain/response';
-import { type SelectRoomRow, type SelectMessageRow, type SendMessageRequest, type ReadChatData, type Chat, type SendFileRequest, type SendAccountRequest, CreatedAtMessageRow, SocketEmitObject, SendChatRequest } from '../interface/chat';
+import { type SelectRoomRow, type SelectMessageRow, type SendMessageRequest, type ReadChatData, type Chat, type SendFileRequest, type SendAccountRequest, type CreatedAtMessageRow, type SocketEmitObject } from '../interface/chat';
 import { type PoolConnection } from 'mysql2/promise';
 import { insertMessageRow, selectMessageRow, selectRoomRow } from '../Repository/MessageRepository';
 import pool from '../config/database';
@@ -7,7 +7,7 @@ import crypto from 'crypto';
 import AWS from 'aws-sdk';
 import { PutObjectCommand, S3Client, type S3ClientConfig } from '@aws-sdk/client-s3';
 import { readUser } from '../Repository/UserRepository';
-import { UserRow } from '../interface/both';
+import { type UserRow } from '../interface/both';
 
 const bucketName: string = process.env.BUCKET_NAME_HARAM ?? '';
 const accessKey: string = process.env.ACCESS_KEY_HARAM ?? '';
@@ -32,17 +32,17 @@ const s3 = new S3Client(s3params);
 export const insertMessage = async (messageObject: SendMessageRequest): Promise<SocketEmitObject> => {
   try {
     const connection: PoolConnection = await pool.getConnection();
-    messageObject.messageType = "message"
+    messageObject.messageType = 'message';
 
     const createdAt: CreatedAtMessageRow[] = await insertMessageRow(connection, messageObject);
 
     connection.release();
 
     const result: SocketEmitObject = {
-      ...messageObject, 
-      createdAt: createdAt[0].craeted_at
+      ...messageObject,
+      createdAt: createdAt[0].created_at
     };
-    
+
     return result;
   } catch (err) {
     console.log(err);
@@ -71,7 +71,7 @@ export const insertFile = async (fileObject: SendFileRequest): Promise<SocketEmi
       roomId: fileObject.roomId,
       sendUserUid: fileObject.sendUserUid,
       message: fileUrl,
-      messageType: "file"
+      messageType: 'file'
     };
 
     const connection: PoolConnection = await pool.getConnection();
@@ -79,10 +79,10 @@ export const insertFile = async (fileObject: SendFileRequest): Promise<SocketEmi
     connection.release();
 
     const result: SocketEmitObject = {
-      ...passedData, 
+      ...passedData,
       createdAt: createdAt[0].created_at
     };
-    
+
     return result;
   } catch (err) {
     console.log(err);
@@ -96,32 +96,32 @@ export const insertAccountMessage = async (accountObject: SendAccountRequest): P
 
     const user: UserRow[] = await readUser(accountObject.sendUserUid);
 
-    if (user[0].real_name === null && user[0].bank_name === null && user[0].account_number === null){
+    if (user[0].real_name === null && user[0].bank_name === null && user[0].account_number === null) {
       throw new Error('계좌 정보를 추가해주세요.');
     }
 
-    const messageObject: SendMessageRequest = { ...accountObject, message: user[0].real_name+" "+user[0].bank_name+" "+user[0].account_number, messageType: "account" };
+    const messageObject: SendMessageRequest = { ...accountObject, message: user[0].real_name + ' ' + user[0].bank_name + ' ' + user[0].account_number, messageType: 'account' };
     const createdAt: CreatedAtMessageRow[] = await insertMessageRow(connection, messageObject);
     connection.release();
 
     const result: SocketEmitObject = {
-      ...messageObject, 
+      ...messageObject,
       createdAt: createdAt[0].craeted_at
     };
-    
+
     return result;
   } catch (err) {
     console.log(err);
     throw err;
   }
-}
+};
 
 export const selectMessage = async (roomId: number): Promise<ApiResponse> => {
   try {
     const connection: PoolConnection = await pool.getConnection();
     const roomRow: SelectRoomRow = await selectRoomRow(connection, roomId);
     const MessageRows: SelectMessageRow[] = await selectMessageRow(connection, roomId);
-    console.log(MessageRows)
+    console.log(MessageRows);
     const data: ReadChatData = {
       isAccident: roomRow.accidentId !== null,
       id: roomRow.accident_id ?? roomRow.observe_id,
@@ -135,7 +135,7 @@ export const selectMessage = async (roomId: number): Promise<ApiResponse> => {
         createdAt: messageRow.created_at,
         messageType: messageRow.message_type
       };
-      console.log(chat)
+      console.log(chat);
 
       data.chatList.push(chat);
     }
@@ -146,8 +146,6 @@ export const selectMessage = async (roomId: number): Promise<ApiResponse> => {
       data
     };
     return answer;
-  
-
   } catch (err) {
     console.log(err);
     const answer: ApiResponse = {

@@ -65,7 +65,7 @@ export interface SelectMessageRow extends RowDataPacket {
   messageType: MessageType
 }
 
-export type MessageType = "message" | "file" | "account";
+export type MessageType = 'message' | 'file' | 'account';
 
 export interface Chat {
   sendUserUid: string
