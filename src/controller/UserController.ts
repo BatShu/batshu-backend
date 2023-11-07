@@ -124,7 +124,7 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
 export const updateAccountInfo = async (req: CustomRequest, res: Response): Promise<void> => {
   try {
     if (req.headers.authorization !== null && req.headers.authorization !== undefined) {
-      if (req.uid != undefined) {
+      if (req.uid !== undefined) {
         const passedData: UserAccountUpdate = {
           uid: req.uid,
           bankName: req.body.backName,

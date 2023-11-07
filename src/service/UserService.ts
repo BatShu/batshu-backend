@@ -1,6 +1,6 @@
 import { type ApiResponse } from 'src/domain/response';
 import userRepository, { updateUserAccount } from '../Repository/UserRepository';
-import { UserAccountUpdate } from '../interface/both';
+import { type UserAccountUpdate } from '../interface/both';
 import pool from '../config/database';
 import { type PoolConnection } from 'mysql2/promise';
 
@@ -54,7 +54,7 @@ export async function removeUser (uid: string): Promise<ApiResponse> {
   }
 }
 
-export const userInfoAddAccount = async (passedData: UserAccountUpdate) => {
+export const userInfoAddAccount = async (passedData: UserAccountUpdate): Promise<ApiResponse> => {
   try {
     const existingUser = await userRepository.readUser(passedData.uid);
     if (existingUser.length === 0) {
@@ -68,8 +68,8 @@ export const userInfoAddAccount = async (passedData: UserAccountUpdate) => {
     const connection: PoolConnection = await pool.getConnection();
 
     await updateUserAccount(connection, passedData);
-    
-    connection.release()
+
+    connection.release();
 
     const resData: ApiResponse = {
       ok: true,
@@ -80,4 +80,4 @@ export const userInfoAddAccount = async (passedData: UserAccountUpdate) => {
     console.error('에러 발생:', error);
     throw error;
   }
-}
+};

@@ -1,6 +1,6 @@
 import type http from 'http';
 import socketIO from 'socket.io';
-import {type SendFileRequest, type SendAccountRequest, type SocketEmitObject, type SendChatRequest, type SendMessageRequest } from '../interface/chat';
+import { type SendFileRequest, type SendAccountRequest, type SocketEmitObject, type SendChatRequest, type SendMessageRequest } from '../interface/chat';
 import { insertMessage, insertFile, insertAccountMessage } from '../service/MessageService';
 import { corsOption } from '../config/network';
 
@@ -36,7 +36,7 @@ const joinRoom = (socket: socketIO.Socket): void => {
 const sendChat = (socket: socketIO.Socket, io: socketIO.Server): void => {
   socket.on('sendChat', async (messageObject: SendChatRequest) => {
     try {
-      const passedObject: SendMessageRequest = {...messageObject, messageType: "message"}
+      const passedObject: SendMessageRequest = { ...messageObject, messageType: 'message' };
 
       const result: SocketEmitObject = await insertMessage(passedObject);
       io.to(`${messageObject.roomId}`).emit('message', result);
@@ -60,10 +60,8 @@ const sendFile = (socket: socketIO.Socket, io: socketIO.Server): void => {
 const sendAccount = (socket: socketIO.Socket, io: socketIO.Server): void => {
   socket.on('sendAccount', async (accountObject: SendAccountRequest) => {
     try {
-
       const result: SocketEmitObject = await insertAccountMessage(accountObject);
-      io.to(`${accountObject.roomId}`).emit('message', result)
-
+      io.to(`${accountObject.roomId}`).emit('message', result);
     } catch (err) {
       io.to(`${accountObject.roomId}`).emit('err message', err);
     }

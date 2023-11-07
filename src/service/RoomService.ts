@@ -1,7 +1,7 @@
 import { type ApiResponse } from 'src/domain/response';
 import { type AccidentRow } from '../interface/accident';
 import { type PoolConnection } from 'mysql2/promise';
-import { type InsertRoomRowParams, type PostRoomRequest, type selectNecessaryRow, type ReadRoomData, type SelectMessageRow, type ReadRoomDataForList, type AlreadyHasRoomResult } from '../interface/chat';
+import { type InsertRoomRowParams, type PostRoomRequest, type selectNecessaryRow, type ReadRoomData, type SelectMessageRow, type ReadRoomDataForList, type AlreadyHasRoomResult, type SendMessageRequest } from '../interface/chat';
 import { insertRoomRow, selectRoomRows, selectRoomRow, selectAlreadyHasRoomResultRows } from '../Repository/RoomRepository';
 import { selectAccidentRow } from '../Repository/AccidentRepository';
 import pool from '../config/database';
@@ -9,6 +9,7 @@ import { admin } from '../auth/firebase';
 import { selectMessageRow } from '../Repository/MessageRepository';
 import { selectObserveRow } from '../Repository/ObserveRepository';
 import { type ObserveUidPlaceNameRow } from '../interface/observe';
+import { insertMessage } from './MessageService';
 
 export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiResponse> => {
   try {
@@ -50,6 +51,19 @@ export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiRespon
     }
     const roomId = await insertRoomRow(connection, passedData);
     if (roomId != null) {
+      const userInfo = await admin.auth().getUser(passedData.reportUid);
+      console.log(typeof userInfo.displayName);
+      if (typeof userInfo.displayName === 'string') {
+        const firstMessage: SendMessageRequest = {
+          roomId,
+          sendUserUid: passedData.reportUid,
+          message: userInfo.displayName + '님이 채팅을 시작하셨습니다 !!',
+          messageType: 'message'
+        };
+        console.log(firstMessage);
+        await insertMessage(firstMessage);
+      }
+
       const answer: ApiResponse = {
         ok: true,
         msg: 'successfully regist room',
@@ -57,6 +71,7 @@ export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiRespon
           roomId
         }
       };
+
       return answer;
     } else {
       throw new Error('Insertion failed'); // Throw an error if insertMessageRow returns false

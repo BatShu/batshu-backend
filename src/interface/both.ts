@@ -9,9 +9,9 @@ export interface LocationRow extends RowDataPacket {
 export interface UserRow extends RowDataPacket {
   id: number
   uid: string
-  real_name: string|null
-  bank_name: string|null
-  account_number: string|null
+  real_name: string | null
+  bank_name: string | null
+  account_number: string | null
 }
 
 export interface UserAccountUpdate {
