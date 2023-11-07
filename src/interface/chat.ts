@@ -19,13 +19,10 @@ export interface SocketEmitObject {
   messageType: MessageType
   message: string
   createdAt: string
-  realName: string | null
-  backName: string | null
-  accountNumber: string | null
 }
 
 export interface CreatedAtMessageRow extends RowDataPacket {
-  craeted_at: string
+  created_at: string
 }
 
 export interface FileObjectType {
@@ -37,12 +34,6 @@ export interface SendFileRequest {
   roomId: number
   sendUserUid: string
   file: FileObjectType
-}
-
-export interface AccountObjectType {
-  realName: string
-  backName: string
-  accountNumber: string
 }
 
 export interface SendAccountRequest {
@@ -81,7 +72,6 @@ export interface Chat {
   message: string
   createdAt: Date
   messageType: MessageType
-  account: AccountObjectType | null
 }
 
 export interface SelectRoomRow extends RowDataPacket {
