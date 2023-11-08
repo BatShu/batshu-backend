@@ -20,6 +20,7 @@ export const removeUser = async (uid: string): Promise<void> => {
   const userDeleteQuery: string = 'DELETE FROM user WHERE uid = ?';
 
   await connect.execute<UserRow[]>(userDeleteQuery, [uid]);
+  connect.release();
 };
 
 export const updateUserAccount = async (connection: PoolConnection, passedData: UserAccountUpdate): Promise<void> => {

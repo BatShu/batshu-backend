@@ -121,6 +121,7 @@ export const selectMessage = async (roomId: number): Promise<ApiResponse> => {
     const connection: PoolConnection = await pool.getConnection();
     const roomRow: SelectRoomRow = await selectRoomRow(connection, roomId);
     const MessageRows: SelectMessageRow[] = await selectMessageRow(connection, roomId);
+    connection.release();
     console.log(MessageRows);
     const data: ReadChatData = {
       isAccident: roomRow.accidentId !== null,

@@ -50,6 +50,7 @@ export const insertRoom = async (roomObject: PostRoomRequest): Promise<ApiRespon
       return answer;
     }
     const roomId = await insertRoomRow(connection, passedData);
+    connection.release();
     if (roomId != null) {
       const userInfo = await admin.auth().getUser(passedData.reportUid);
       console.log(typeof userInfo.displayName);
@@ -116,6 +117,7 @@ export const selectRoomsByUid = async (uid: string): Promise<ApiResponse> => {
 
       answer.data.push(inputData);
     }
+    connection.release();
 
     return answer;
   } catch (err) {
@@ -134,7 +136,7 @@ export const selectRoom = async (roomId: number): Promise<ReadRoomData> => {
 
   const userInfo = await admin.auth().getUser(roomRow.uid);
   const chat: SelectMessageRow[] = await selectMessageRow(connection, roomRow.roomId);
-
+  connection.release();
   const inputData: ReadRoomData = {
     roomId: roomRow.roomId,
     uid: userInfo.uid,
